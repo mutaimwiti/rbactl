@@ -1,2 +1,2 @@
-# easy-rbac
-Easy and intuitive role based access control for Node.js.
+# flex-rbac
+Easy and intuitive role based access control for Express apps.

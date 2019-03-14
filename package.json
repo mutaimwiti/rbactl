@@ -1,0 +1,55 @@
+{
+  "name": "@mutaimwiti/flex-rbac",
+  "version": "0.0.1d",
+  "description": "Easy and intuitive role based access control on Express.",
+  "main": "./index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest --colors || true",
+    "test:watch": "jest --colors --watch || true",
+    "build": "babel -d lib src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mutaimwiti/flex-rbac.git"
+  },
+  "keywords": [
+    "flex",
+    "rbac",
+    "flex-rbac",
+    "node",
+    "nodejs",
+    "express"
+  ],
+  "author": "Mutai Mwiti",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mutaimwiti/flex-rbac/issues"
+  },
+  "homepage": "https://github.com/mutaimwiti/flex-rbac#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "babel-loader": "^8.0.5",
+    "expect": "^24.5.0",
+    "jest": "^24.5.0"
+  },
+  "jest": {
+    "verbose": true,
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "clover"
+    ],
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "index.js"
+    ]
+  }
+}
