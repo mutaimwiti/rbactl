@@ -9,8 +9,13 @@
   "scripts": {
     "test": "jest --colors || true",
     "test:watch": "jest --colors --watch || true",
-    "build": "babel -d lib src/"
+    "build": "babel -d lib src/",
+    "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
   },
+  "pre-commit": [
+    "test",
+    "build"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mutaimwiti/flex-rbac.git"
@@ -35,7 +40,8 @@
     "@babel/preset-env": "^7.3.4",
     "babel-loader": "^8.0.5",
     "expect": "^24.5.0",
-    "jest": "^24.5.0"
+    "jest": "^24.5.0",
+    "pre-commit": "^1.2.2"
   },
   "jest": {
     "verbose": true,

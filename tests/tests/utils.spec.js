@@ -1,14 +1,25 @@
-import {hasAnyPermission, hasAllPermissions} from '../../src/utils';
+import expect from 'expect';
+import {hasAnyPermission, hasAllPermissions, getFullGroupPermission} from '../../src/utils';
 
 describe('utils.js', () => {
+  describe('getFullGroupPermission', () => {
+    it('should return full group permission', () => {
+      expect(getFullGroupPermission('user.create')).toEqual('user.*');
+    });
+
+    it('should return the same permission if it is a full group permission', () => {
+      expect(getFullGroupPermission('blog.*')).toEqual('blog.*');
+    });
+  });
+
   describe('hasAnyPermission()', () => {
     const validPermissions = [
-      'user.*',
+      'user.edit',
       'user.view',
       'user.update',
     ];
     const withValidPermissions = ['user.view', 'user.update'];
-    const withoutValidPermissions = ['blog.*'];
+    const withoutValidPermissions = ['blog.edit'];
 
     it('should return true when user has any valid permission', () => {
       expect(hasAnyPermission(withValidPermissions, validPermissions)).toEqual(
@@ -29,19 +40,27 @@ describe('utils.js', () => {
     it('should return true when no valid permissions are provided', () => {
       expect(hasAnyPermission(withoutValidPermissions, [])).toEqual(true);
     });
+
+    it('should return true when full group permission is provided', () => {
+      expect(hasAnyPermission(['user.*'], ['user.create'])).toEqual(true);
+    });
+
+    it('should return false when an invalid full group permission is provided', () => {
+      expect(hasAnyPermission(['blog.*'], ['user.create'])).toEqual(false);
+    });
   });
 
   describe('hasAllPermissions()', () => {
     const requiredPermissions = [
       'user.view',
-      'user.update',
+      'user.edit',
     ];
     const withRequiredPermissions = [
-      'group.*',
       'user.view',
-      'user.update',
+      'user.edit',
+      'group.update',
     ];
-    const withoutRequiredPermissions = ['group.*'];
+    const withoutRequiredPermissions = ['group.edit'];
 
     it('should return true when user has all required permissions', () => {
       expect(
@@ -61,6 +80,18 @@ describe('utils.js', () => {
 
     it('should return true when required permissions are not provided', () => {
       expect(hasAllPermissions(withoutRequiredPermissions, [])).toEqual(true);
+    });
+
+    it('should return true when full group permission is provided', () => {
+      expect(
+        hasAllPermissions(['user.*', 'blog.*'], ['user.create', 'blog.delete'])
+      ).toEqual(true);
+    });
+
+    it('should return false when an invalid full group permission is provided', () => {
+      expect(
+        hasAllPermissions(['user.*', 'blog.*'], ['user.create', 'comment.edit'])
+      ).toEqual(false);
     });
   });
 });
