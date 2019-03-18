@@ -10,6 +10,8 @@
     "test": "jest --colors || true",
     "test:watch": "jest --colors --watch || true",
     "build": "babel -d lib src/",
+    "lint": "eslint ./src",
+    "pretest": "yarn lint",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
   },
   "pre-commit": [
@@ -39,9 +41,15 @@
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "babel-loader": "^8.0.5",
+    "eslint": "^5.15.2",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-prettier": "^3.0.1",
     "expect": "^24.5.0",
     "jest": "^24.5.0",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.16.4"
   },
   "jest": {
     "verbose": true,

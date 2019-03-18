@@ -7,11 +7,11 @@
  * @param permission
  * @returns {*}
  */
-export const getFullGroupPermission = (permission) => {
-  if (permission.indexOf('*') >= 0) {
+export const getFullGroupPermission = permission => {
+  if (permission.indexOf("*") >= 0) {
     return permission;
   }
-  return `${permission.substr(0, permission.lastIndexOf('.'))}.*`;
+  return `${permission.substr(0, permission.lastIndexOf("."))}.*`;
 };
 
 /**
@@ -29,8 +29,11 @@ export const hasAnyPermission = (userPermissions, validPermissions) => {
 
   let hasAnyValid = false;
 
-  validPermissions.forEach((permission) => {
-    if (userPermissions.indexOf(permission) >= 0 || userPermissions.indexOf(getFullGroupPermission(permission)) >= 0) {
+  validPermissions.forEach(permission => {
+    if (
+      userPermissions.indexOf(permission) >= 0 ||
+      userPermissions.indexOf(getFullGroupPermission(permission)) >= 0
+    ) {
       hasAnyValid = true;
     }
   });
@@ -49,8 +52,11 @@ export const hasAnyPermission = (userPermissions, validPermissions) => {
 export const hasAllPermissions = (userPermissions, requiredPermissions) => {
   let hasAllRequired = true;
 
-  requiredPermissions.forEach((permission) => {
-    if (userPermissions.indexOf(permission) < 0 && userPermissions.indexOf(getFullGroupPermission(permission)) < 0) {
+  requiredPermissions.forEach(permission => {
+    if (
+      userPermissions.indexOf(permission) < 0 &&
+      userPermissions.indexOf(getFullGroupPermission(permission)) < 0
+    ) {
       hasAllRequired = false;
     }
   });

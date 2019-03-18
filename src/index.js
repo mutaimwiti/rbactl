@@ -1,5 +1,4 @@
-import authorize from './authorize';
+import authorize from "./authorize";
 
-export {
-  authorize,
-};
+// eslint-disable-next-line import/prefer-default-export
+export { authorize };
