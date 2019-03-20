@@ -1,3 +1,1 @@
-export default () => {
-  "Authorized";
-};
+export default () => "Authorized";
