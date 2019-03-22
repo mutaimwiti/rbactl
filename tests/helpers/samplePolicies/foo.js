@@ -1,5 +1,5 @@
 export default {
-  // simple
+  // basic
   dive: "foo.q",
   // all
   load: {
@@ -10,5 +10,6 @@ export default {
     any: ["foo.x", "foo.y", "foo.z"]
   },
   // callback
-  stop: () => true
+  start: () => true,
+  stop: () => false
 };

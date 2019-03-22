@@ -7,13 +7,14 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "yarn lint; jest --colors",
+    "test": "jest --colors",
     "test:watch": "jest --colors --watch",
     "build": "rimraf ./lib; babel -d lib src/",
     "lint": "eslint .",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
   },
   "pre-commit": [
+    "lint",
     "test",
     "build"
   ],
