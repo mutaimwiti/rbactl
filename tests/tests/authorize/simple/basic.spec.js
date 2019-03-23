@@ -1,6 +1,4 @@
-import { authorize } from "../../../src";
-
-const policiesPath = `${__dirname}/../../helpers/samplePolicies`;
+import authorize from "../../../utils/authorize";
 
 describe("authorize.js - basic", () => {
   it("should check for authorization correctly - success", () => {
@@ -8,7 +6,7 @@ describe("authorize.js - basic", () => {
     const successCombinations = [["foo.q"], ["foo.q", "foo.r"]];
 
     successCombinations.forEach(permissions => {
-      expect(authorize("foo", "dive", permissions, policiesPath)).toEqual(true);
+      expect(authorize("foo", "dive", permissions)).toEqual(true);
     });
   });
 
@@ -17,9 +15,7 @@ describe("authorize.js - basic", () => {
     const failureCombinations = [[], ["foo.r"]];
 
     failureCombinations.forEach(permissions => {
-      expect(authorize("foo", "dive", permissions, policiesPath)).toEqual(
-        false
-      );
+      expect(authorize("foo", "dive", permissions)).toEqual(false);
     });
   });
 });

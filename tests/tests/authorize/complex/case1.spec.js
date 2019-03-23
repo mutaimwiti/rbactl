@@ -1,6 +1,4 @@
-import { authorize } from "../../../../src";
-
-const policiesPath = `${__dirname}/../../../helpers/samplePolicies`;
+import authorize from "../../../utils/authorize";
 
 describe("authorize.js - complex - case 1", () => {
   it("should check for authorization correctly - success", () => {
@@ -11,9 +9,7 @@ describe("authorize.js - complex - case 1", () => {
     ];
 
     successCombinations.forEach(permissions => {
-      expect(authorize("bar", "create", permissions, policiesPath)).toEqual(
-        true
-      );
+      expect(authorize("bar", "create", permissions)).toEqual(true);
     });
   });
 
@@ -21,9 +17,7 @@ describe("authorize.js - complex - case 1", () => {
     const failureCombinations = [[], ["bar.n"]];
 
     failureCombinations.forEach(permissions => {
-      expect(authorize("bar", "create", permissions, policiesPath)).toEqual(
-        false
-      );
+      expect(authorize("bar", "create", permissions)).toEqual(false);
     });
   });
 });

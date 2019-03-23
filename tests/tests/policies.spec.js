@@ -1,9 +1,9 @@
 import { loadPolicies } from "../../src/policies";
-import blog from "../helpers/samplePolicies/blog";
-import foo from "../helpers/samplePolicies/foo";
-import bar from "../helpers/samplePolicies/bar";
+import blog from "../utils/samplePolicies/blog";
+import foo from "../utils/samplePolicies/foo";
+import bar from "../utils/samplePolicies/bar";
 
-const policiesPath = `${__dirname}/../helpers/samplePolicies`;
+const policiesPath = `${__dirname}/../utils/samplePolicies`;
 
 describe("policies.js", () => {
   describe("loadPolicies", () => {

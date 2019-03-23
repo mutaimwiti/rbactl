@@ -1,4 +1,3 @@
-import { loadPolicies } from "./policies";
 import { hasAllPermissions, hasAnyPermission } from "./permissions";
 
 /**
@@ -33,9 +32,7 @@ export const authorizeActionAgainstPolicy = (userPermissions, actionPolicy) => {
   return authorize(actionPolicy);
 };
 
-export default (entity, action, userPermissions, policiesPath) => {
-  const policies = loadPolicies(policiesPath);
-
+export default (entity, action, userPermissions, policies) => {
   const policy = policies[entity];
 
   if (policy) {
