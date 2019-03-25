@@ -10,13 +10,13 @@
     "test": "jest --colors",
     "test:watch": "jest --colors --watch",
     "build": "rimraf ./lib; babel -d lib src/",
-    "lint": "eslint .",
-    "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
+    "build_and_stage": "yarn build; git add .",
+    "lint": "eslint ."
   },
   "pre-commit": [
     "lint",
     "test",
-    "build"
+    "build_and_stage"
   ],
   "repository": {
     "type": "git",
