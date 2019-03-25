@@ -6,7 +6,7 @@ import bar from "../utils/samplePolicies/bar";
 const policiesPath = `${__dirname}/../utils/samplePolicies`;
 
 describe("policies.js", () => {
-  describe("loadPolicies", () => {
+  describe("loadPolicies()", () => {
     it("should load all policies", () => {
       const loaded = loadPolicies(policiesPath);
       expect(Object.keys(loaded).length).toEqual(3);
