@@ -7,16 +7,16 @@
     "test": "tests"
   },
   "scripts": {
+    "clean": "rimraf lib",
     "test": "jest --colors",
     "test:watch": "jest --colors --watch",
-    "build": "rimraf ./lib; babel -d lib src/",
-    "build_and_stage": "yarn build; git add .",
-    "lint": "eslint ."
+    "build": "babel -d lib src/",
+    "lint": "eslint .",
+    "prepublishOnly": "yarn clean && yarn lint && yarn test && yarn build"
   },
   "pre-commit": [
     "lint",
-    "test",
-    "build_and_stage"
+    "test"
   ],
   "repository": {
     "type": "git",

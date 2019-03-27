@@ -16,14 +16,14 @@ const policies = {
 describe("authorize.js - simple policies", () => {
   it("should check for authorization correctly - success", () => {
     const permissions = ["article.create", "article.remove", "user.update"];
-    expect(authorize("article", "create", permissions, policies)).toEqual(true);
-    expect(authorize("article", "remove", permissions, policies)).toEqual(true);
-    expect(authorize("user", "update", permissions, policies)).toEqual(true);
+    expect(authorize("create", "article", permissions, policies)).toEqual(true);
+    expect(authorize("remove", "article", permissions, policies)).toEqual(true);
+    expect(authorize("update", "user", permissions, policies)).toEqual(true);
   });
 
   it("should check for authorization correctly - failure", () => {
-    expect(authorize("article", "create", [], policies)).toEqual(false);
-    expect(authorize("article", "remove", [], policies)).toEqual(false);
-    expect(authorize("user", "update", [], policies)).toEqual(false);
+    expect(authorize("create", "article", [], policies)).toEqual(false);
+    expect(authorize("remove", "article", [], policies)).toEqual(false);
+    expect(authorize("update", "user", [], policies)).toEqual(false);
   });
 });

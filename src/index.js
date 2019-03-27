@@ -1,17 +1,8 @@
-import authorize from "./authorize";
-import { loadPolicies } from "./policies";
-import {
+export { default as authorize } from "./authorize";
+export { loadPolicies } from "./policies";
+export {
   loadPermissions,
   validatePermissions,
   getAllPermissionsFor,
   getPermissionsMapArray
 } from "./permissions";
-
-export {
-  authorize,
-  loadPolicies,
-  loadPermissions,
-  validatePermissions,
-  getAllPermissionsFor,
-  getPermissionsMapArray
-};
