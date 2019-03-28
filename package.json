@@ -10,7 +10,7 @@
     "clean": "rimraf lib",
     "test": "jest --colors",
     "test:watch": "jest --colors --watch",
-    "build": "babel -d lib src/",
+    "build": "babel -d lib src/ && cp src/index.d.ts lib/index.d.ts",
     "lint": "eslint .",
     "prepublishOnly": "yarn clean && yarn lint && yarn test && yarn build"
   },

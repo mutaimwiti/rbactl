@@ -1,4 +1,4 @@
-export { default as authorize } from "./authorize";
+export { authorize } from "./authorize";
 export { loadPolicies } from "./policies";
 export {
   loadPermissions,

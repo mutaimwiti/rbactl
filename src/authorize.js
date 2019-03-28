@@ -42,7 +42,7 @@ export const authorizeActionAgainstPolicy = (userPermissions, actionPolicy) => {
  * @param policies
  * @returns {*}
  */
-export default (action, entity, userPermissions, policies) => {
+export const authorize = (action, entity, userPermissions, policies) => {
   const policy = policies[entity];
 
   if (policy) {
