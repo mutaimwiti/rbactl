@@ -64,5 +64,8 @@ typings/
 .vscode
 .idea
 
-#src
+# src
 src
+
+# examples
+examples
