@@ -1,14 +1,23 @@
 /**
  * Authorize a user action on an entity based on the user permissions
- * and system policies.
+ * and system policies. All occurrences of the callback rule are
+ * called with the request object. This allows the user to make
+ * complex expressions that rely on request object.
  *
  * @param action
  * @param entity
  * @param userPermissions
  * @param policies
- * @returns boolean
+ * @param request
+ * @returns {*}
  */
-export const authorize: (action, entity, userPermissions, policies) => boolean;
+export const authorize: (
+  action,
+  entity,
+  userPermissions,
+  policies,
+  request
+) => boolean;
 
 /**
  * Loads the policies defined on the specified path. When loading, the policy
@@ -49,7 +58,6 @@ export const validatePermissions: (systemPermissions, permissions) => object;
  */
 export const getAllPermissionsFor: (systemPermissions, entity) => Array<string>;
 
-
 /**
  * Get an array containing mappings (key : description) of permissions. These are
  * against the system pe
@@ -58,4 +66,7 @@ export const getAllPermissionsFor: (systemPermissions, entity) => Array<string>;
  * @param permissions
  * @returns {Array}
  */
-export const getPermissionsMapArray: (systemPermissions, permissions) => Array<object>;
+export const getPermissionsMapArray: (
+  systemPermissions,
+  permissions
+) => Array<object>;

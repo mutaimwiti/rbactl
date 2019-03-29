@@ -11,5 +11,6 @@ export default {
   },
   // callback
   start: () => true,
-  stop: () => false
+  stop: () => false,
+  pause: req => req.body.status === 0
 };

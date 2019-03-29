@@ -10,8 +10,9 @@ const policies = loadPolicies(`${__dirname}/samplePolicies`);
  * @param entity
  * @param action
  * @param userPermissions
+ * @param req
  * @returns {*}
  */
-export default (entity, action, userPermissions) => {
-  return authorize(action, entity, userPermissions, policies);
+export default (entity, action, userPermissions, req) => {
+  return authorize(action, entity, userPermissions, policies, req);
 };

@@ -1,6 +1,7 @@
 const data = {
   likes: true,
-  dislikes: false
+  dislikes: false,
+  ownerId: 3
 };
 
 /**
@@ -38,5 +39,8 @@ export default {
       },
       { $or: [{ any: ["bar.r", "bar.s"] }, () => data.dislikes] }
     ]
+  },
+  archive: {
+    $and: [req => req.params.id === data.ownerId, { any: ["bar.x", "bar.y"] }]
   }
 };
