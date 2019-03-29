@@ -276,7 +276,7 @@
     "@types/istanbul-lib-coverage" "^1.1.0"
     "@types/yargs" "^12.0.9"
 
-"@mutaimwiti/flex-rbac@^0.0.1-i":
+"@mutaimwiti/flex-rbac@^0.0.1-beta.3":
   version "0.0.1-i"
   resolved "https://registry.yarnpkg.com/@mutaimwiti/flex-rbac/-/flex-rbac-0.0.1-i.tgz#9fde4aa125a55dab663d20a7d991dc280c750447"
   integrity sha512-sWfWgSy4xNhbJwUKOpi5G8y6KEK+C4QF0FkZ10HVnASEJVZBOXQ0NOEmh9JLXoG0kVOKJpBcJzbUete24Az8iQ==

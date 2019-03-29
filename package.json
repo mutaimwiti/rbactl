@@ -1,6 +1,6 @@
 {
   "name": "@mutaimwiti/flex-rbac",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.1-beta.4",
   "description": "Easy and intuitive role based access control on Express.",
   "main": "./index.js",
   "directories": {
@@ -52,6 +52,9 @@
     "prettier": "^1.16.4"
   },
   "jest": {
+    "roots": [
+      "tests"
+    ],
     "verbose": true,
     "coverageReporters": [
       "text",

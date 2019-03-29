@@ -4,7 +4,12 @@ cache:
   paths:
   - node_modules/
 
-test:
+test:main:
   script:
    - yarn
    - yarn test
+
+test:examples:
+  script:
+  - yarn --cwd examples/simple
+  - yarn --cwd examples/simple test
