@@ -1,22 +1,22 @@
 /**
- * Authorize a user action on an entity based on the user permissions
- * and system policies. All occurrences of the callback rule are
- * called with the request object. This allows the user to make
- * complex expressions that rely on request object.
+ * Authorize a user action on an entity based on the user permissions and
+ * system policies. All occurrences of the callback rule are called with
+ * the req object. This allows the user to authorize based on req
+ * parameters.
  *
  * @param action
  * @param entity
  * @param userPermissions
  * @param policies
- * @param request
+ * @param req
  * @returns {*}
  */
 export const authorize: (
-  action,
-  entity,
-  userPermissions,
-  policies,
-  request
+    action,
+    entity,
+    userPermissions,
+    policies,
+    req
 ) => boolean;
 
 /**
@@ -67,6 +67,6 @@ export const getAllPermissionsFor: (systemPermissions, entity) => Array<string>;
  * @returns {Array}
  */
 export const getPermissionsMapArray: (
-  systemPermissions,
-  permissions
+    systemPermissions,
+    permissions
 ) => Array<object>;
