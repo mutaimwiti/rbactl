@@ -1,3 +1,1 @@
-var rbac = require("./lib/index");
-
-module["exports"] = rbac;
+module.exports = require("./lib/index");

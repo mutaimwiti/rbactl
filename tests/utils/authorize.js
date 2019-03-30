@@ -1,7 +1,7 @@
 import { loadPolicies } from "../../src/policies";
 import { authorize } from "../../src";
 
-const policies = loadPolicies(`${__dirname}/samplePolicies`);
+const policies = loadPolicies(`${__dirname}/policies/samplePolicies`);
 
 /**
  * This is a wrapper that allows us to test authorize() without having to supply

@@ -1,6 +1,6 @@
 import expect from "expect";
 import { getAllPermissionsFor } from "../../../src/permissions";
-import { systemPermissions } from "../../utils/permissions";
+import { systemPermissions } from "../../utils/permissions/helpers";
 
 describe("permissions.js", () => {
   describe("allPermissionsFor()", () => {
