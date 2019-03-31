@@ -20,12 +20,6 @@
   },
   "jest": {
     "verbose": true,
-    "testEnvironment": "node",
-    "collectCoverage": true,
-    "coverageDirectory": "coverage",
-    "collectCoverageFrom": [
-      "app/**/*.js",
-      "server.js"
-    ]
+    "testEnvironment": "node"
   }
 }
