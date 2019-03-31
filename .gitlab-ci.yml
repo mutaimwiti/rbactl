@@ -3,6 +3,7 @@ image: node:latest
 cache:
   paths:
   - node_modules/
+  - examples/simple/node_modules/
 
 test:main:
   script:

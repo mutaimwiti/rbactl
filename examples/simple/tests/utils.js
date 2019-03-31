@@ -1,7 +1,7 @@
 const supertest = require("supertest");
-const server = require("../server");
+const app = require("../app");
 
-const app = supertest(server);
+const request = supertest(app);
 
 /**
  * Run a supertest test block separately for
@@ -18,6 +18,6 @@ const eachUser = (users, testBlock) => {
 };
 
 module.exports = {
-  app,
+  app: request,
   eachUser
 };
