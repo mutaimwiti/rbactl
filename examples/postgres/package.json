@@ -1,0 +1,31 @@
+{
+  "name": "simple",
+  "version": "0.0.1",
+  "main": "server.js",
+  "scripts": {
+    "setup": "cd app && NODE_ENV=test sequelize db:migrate",
+    "teardown": "cd app && NODE_ENV=test sequelize db:migrate:undo:all",
+    "test": "NODE_ENV=test yarn teardown && yarn setup && jest --colors"
+  },
+  "author": "Mutai Mwiti",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "faker": "^4.1.0",
+    "nodemon": "^1.18.10",
+    "pg": "^7.9.0",
+    "sequelize": "^5.2.8",
+    "sequelize-cli": "^5.4.0",
+    "supertest": "^4.0.2"
+  },
+  "devDependencies": {
+    "jest": "^24.5.0"
+  },
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "node"
+  }
+}
