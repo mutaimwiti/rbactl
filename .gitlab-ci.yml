@@ -2,15 +2,33 @@ image: node:latest
 
 cache:
   paths:
-  - node_modules/
-  - examples/simple/node_modules/
+    - node_modules/
+    - examples/simple/node_modules/
 
-test:main:
+stages:
+  - build
+  - test
+
+build:
+  stage: build
   script:
-   - yarn
-   - yarn test
+    # lib
+    - yarn
+    - yarn build
+    # examples
+    - yarn --cwd examples/simple
+    # lint all
+    - yarn lint
 
+# lib
+test:
+  stage: test
+  script:
+    - yarn test
+
+# simple example
 test:examples:
+  stage: test
   script:
-  - yarn --cwd examples/simple
-  - yarn --cwd examples/simple test
+    - yarn build # need lib
+    - yarn --cwd examples/simple test

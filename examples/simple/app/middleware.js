@@ -1,4 +1,4 @@
-const { authorize } = require("@mutaimwiti/flex-rbac");
+const { authorize } = require("../../../lib");
 const policies = require("./policies");
 const { User, Article } = require("./models");
 

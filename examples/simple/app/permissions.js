@@ -15,6 +15,7 @@
 //  }
 
 module.exports = {
+  "article.*": "Full articles access",
   "article.view": "View articles",
   "article.create": "Create articles",
   "article.update": "Update articles",
