@@ -12,5 +12,13 @@ export default {
   // callback
   start: () => true,
   stop: () => false,
-  pause: req => req.body.status === 0
+  pause: req => req.body.status === 0,
+  rewind: () =>
+    new Promise(resolve => {
+      return resolve(true);
+    }),
+  proceed: () =>
+    new Promise(resolve => {
+      return resolve(false);
+    })
 };

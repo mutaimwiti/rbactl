@@ -20,4 +20,12 @@ describe("authorize.js - callback", () => {
     const req = { body: { status: 1 } };
     expect(authorize("foo", "pause", [], req)).toEqual(false);
   });
+
+  it("should check for authorization correctly for promise - success", async () => {
+    expect(await authorize("foo", "rewind", [])).toEqual(true);
+  });
+
+  it("should check for authorization correctly for promise - failure", async () => {
+    expect(await authorize("foo", "proceed", [])).toEqual(false);
+  });
 });
