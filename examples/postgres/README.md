@@ -1,4 +1,4 @@
-# Simple express app
+# Postgres express app
 
 ## Quick intro
 
@@ -21,14 +21,17 @@ The key files to look at are:
 When a request is received the aim is to invoke a controller method to process it. Before the controller method is hit
 we have middleware to perform checks. The key ones are:
 
-1. `authenticate` - determines identity of the user that is making the request. Since we are not demonstrating how to
+1. `init` - sets req.context to an empty object. req.context is used to add our custom request values to avoid polluting
+   or accidentally overriding important req object values.
+2. `authenticate` - determines identity of the user that is making the request. Since we are not demonstrating how to
    authenticate we use a simple solution where the `authorization` header is the `id` of the intended user. If the id
    does not exist or none is passed authentication fails. This causes the request to fail with a `401 status`. If the
    user exists it adds the user object to the express req object to be used by proceeding handlers.
-2. `articleExists` - checks whether the article represented by the `id` parameter exists. If not the request fails with
-   a `404 status`. If it exists the request is allowed to proceed to the next handler. Note that this middleware is
-   only relevant for requests that have the id parameter i.e. get one, update and delete.
-3. `can` - checks whether the user is authorized to perform the action that they are trying to perform on a given
+3. `articleExists` - checks whether the article represented by the `id` parameter exists. If not the request fails with
+   a `404 status`. If it exists it adds the article object to the req.context object. the request is allowed to proceed
+   to the next handler. Note that this middleware is only relevant for requests that have the id parameter i.e. get one,
+   update and delete.
+4. `can` - checks whether the user is authorized to perform the action that they are trying to perform on a given
    entity. In the implementation, it makes use of the `authorize` method to create an express middleware method to
    authorize a specific action. The authorize method takes the following parameters: `action`, `entity`,
    `auth user permissions`, `policies` and the `req express object`. The last parameter is optional so long as the app
@@ -51,11 +54,37 @@ This app defines policies only for one entity - article.
 
 ## Install packages
 
-Ensure that you're on the directory of this file.
+Ensure that you're on the `examples/postgres/` directory of this repository.
 
 ```bash
 $ yarn
 ```
+
+## Setup environment
+
+This guide assumes that you have `postgres` set up on your computer and have enough knowledge to interact manipulate
+postgres databases. Refer to this [resource](https://www.guru99.com/introduction-postgresql.html) for quick reference.
+Follow the following steps:
+
+1. Create two postgres databases with names of your choice.
+2. Copy `.env.example` to `.env` and edit the environment variables to match your computer's postgres credentials and
+   the databases that you created.
+3. Migrate the development database schema:
+   ```bash
+   yarn migrate
+   ```
+   To undo this step run:
+   ```bash
+   yarn migrate:undo
+   ```
+4. Seed the database with some data.
+   ```bash
+   yarn seed
+   ```
+   To undo this step run:
+   ```bash
+   yarn seed:undo
+   ```
 
 ## Run tests
 
@@ -65,8 +94,10 @@ $ yarn test
 
 ## Test manually (using Postman)
 
-In order to make the requests you must set the Authorization header. This should be an integer from 1 to 4 which are
-the ids of the users that are currently hard-coded on the app. Make the following requests:
+In order to make the requests you must set the Authorization header. This should be an integer representing the id of
+any of the users of the users that are seeded on the app. Ideally the ids will be either 1, 2, 3 or 4 if you seeded the
+data once without reversing the seed. For some of the requests to give relevant results you will need to have migrated
+the schema and seeded data. Make the following requests:
 
 1. `GET article`
 2. `GET article/:id`

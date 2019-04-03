@@ -3,9 +3,13 @@
   "version": "0.0.1",
   "main": "server.js",
   "scripts": {
+    "migrate": "cd app && sequelize db:migrate",
+    "migrate:undo": "cd app && sequelize db:migrate:undo:all",
+    "seed": "cd app && sequelize db:seed:all",
+    "seed:undo": "cd app && sequelize db:seed:undo:all",
     "setup": "cd app && NODE_ENV=test sequelize db:migrate",
     "teardown": "cd app && NODE_ENV=test sequelize db:migrate:undo:all",
-    "test": "NODE_ENV=test yarn teardown && yarn setup && jest --colors"
+    "test": "NODE_ENV=test yarn teardown && yarn setup && jest --colors --detectOpenHandles"
   },
   "author": "Mutai Mwiti",
   "license": "MIT",
