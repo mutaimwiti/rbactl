@@ -1,9 +1,18 @@
 image: node:latest
 
+services:
+  - postgres:latest
+
+variables:
+  POSTGRES_DB: ci_db
+  POSTGRES_USER: ci_user
+  POSTGRES_PASSWORD: ""
+
 cache:
   paths:
     - node_modules/
     - examples/simple/node_modules/
+    - examples/postgres/node_modules/
 
 stages:
   - build
@@ -15,8 +24,10 @@ build:
     # lib
     - yarn
     - yarn build
-    # examples
+    # simple example
     - yarn --cwd examples/simple
+    # postgres example
+    - yarn --cwd examples/postgres
     # lint all
     - yarn lint
 
@@ -27,8 +38,15 @@ test:
     - yarn test
 
 # simple example
-test:examples:
+test:simple:
   stage: test
   script:
     - yarn build # need lib
     - yarn --cwd examples/simple test
+
+# postgres example
+test:postgres:
+  stage: test
+  script:
+    - yarn build # need lib
+    - yarn --cwd examples/postgres test
