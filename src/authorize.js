@@ -13,7 +13,10 @@ export const authorizeActionAgainstPolicy = (
   actionPolicy,
   req
 ) => {
+  let callCount = 0;
+
   const authorize = policy => {
+    callCount += 1;
     const operators = { $or: "some", $and: "every" };
     const fns = {
       any: permissions => hasAnyPermission(userPermissions, permissions),
@@ -23,7 +26,13 @@ export const authorizeActionAgainstPolicy = (
     if (typeof policy === "string")
       return hasAllPermissions(userPermissions, [policy]);
 
-    if (typeof policy === "function") return policy(req);
+    if (typeof policy === "function") {
+      const result = policy(req);
+      if (result instanceof Promise && callCount > 1) {
+        throw Error("Unexpected nested promise callback.");
+      }
+      return result;
+    }
 
     if (!policy || typeof policy !== "object") return false;
 
@@ -62,7 +71,12 @@ export const authorize = (
   if (policy) {
     const actionPolicy = policy[action];
     if (actionPolicy) {
-      return authorizeActionAgainstPolicy(userPermissions, actionPolicy, req);
+      try {
+        return authorizeActionAgainstPolicy(userPermissions, actionPolicy, req);
+      } catch (e) {
+        // an exception occurs if a promise callback is encountered
+        throw e;
+      }
     }
     throw Error(`The [${entity}] policy does not define action [${action}].`);
   }

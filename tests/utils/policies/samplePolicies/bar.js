@@ -42,5 +42,9 @@ export default {
   },
   archive: {
     $and: [req => req.params.id === data.ownerId, { any: ["bar.x", "bar.y"] }]
+  },
+  // a nested promise callback - not supported
+  share: {
+    $and: [{ any: ["bar.g"] }, async () => true]
   }
 };
