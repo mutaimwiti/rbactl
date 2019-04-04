@@ -81,7 +81,9 @@ export const loadPermissions = pathName => {
   const permissionsObj = requireAll(pathName);
   Object.keys(permissionsObj).forEach(permission => {
     const actions = {};
-    const actionsObj = permissionsObj[permission].default;
+    const actionsObj = permissionsObj[permission].default
+      ? permissionsObj[permission].default
+      : permissionsObj[permission];
     Object.keys(actionsObj).forEach(action => {
       actions[`${permission}.${action}`] = actionsObj[action];
     });

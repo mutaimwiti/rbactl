@@ -10,7 +10,9 @@ export const loadPolicies = pathName => {
   const policies = {};
   const policiesObj = requireAll(pathName);
   Object.keys(policiesObj).forEach(policy => {
-    policies[policy] = policiesObj[policy].default;
+    policies[policy] = policiesObj[policy].default
+      ? policiesObj[policy].default
+      : policiesObj[policy];
   });
   return policies;
 };
