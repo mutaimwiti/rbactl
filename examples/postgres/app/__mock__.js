@@ -12,7 +12,7 @@ const getRoles = () =>
   appendTimestamps([
     {
       name: "Super Admin",
-      permissions: ["article.*"]
+      permissions: ["article.*", "role.*", "user.*"]
     },
     {
       name: "Role 2",

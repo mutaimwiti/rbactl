@@ -35,7 +35,10 @@ describe("update", () => {
   it("should only allow authorized users", async () => {
     await app.login(owner);
 
-    const res = await apiUpdate(articleId);
+    const res = await apiUpdate(articleId, {
+      title: "My updated article",
+      body: "It's updated. Right?"
+    });
 
     expect(res.status).toEqual(200);
   });

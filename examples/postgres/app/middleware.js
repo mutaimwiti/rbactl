@@ -1,7 +1,9 @@
-const { authorize } = require("../../../lib");
-const policies = require("./policies");
-const { User, Article } = require("./models");
-const { decodeAuthToken } = require("./utils");
+const { authorize, loadPolicies } = require("../../../lib");
+const { User, Role, Article } = require("./models");
+const { decodeAuthToken, visibleUserAttributes } = require("./utils");
+
+// load policies required by authorize method of the lib
+const policies = loadPolicies(`${__dirname}/policies`);
 
 module.exports = {
   /**
@@ -32,6 +34,8 @@ module.exports = {
    * @returns {Promise<*>}
    */
   authenticate: async (req, res, next) => {
+    // if the route is not protected proceed to the next handler
+    if (req.url === "/" || req.url === "/auth/login") return next();
     // If this were session based auth system we would be verifying the
     // username/email and password combination against the session
     // in this step.
@@ -95,7 +99,7 @@ module.exports = {
    * @param next
    * @returns {Promise<*>}
    */
-  articleExists: async (req, res, next) => {
+  processArticleParam: async (req, res, next) => {
     const article = await Article.findOne({
       where: { id: req.params.id }
     });
@@ -105,6 +109,57 @@ module.exports = {
       });
     }
     req.context.article = article;
+    return next();
+  },
+
+  /**
+   * This middleware checks whether the role whose id is passed as a
+   * parameter on the request exits. If it does not exist it returns a
+   * 404 error response. Else, it adds the role object to the
+   * req.context object and calls the next handler.
+   *
+   * @param req
+   * @param res
+   * @param next
+   * @returns {Promise<*>}
+   */
+  processRoleParam: async (req, res, next) => {
+    const role = await Role.findOne({
+      where: { id: req.params.id },
+      include: { model: User, as: "users" }
+    });
+    if (!role) {
+      return res.status(404).json({
+        message: "The role does not exist."
+      });
+    }
+    req.context.role = role;
+    return next();
+  },
+
+  /**
+   * This middleware checks whether the user whose id is passed as a
+   * parameter on the request exits. If it does not exist it returns a
+   * 404 error response. Else, it adds the role object to the
+   * req.context object and calls the next handler.
+   *
+   * @param req
+   * @param res
+   * @param next
+   * @returns {Promise<*>}
+   */
+  processUserParam: async (req, res, next) => {
+    const user = await User.findOne({
+      where: { id: req.params.id },
+      attributes: visibleUserAttributes,
+      include: { model: Role, as: "roles" }
+    });
+    if (!user) {
+      return res.status(404).json({
+        message: "The user does not exist."
+      });
+    }
+    req.context.user = user;
     return next();
   }
 };

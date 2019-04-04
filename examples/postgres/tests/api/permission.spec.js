@@ -1,10 +1,10 @@
-const { app, eachPermission } = require("../../utils");
+const { app, eachPermission } = require("../utils");
 
 const apiList = () => {
-  return app.get("/article").send();
+  return app.get("/permission").send();
 };
 
-describe("article - list", () => {
+describe("permission - list", () => {
   it("should not allow unauthenticated users", async () => {
     const res = await apiList();
 
@@ -12,7 +12,7 @@ describe("article - list", () => {
   });
 
   it("should not allow unauthorized users", async () => {
-    await app.loginRandom(["article.something"]);
+    await app.loginRandom(["role.something"]);
 
     const res = await apiList();
 
@@ -21,10 +21,10 @@ describe("article - list", () => {
 
   it("should only allow authorized users", async () => {
     const allowedPermissions = [
-      "article.view",
-      "article.create",
-      "article.update",
-      "article.delete"
+      "role.view",
+      "role.create",
+      "role.update",
+      "role.delete"
     ];
 
     await eachPermission(allowedPermissions, async user => {

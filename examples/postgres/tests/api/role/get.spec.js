@@ -1,14 +1,14 @@
-const { app, eachPermission, createArticle } = require("../../utils");
+const { app, eachPermission, createRole } = require("../../utils");
 
-const apiGet = articleId => {
-  return app.get(`/article/${articleId}`).send();
+const apiGet = roleId => {
+  return app.get(`/role/${roleId}`).send();
 };
 
-describe("article - get", () => {
-  let articleId;
+describe("role - get", () => {
+  let roleId;
 
   beforeAll(async () => {
-    articleId = (await createArticle()).id;
+    roleId = (await createRole()).id;
   });
 
   it("should not allow unauthenticated users", async () => {
@@ -18,23 +18,23 @@ describe("article - get", () => {
   });
 
   it("should not allow unauthorized users", async () => {
-    await app.loginRandom(["article.something"]);
+    await app.loginRandom(["role.something"]);
 
-    const res = await apiGet(articleId);
+    const res = await apiGet(roleId);
 
     expect(res.status).toBe(403);
   });
 
   it("should only allow authorized users", async () => {
     const allowedPermissions = [
-      "article.view",
-      "article.create",
-      "article.update",
-      "article.delete"
+      "role.view",
+      "role.create",
+      "role.update",
+      "role.delete"
     ];
 
     await eachPermission(allowedPermissions, async () => {
-      const res = await apiGet(articleId);
+      const res = await apiGet(roleId);
 
       expect(res.status).toBe(200);
     });

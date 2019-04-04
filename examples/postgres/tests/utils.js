@@ -162,6 +162,7 @@ const eachPermission = async (permissions, testBlock) => {
 module.exports = {
   app,
   eachPermission,
+  createRole,
   createUser,
   createArticle
 };
