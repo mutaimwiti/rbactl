@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 const appendTimestamps = data => {
   return data.map(item => ({
     ...item,
@@ -26,33 +28,35 @@ const getRoles = () =>
     }
   ]);
 
-const getUsers = () =>
-  appendTimestamps([
+const getUsers = () => {
+  const password = bcrypt.hashSync("password", 10);
+  return appendTimestamps([
     {
       name: "Foo Bar",
       username: "foobar",
       email: "foobar@mail.com",
-      password: "password"
+      password
     },
     {
       name: "Bar Baz",
       username: "barbaz",
       email: "barbaz@mail.com",
-      password: "password"
+      password
     },
     {
       name: "Jane Doe",
       username: "janedoe",
       email: "janedoe@mail.com",
-      password: "password"
+      password
     },
     {
       name: "John Doe",
       username: "johndoe",
       email: "johndoe@mail.com",
-      password: "password"
+      password
     }
   ]);
+};
 
 const getArticles = users =>
   appendTimestamps([

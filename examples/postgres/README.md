@@ -5,11 +5,12 @@
 In this app the key features of the library are demonstrated in a simple manner. The app exposes an api with the
 following endpoints:
 
-1. `GET article` - List articles
-2. `GET article/:id` - Get a specific article
-3. `POST article` - Create an article
-4. `PUT article/:id` - Update an article
-5. `DELETE article/:id` - Delete an article
+1. `POST auth/login` - Log in a user.
+2. `GET article` - List articles
+3. `GET article/:id` - Get a specific article
+4. `POST article` - Create an article
+5. `PUT article/:id` - Update an article
+6. `DELETE article/:id` - Delete an article
 
 The key files to look at are:
 
@@ -47,8 +48,8 @@ This app defines policies only for one entity - article.
 2. `create` - determines whether the user can create new articles. From the rules, it is only possible to create an
    article if you have the `article.create` permission.
 3. `update` - determines whether the user can update an existing article. From the rules, it is only possible to update
-   an article if it belongs to you. It makes use of the `req` express object in a callback that determines if the user
-   owns the article.
+   an article if it belongs to you. It makes use of the `req.context.article` object in a callback that determines if
+   the user owns the article.
 4. `delete` - determines whether a user can delete an article. It uses the same callback as the update policy to
    determine whether the user owns the article.
 
@@ -62,9 +63,9 @@ $ yarn
 
 ## Setup environment
 
-This guide assumes that you have `postgres` set up on your computer and have enough knowledge to interact manipulate
-postgres databases. Refer to this [resource](https://www.guru99.com/introduction-postgresql.html) for quick reference.
-Follow the following steps:
+This guide assumes that you have `postgres` set up on your computer and have enough knowledge to interact with postgres
+databases. Refer to this [resource](https://www.guru99.com/introduction-postgresql.html) for quick reference. Follow the
+following steps:
 
 1. Create two postgres databases with names of your choice.
 2. Copy `.env.example` to `.env` and edit the environment variables to match your computer's postgres credentials and
@@ -97,7 +98,35 @@ $ yarn test
 In order to make the requests you must set the Authorization header. This should be an integer representing the id of
 any of the users of the users that are seeded on the app. Ideally the ids will be either 1, 2, 3 or 4 if you seeded the
 data once without reversing the seed. For some of the requests to give relevant results you will need to have migrated
-the schema and seeded data. Make the following requests:
+the schema and seeded data. The following users are seeded:
+
+```text
+1. Foo Bar => username: foobar
+2. Bar Baz => username: barbaz
+3. Jane Doe => username: janedoe
+4. John Doe => username: johndoe
+```
+
+All of them use the password `password`.
+
+Start express server.
+
+```bash
+$ yarn start
+```
+
+To login make the following request:
+
+`POST auth/login`
+
+```json
+{
+  "username": "foobar",
+  "password": "password"
+}
+```
+
+To interact with the article CRUD make the following requests:
 
 1. `GET article`
 2. `GET article/:id`
@@ -117,5 +146,4 @@ the schema and seeded data. Make the following requests:
    ```
 5. `DELETE article/:id`
 
-Remember to vary the `id` parameter for the update and delete requests since they can only be performed by the owners of
-the articles.
+Confirm that it is impossible for any user to update or delete an article that is created by another.

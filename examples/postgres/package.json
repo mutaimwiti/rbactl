@@ -7,6 +7,7 @@
     "migrate:undo": "cd app && sequelize db:migrate:undo:all",
     "seed": "cd app && sequelize db:seed:all",
     "seed:undo": "cd app && sequelize db:seed:undo:all",
+    "start": "cd app && yarn nodemon server.js",
     "setup": "cd app && NODE_ENV=test sequelize db:migrate",
     "teardown": "cd app && NODE_ENV=test sequelize db:migrate:undo:all",
     "test": "NODE_ENV=test yarn teardown && yarn setup && jest --colors --detectOpenHandles"
@@ -14,11 +15,13 @@
   "author": "Mutai Mwiti",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^3.0.5",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "faker": "^4.1.0",
+    "jsonwebtoken": "^8.5.1",
     "nodemon": "^1.18.10",
     "pg": "^7.9.0",
     "sequelize": "^5.2.8",

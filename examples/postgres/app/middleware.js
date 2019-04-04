@@ -1,6 +1,7 @@
 const { authorize } = require("../../../lib");
 const policies = require("./policies");
 const { User, Article } = require("./models");
+const { decodeAuthToken } = require("./utils");
 
 module.exports = {
   /**
@@ -31,22 +32,21 @@ module.exports = {
    * @returns {Promise<*>}
    */
   authenticate: async (req, res, next) => {
-    // we are identifying the user using their id that is set as the
-    // Authorization header. This is to avoid going out of scope.
-    // Ideally this would be decoding a jwt auth token or
-    // verifying the username/email and password
-    // combination.
-    const authId = Number(req.headers.authorization) || null;
-    if (!authId) {
+    // If this were session based auth system we would be verifying the
+    // username/email and password combination against the session
+    // in this step.
+    try {
+      const userData = decodeAuthToken(req);
+      // Adding the user object to the request object so that all proceeding
+      // handlers e.g. authorize middleware will know the authenticated
+      // user.
+      req.user = await User.findOne({ where: { username: userData.username } });
+      return next();
+    } catch (e) {
       return res.status(401).json({
-        message: "Unauthenticated. Log in and try again."
+        message: "Sorry :( Log in and try again."
       });
     }
-    // Adding the user object to the request object so that all proceeding
-    // handlers e.g. authorize middleware will know the authenticated
-    // user.
-    req.user = await User.findOne({ where: { id: authId } });
-    return next();
   },
 
   /**
@@ -97,8 +97,7 @@ module.exports = {
    */
   articleExists: async (req, res, next) => {
     const article = await Article.findOne({
-      where: { id: req.params.id },
-      include: { model: User }
+      where: { id: req.params.id }
     });
     if (!article) {
       return res.status(404).json({

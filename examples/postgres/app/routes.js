@@ -3,7 +3,7 @@ const controller = require("./controllers");
 
 /**
  * A helper function to create an authorization middleware specific
- * to articles. This removes repetition of the entity argument.
+ * to articles. This prevents repetition of the entity argument.
  *
  * @param action
  * @returns {*}
@@ -14,7 +14,10 @@ const authorizeArticle = action => {
 
 module.exports = app => {
   app.use(init);
-  app.get("/", controller.dashboard);
+  app.get("/", (req, res) => {
+    return res.json({ message: "Welcome" });
+  });
+  app.post("/auth/login", controller.auth.login);
   app.get(
     "/article",
     authenticate,

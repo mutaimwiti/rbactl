@@ -1,5 +1,6 @@
 const supertest = require("supertest");
 const faker = require("faker");
+const { generateAuthToken } = require("../app/utils");
 const appDef = require("../app");
 const { User, Role, Article } = require("../app/models");
 
@@ -50,7 +51,7 @@ const app = {
   async login(user, permissions = []) {
     const role = await createRole(permissions);
     await user.setRoles([role]);
-    this.token = user.id;
+    this.token = await generateAuthToken(user);
   },
 
   /**
@@ -65,7 +66,7 @@ const app = {
     const role = await createRole(permissions);
     const user = await createUser();
     await user.setRoles([role.id]);
-    this.token = user.id;
+    this.token = await generateAuthToken(user);
     return user;
   },
 
