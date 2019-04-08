@@ -1,13 +1,23 @@
-const { app, eachUser } = require("../../utils");
+const {
+  app,
+  eachPermission,
+  createUser,
+  createArticle
+} = require("../../utils");
 
-const apiUpdate = (user = null) => {
-  return app
-    .put("/article/1")
-    .set("Authorization", user)
-    .send();
+const apiUpdate = articleId => {
+  return app.put(`/article/${articleId}`).send();
 };
 
 describe("update", () => {
+  let owner;
+  let articleId;
+
+  beforeAll(() => {
+    owner = createUser();
+    articleId = createArticle(owner).id;
+  });
+
   it("should not allow unauthenticated users", async () => {
     const res = await apiUpdate();
 
@@ -15,17 +25,20 @@ describe("update", () => {
   });
 
   it("should not allow unauthorized users", async () => {
-    const unAuthorizedUsers = [2, 3, 4]; // don't own the article
-
-    eachUser(unAuthorizedUsers, async user => {
-      const res = await apiUpdate(user);
+    await eachPermission(["article.*", "article.something"], async () => {
+      const res = await apiUpdate(articleId);
 
       expect(res.status).toEqual(403);
     });
   });
 
   it("should only allow authorized users", async () => {
-    const res = await apiUpdate(1);
+    await app.login(owner);
+
+    const res = await apiUpdate(articleId, {
+      title: "My updated article",
+      body: "It's updated. Right?"
+    });
 
     expect(res.status).toEqual(200);
   });

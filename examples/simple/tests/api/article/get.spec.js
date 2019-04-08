@@ -1,13 +1,16 @@
-const { app, eachUser } = require("../../utils");
+const { app, eachPermission, createArticle } = require("../../utils");
 
-const apiGet = (user = null) => {
-  return app
-    .get("/article/1")
-    .set("Authorization", user)
-    .send();
+const apiGet = articleId => {
+  return app.get(`/article/${articleId}`).send();
 };
 
-describe("get", () => {
+describe("article - get", () => {
+  let articleId;
+
+  beforeAll(() => {
+    articleId = createArticle().id;
+  });
+
   it("should not allow unauthenticated users", async () => {
     const res = await apiGet();
 
@@ -15,16 +18,23 @@ describe("get", () => {
   });
 
   it("should not allow unauthorized users", async () => {
-    const res = await apiGet(4); // doesn't have view permission
+    await app.loginRandom(["article.something"]);
+
+    const res = await apiGet(articleId);
 
     expect(res.status).toBe(403);
   });
 
   it("should only allow authorized users", async () => {
-    const authorizedUsers = [1, 3]; // have view permission
+    const allowedPermissions = [
+      "article.view",
+      "article.create",
+      "article.update",
+      "article.delete"
+    ];
 
-    eachUser(authorizedUsers, async user => {
-      const res = await apiGet(user);
+    await eachPermission(allowedPermissions, async () => {
+      const res = await apiGet(articleId);
 
       expect(res.status).toBe(200);
     });

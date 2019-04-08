@@ -1,10 +1,10 @@
 const { app, eachPermission } = require("../../utils");
 
 const apiCreate = (data = {}) => {
-  return app.post("/article").send(data);
+  return app.post("/role").send(data);
 };
 
-describe("article - create", () => {
+describe("role - create", () => {
   it("should not allow unauthenticated users", async () => {
     const res = await apiCreate();
 
@@ -13,12 +13,11 @@ describe("article - create", () => {
 
   it("should not allow unauthorized users", async () => {
     const unauthorizedPermissions = [
-      "article.view",
-      "article.update",
-      "article.delete",
-      "article.something"
+      "role.view",
+      "role.update",
+      "role.delete",
+      "role.something"
     ];
-
     await eachPermission(unauthorizedPermissions, async () => {
       const res = await apiCreate();
 
@@ -26,11 +25,23 @@ describe("article - create", () => {
     });
   });
 
+  it("should reject data with invalid system permissions", async () => {
+    app.loginRandom(["role.create"]);
+
+    const res = await apiCreate({
+      name: "My role",
+      permissions: ["something.create"]
+    });
+
+    expect(res.status).toBe(400);
+    expect(res.body.invalids).toEqual(["something.create"]);
+  });
+
   it("should only allow authorized users", async () => {
-    await eachPermission(["article.*", "article.create"], async () => {
+    await eachPermission(["role.*", "role.create"], async () => {
       const res = await apiCreate({
-        title: "My article",
-        body: "This is me writing."
+        name: "My role",
+        permissions: ["article.create", "article.delete"]
       });
 
       expect(res.status).toBe(200);

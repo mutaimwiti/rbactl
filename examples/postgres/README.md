@@ -2,8 +2,8 @@
 
 #### Quick intro
 
-In this app the key features of the library are demonstrated in an express app that is implemented with `Postgres` using
-the [Sequelize](http://docs.sequelizejs.com/) ORM.
+In this app the key features of the library are demonstrated in an express app that is implemented with `Postgres`
+using the [Sequelize](http://docs.sequelizejs.com/) ORM.
 
 #### Endpoints
 
@@ -168,8 +168,8 @@ $ yarn test
 
 ### Testing manually (using Postman)
 
-A Postman collection that you can import is included on the root of the project. Before testing the endpoints on Postman 
-be sure to migrate the schema and seed the database. The following users will be seeded:
+A Postman collection that you can import is included on the root of the project. Before testing the endpoints on 
+Postman, be sure to migrate the schema and seed the database. The following users will be seeded:
 
 ```text
 1. Foo Bar => username: foobar

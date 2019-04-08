@@ -1,31 +1,58 @@
-const { app, eachUser } = require("../../utils");
+const {
+  app,
+  eachPermission,
+  createUser,
+  createArticle
+} = require("../../utils");
 
-const apiDelete = (user = null) => {
-  return app
-    .delete("/article/2")
-    .set("Authorization", user)
-    .send();
+const apiDelete = articleId => {
+  return app.delete(`/article/${articleId}`).send();
 };
 
-describe("delete", () => {
+describe("article - delete", () => {
+  let owner;
+  let articleId;
+
+  beforeEach(() => {
+    owner = createUser();
+    articleId = createArticle(owner).id;
+  });
+
   it("should not allow unauthenticated users", async () => {
-    const res = await apiDelete();
+    const res = await apiDelete(articleId);
 
     expect(res.status).toEqual(401);
   });
 
   it("should not allow unauthorized users", async () => {
-    const unAuthorizedUsers = [1, 3, 4]; // don't own the article
+    const unauthorizedPermissions = [
+      "article.view",
+      "article.create",
+      "article.update",
+      "article.something"
+    ];
 
-    eachUser(unAuthorizedUsers, async user => {
-      const res = await apiDelete(user);
+    await eachPermission(unauthorizedPermissions, async () => {
+      const res = await apiDelete(articleId);
 
       expect(res.status).toEqual(403);
     });
   });
 
-  it("should only allow authorized users", async () => {
-    const res = await apiDelete(2);
+  it("should allow owner", async () => {
+    // owner
+    app.login(owner);
+
+    const res = await apiDelete(articleId);
+
+    expect(res.status).toEqual(200);
+  });
+
+  it("should allow permitted user", async () => {
+    // this could be admin
+    app.loginRandom(["article.delete"]);
+
+    const res = await apiDelete(articleId);
 
     expect(res.status).toEqual(200);
   });
