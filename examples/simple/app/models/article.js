@@ -1,5 +1,7 @@
 const { getArticles } = require("../__mock__");
 
+let nextId = 3;
+
 let articleData = getArticles();
 
 module.exports = {
@@ -11,13 +13,13 @@ module.exports = {
   },
 
   create: (ownerId, data) => {
-    const latestId = articleData[articleData.length - 1].id;
     const article = {
-      id: latestId + 1,
+      id: nextId,
       ...data,
       ownerId
     };
     articleData.push(article);
+    nextId += 1;
     return article;
   },
 

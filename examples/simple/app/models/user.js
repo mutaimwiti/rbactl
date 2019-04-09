@@ -1,5 +1,7 @@
 const { getUsers } = require("../__mock__");
 
+let nextId = 5;
+
 let userData = getUsers();
 
 module.exports = {
@@ -19,12 +21,12 @@ module.exports = {
   },
 
   create: data => {
-    const latestId = userData[userData.length - 1].id;
     const user = {
-      id: latestId + 1,
+      id: nextId,
       ...data
     };
     userData.push(user);
+    nextId += 1;
     return user;
   },
 

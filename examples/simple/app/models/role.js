@@ -1,5 +1,7 @@
 const { getRoles } = require("../__mock__");
 
+let nextId = 5;
+
 let roleData = getRoles();
 
 module.exports = {
@@ -24,12 +26,12 @@ module.exports = {
   },
 
   create: data => {
-    const latestId = roleData[roleData.length - 1].id;
     const role = {
-      id: latestId + 1,
+      id: nextId,
       ...data
     };
     roleData.push(role);
+    nextId += 1;
     return role;
   },
 
