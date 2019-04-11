@@ -2,7 +2,7 @@ const { getAllPermissionsFor } = require("../../../lib");
 const { getAppPermissions } = require("./utils");
 
 const isArticleOwner = req => {
-  return req.user && req.user.id === req.context.article.ownerId;
+  return req.user && req.user._id.equals(req.context.article.ownerId);
 };
 
 module.exports = {
@@ -13,6 +13,7 @@ module.exports = {
       any: getAllPermissionsFor(getAppPermissions(), "role")
     }
   },
+
   role: {
     view: {
       any: ["role.view", "role.create", "role.update", "role.delete"]
@@ -21,12 +22,14 @@ module.exports = {
     update: "role.update",
     delete: "role.delete"
   },
+
   user: {
     view: {
       any: ["user.view", "user.setRoles"]
     },
     setRoles: "user.setRoles"
   },
+
   article: {
     view: {
       any: [

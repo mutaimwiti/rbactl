@@ -7,8 +7,8 @@ const apiGet = articleId => {
 describe("article - get", () => {
   let articleId;
 
-  beforeAll(() => {
-    articleId = createArticle().id;
+  beforeAll(async () => {
+    articleId = (await createArticle())._id;
   });
 
   it("should not allow unauthenticated users", async () => {

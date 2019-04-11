@@ -1,64 +1,26 @@
-const { getUsers } = require("../__mock__");
+const mongoose = require("mongoose");
 
-let nextId = 5;
+const { Schema } = mongoose;
 
-let userData = getUsers();
+const UserSchema = mongoose.Schema({
+  name: { type: String, required: true },
+  username: { type: String, required: true },
+  password: { type: String, required: true },
+  roles: [{ type: Schema.Types.ObjectId, ref: "Role" }]
+});
 
-module.exports = {
-  all: () =>
-    userData.map(user => {
-      const data = user;
-      delete data.password;
-      return data;
-    }),
+UserSchema.virtual("permissions").get(async function f() {
+  const Role = mongoose.model("Role");
 
-  find: userId => {
-    return userData.find(user => user.id === userId);
-  },
+  const roles = await Role.find({ _id: { $in: this.roles.toObject() } });
 
-  findByUsername: username => {
-    return userData.find(user => user.username === username);
-  },
+  let permissions = [];
 
-  create: data => {
-    const user = {
-      id: nextId,
-      ...data
-    };
-    userData.push(user);
-    nextId += 1;
-    return user;
-  },
+  roles.forEach(role => {
+    permissions = permissions.concat(role.permissions);
+  });
 
-  update: (userId, data) => {
-    let updatedUser = null;
-    userData = userData.map(user => {
-      if (user.id === userId) {
-        updatedUser = { ...user };
-        Object.keys(data).forEach(key => {
-          updatedUser[key] = data[key];
-        });
-        return updatedUser;
-      }
-      return user;
-    });
-    return updatedUser;
-  },
+  return permissions;
+});
 
-  /**
-   * Register functions that rely on other models. This will be called
-   * after a models are defined,
-   *
-   * @private
-   */
-  addRelationships: models => ({
-    getPermissions: userId => {
-      const user = userData.find(({ id }) => id === userId);
-      let permissions = [];
-      user.roles.forEach(id => {
-        permissions = permissions.concat(models.Role.find(id).permissions);
-      });
-      return permissions;
-    }
-  })
-};
+module.exports = mongoose.model("User", UserSchema);

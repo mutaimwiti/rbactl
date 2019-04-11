@@ -1,8 +1,9 @@
 const { User, Role } = require("../models");
+const { objectIdsAreValid } = require("../utils");
 
 module.exports = {
-  list: (req, res) => {
-    const users = User.all();
+  list: async (req, res) => {
+    const users = await User.find({});
     return res.json({ users });
   },
 
@@ -10,10 +11,14 @@ module.exports = {
     return res.json({ user: req.context.user });
   },
 
-  setRoles: (req, res) => {
+  setRoles: async (req, res) => {
     const { roleIds } = req.body;
 
-    const roleCount = Role.count(roleIds);
+    let roleCount = 0;
+
+    if (objectIdsAreValid(roleIds)) {
+      roleCount = await Role.countDocuments({ _id: { $in: roleIds } });
+    }
 
     if (!(roleCount === roleIds.length)) {
       return res.status(400).json({
@@ -21,7 +26,9 @@ module.exports = {
       });
     }
 
-    const user = User.update(req.user.id, { ...req.user, roles: roleIds });
+    const { user } = req.context;
+    user.roles = roleIds;
+    await user.save();
 
     return res.json({
       message: "Successfully updated user roles.",

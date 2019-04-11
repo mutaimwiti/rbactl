@@ -4,18 +4,19 @@ const appDef = require("../app");
 const { Role, User, Article } = require("../app/models");
 const { generateAuthToken } = require("../app/utils");
 
-const createRole = (permissions = []) => {
+const createRole = async (permissions = []) => {
   return Role.create({
     name: faker.name.jobTitle(),
     permissions
   });
 };
 
-const createUser = (overrides = {}, permissions = []) => {
+const createUser = async (overrides = {}, permissions = []) => {
   const roles = [];
 
   if (permissions.length) {
-    roles.push(createRole(permissions).id);
+    const role = await createRole(permissions);
+    roles.push(role._id);
   }
 
   return User.create({
@@ -27,11 +28,12 @@ const createUser = (overrides = {}, permissions = []) => {
   });
 };
 
-const createArticle = (owner, overrides = {}) => {
-  const articleOwner = owner || createUser();
-  return Article.create(articleOwner.id, {
+const createArticle = async (owner, overrides = {}) => {
+  const articleOwner = owner || (await createUser());
+  return Article.create({
     title: faker.lorem.sentence(1),
     body: faker.lorem.paragraph(1),
+    ownerId: articleOwner._id,
     ...overrides
   });
 };
@@ -47,15 +49,19 @@ const app = {
    * @param permissions
    * @returns {Promise<void>}
    */
-  login(user, permissions = []) {
+  async login(user, permissions = []) {
     const roles = [];
 
     if (permissions.length) {
-      roles.push(createRole(permissions).id);
+      const role = await createRole(permissions);
+      roles.push(role._id);
     }
 
-    User.update(user.id, { ...user, roles });
-    this.token = generateAuthToken(user);
+    // eslint-disable-next-line
+    user.roles = roles;
+    await user.save();
+
+    this.token = await generateAuthToken(user);
   },
 
   /**
@@ -66,15 +72,16 @@ const app = {
    * @param permissions
    * @returns {Promise<void>}
    */
-  loginRandom(permissions = []) {
+  async loginRandom(permissions = []) {
     const roles = [];
 
     if (permissions.length) {
-      roles.push(createRole(permissions).id);
+      const role = await createRole(permissions);
+      roles.push(role._id);
     }
 
-    const user = createUser({ roles });
-    this.token = generateAuthToken(user);
+    const user = await createUser({ roles });
+    this.token = await generateAuthToken(user);
     return user;
   },
 
@@ -156,12 +163,13 @@ const app = {
  * @param permissions
  * @param testBlock
  */
-const eachPermission = (permissions, testBlock) => {
+const eachPermission = async (permissions, testBlock) => {
   app.logout();
 
   for (let i = 0; i < permissions.length; i += 1) {
-    app.login(createUser({}), [permissions[i]]);
-    testBlock();
+    /* eslint-disable*/
+    await app.loginRandom(permissions[i]);
+    await testBlock();
   }
 };
 

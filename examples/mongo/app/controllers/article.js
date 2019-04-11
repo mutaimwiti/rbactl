@@ -1,27 +1,33 @@
 const { Article } = require("../models");
 
 module.exports = {
-  list: (req, res) => {
-    const articles = Article.all();
+  list: async (req, res) => {
+    const articles = await Article.find({});
     return res.json({ articles });
   },
 
-  get: (req, res) => {
+  get: async (req, res) => {
     return res.json({ article: req.context.article });
   },
 
-  create: (req, res) => {
-    const article = Article.create(req.user.id, req.body);
+  create: async (req, res) => {
+    const article = await Article.create({ ...req.body, ownerId: req.user.id });
     return res.json({ article, message: "Article created successfully." });
   },
 
-  update: (req, res) => {
-    const article = Article.update(req.context.article.id, req.body);
+  update: async (req, res) => {
+    const { article } = req.context;
+    const { title, body } = req.body;
+
+    article.title = title;
+    article.body = body;
+    await article.save();
+
     return res.json({ article, message: "Article updated successfully." });
   },
 
-  delete: (req, res) => {
-    Article.delete(req.context.article.id);
+  delete: async (req, res) => {
+    await Article.findOneAndDelete({ _id: req.context.article.id });
     return res.json({ message: "Article deleted successfully." });
   }
 };

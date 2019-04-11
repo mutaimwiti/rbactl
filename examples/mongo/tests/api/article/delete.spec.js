@@ -13,9 +13,9 @@ describe("article - delete", () => {
   let owner;
   let articleId;
 
-  beforeEach(() => {
-    owner = createUser();
-    articleId = createArticle(owner).id;
+  beforeEach(async () => {
+    owner = await createUser();
+    articleId = (await createArticle(owner))._id;
   });
 
   it("should not allow unauthenticated users", async () => {
@@ -41,7 +41,7 @@ describe("article - delete", () => {
 
   it("should allow owner", async () => {
     // owner
-    app.login(owner);
+    await app.login(owner);
 
     const res = await apiDelete(articleId);
 
@@ -50,7 +50,7 @@ describe("article - delete", () => {
 
   it("should allow permitted user", async () => {
     // this could be admin
-    app.loginRandom(["article.delete"]);
+    await app.loginRandom(["article.delete"]);
 
     const res = await apiDelete(articleId);
 

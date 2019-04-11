@@ -27,8 +27,8 @@ describe("role - list", () => {
       "role.delete"
     ];
 
-    await eachPermission(allowedPermissions, async user => {
-      const res = await apiList(user);
+    await eachPermission(allowedPermissions, async () => {
+      const res = await apiList();
 
       expect(res.status).toBe(200);
     });

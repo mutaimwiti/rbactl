@@ -1,83 +1,86 @@
 const bcrypt = require("bcrypt");
+
+/* eslint-disable */
+
 /*
 Here the user permissions field is mocked. Ideally it should be resolved
 from the roles of the user.
  */
-module.exports = {
-  getRoles: () => [
-    {
-      id: 1,
-      name: "Super Admin",
-      permissions: ["article.*", "role.*", "user.*"]
-    },
-    {
-      id: 2,
-      name: "Role 2",
-      permissions: ["article.view"]
-    },
-    {
-      id: 3,
-      name: "Role 3",
-      permissions: ["article.create"]
-    },
-    {
-      id: 4,
-      name: "Role 4",
-      permissions: []
-    }
-  ],
-
-  getUsers: () => {
-    const password = bcrypt.hashSync("password", 10);
-
-    return [
-      // admin
-      {
-        id: 1,
-        name: "Foo Bar",
-        username: "foobar",
-        roles: [1]
-      },
-      // simple user 1
-      {
-        id: 2,
-        name: "Bar Baz",
-        username: "barbaz",
-        roles: [2]
-      },
-      // simple user 2
-      {
-        id: 3,
-        name: "John Doe",
-        username: "johndoe",
-        roles: [3]
-      },
-      // simple user 3
-      {
-        id: 4,
-        name: "Jane Doe",
-        username: "janedoe",
-        roles: [4]
-      }
-    ].map(user => {
-      const newData = user;
-      newData.password = password;
-      return newData;
-    });
+const getRoles = () => [
+  {
+    name: "Super Admin",
+    permissions: ["article.*", "role.*", "user.*"]
   },
+  {
+    name: "Role 2",
+    permissions: ["article.view"]
+  },
+  {
+    name: "Role 3",
+    permissions: ["article.create"]
+  },
+  {
+    name: "Role 4",
+    permissions: []
+  }
+];
 
-  getArticles: () => [
+const getUsers = () => {
+  const password = bcrypt.hashSync("password", 10);
+
+  return [
+    // admin
     {
-      id: 1,
+      name: "Foo Bar",
+      username: "foobar"
+    },
+    // simple user 1
+    {
+      name: "Bar Baz",
+      username: "barbaz"
+    },
+    // simple user 2
+    {
+      name: "John Doe",
+      username: "johndoe"
+    },
+    // simple user 3
+    {
+      name: "Jane Doe",
+      username: "janedoe"
+    }
+  ].map(user => {
+    const newData = user;
+    newData.password = password;
+    return newData;
+  });
+};
+
+const getArticles = users =>
+  [
+    {
       title: "Cooking",
-      body: "This is how to cook",
-      ownerId: 1
+      body: "This is how to cook"
     },
     {
-      id: 2,
       title: "Coding",
-      body: "This is how to code",
-      ownerId: 2
+      body: "This is how to code"
     }
-  ]
+  ].map((user, i) => {
+    return { ...user, ownerId: users[i]._id };
+  });
+
+const setUserRoles = async (users, roles) => {
+  for (let i = 0; i < users.length; i += 1) {
+    const user = users[i];
+    user.roles = [roles[i]._id];
+    await user.save();
+  }
+};
+
+module.exports = {
+  getRoles,
+  getUsers,
+  getArticles,
+  setUserRoles
 };

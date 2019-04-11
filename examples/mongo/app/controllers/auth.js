@@ -2,14 +2,14 @@ const { User } = require("../models");
 const { generateAuthToken, checkPassword } = require("../utils");
 
 module.exports = {
-  login: (req, res) => {
+  login: async (req, res) => {
     const { username, password } = req.body;
 
-    const user = User.findByUsername(username, password);
+    const user = await User.findOne({ username });
 
     if (user) {
       if (checkPassword(password, user)) {
-        const token = generateAuthToken(user);
+        const token = await generateAuthToken(user);
         if (token) {
           return res.status(200).json({
             token,

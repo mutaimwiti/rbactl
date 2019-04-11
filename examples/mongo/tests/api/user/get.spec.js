@@ -8,7 +8,7 @@ describe("user - get", () => {
   let userId;
 
   beforeAll(async () => {
-    userId = (await createUser()).id;
+    userId = (await createUser())._id;
   });
 
   it("should not allow unauthenticated users", async () => {

@@ -26,7 +26,7 @@ describe("role - create", () => {
   });
 
   it("should reject data with invalid system permissions", async () => {
-    app.loginRandom(["role.create"]);
+    await app.loginRandom(["role.create"]);
 
     const res = await apiCreate({
       name: "My role",

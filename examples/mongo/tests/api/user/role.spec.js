@@ -8,7 +8,7 @@ describe("user - role", () => {
   let userId;
 
   beforeEach(async () => {
-    userId = (await createUser()).id;
+    userId = (await createUser())._id;
   });
 
   it("should not allow unauthenticated users", async () => {
@@ -43,7 +43,7 @@ describe("user - role", () => {
 
     await eachPermission(["user.*", "user.setRoles"], async () => {
       const res = await apiUpdate(userId, {
-        roleIds: [existingRole1.id, existingRole2.id]
+        roleIds: [existingRole1._id, existingRole2._id]
       });
 
       expect(res.status).toBe(200);

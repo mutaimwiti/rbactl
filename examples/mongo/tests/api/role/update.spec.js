@@ -8,7 +8,7 @@ describe("role - delete", () => {
   let roleId;
 
   beforeEach(async () => {
-    roleId = (await createRole()).id;
+    roleId = (await createRole())._id;
   });
 
   it("should not allow unauthenticated users", async () => {

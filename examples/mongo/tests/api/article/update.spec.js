@@ -5,17 +5,17 @@ const {
   createArticle
 } = require("../../utils");
 
-const apiUpdate = articleId => {
-  return app.put(`/article/${articleId}`).send();
+const apiUpdate = (articleId, data) => {
+  return app.put(`/article/${articleId}`).send(data);
 };
 
 describe("update", () => {
   let owner;
   let articleId;
 
-  beforeAll(() => {
-    owner = createUser();
-    articleId = createArticle(owner).id;
+  beforeAll(async () => {
+    owner = await createUser();
+    articleId = (await createArticle(owner))._id;
   });
 
   it("should not allow unauthenticated users", async () => {

@@ -8,7 +8,7 @@ describe("role - get", () => {
   let roleId;
 
   beforeAll(async () => {
-    roleId = (await createRole()).id;
+    roleId = (await createRole())._id;
   });
 
   it("should not allow unauthenticated users", async () => {

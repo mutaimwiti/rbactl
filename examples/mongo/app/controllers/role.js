@@ -2,8 +2,8 @@ const { validatePermissions } = require("./../utils");
 const { Role } = require("../models");
 
 module.exports = {
-  list: (req, res) => {
-    const roles = Role.all();
+  list: async (req, res) => {
+    const roles = await Role.find({});
     return res.json({ roles });
   },
 
@@ -11,12 +11,12 @@ module.exports = {
     return res.json({ role: req.context.role });
   },
 
-  create: (req, res) => {
+  create: async (req, res) => {
     const { name, permissions } = req.body;
     if (name && permissions) {
       const { isValid, invalids } = validatePermissions(permissions);
       if (isValid) {
-        const role = Role.create({
+        const role = await Role.create({
           ...req.body
         });
         return res.json({ role, message: "Role created successfully." });
@@ -30,12 +30,15 @@ module.exports = {
       .json({ message: "name and permissions are required." });
   },
 
-  update: (req, res) => {
+  update: async (req, res) => {
     const { name, permissions } = req.body;
     if (name && permissions) {
       const { isValid, invalids } = validatePermissions(permissions);
       if (isValid) {
-        const role = Role.update(req.context.role.id, { ...req.body });
+        const { role } = req.context;
+        role.name = name;
+        role.permissions = permissions;
+        await role.save();
         return res.json({ role, message: "Role updated successfully." });
       }
       return res
@@ -47,15 +50,14 @@ module.exports = {
       .json({ message: "name and permissions are required." });
   },
 
-  delete: (req, res) => {
-    const roleId = req.context.role.id;
-    if (Role.getUsers(roleId).length) {
+  delete: async (req, res) => {
+    if (await req.context.role.users) {
       return res.status(400).json({
         message:
           "The role cannot be deleted because there are users that belong to it."
       });
     }
-    Role.delete(roleId);
+    await req.context.role.delete();
     return res.json({ message: "Role deleted successfully." });
   }
 };

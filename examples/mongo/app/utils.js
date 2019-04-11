@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { ObjectId } = require("mongoose").Types;
 const {
   parsePermissions,
   validatePermissions: permissionsValidator
@@ -14,13 +15,13 @@ const permissionsDef = require("./permissions");
  * @returns {Promise<*>}
  * @throws Error
  */
-const generateAuthToken = user => {
-  const { name, username, permissions } = user;
+const generateAuthToken = async user => {
+  const { name, username } = user;
   return jwt.sign(
     {
       name,
       username,
-      permissions
+      permissions: await user.permissions
     },
     process.env.SECRET_KEY || "$3cr3T"
   );
@@ -77,10 +78,29 @@ const validatePermissions = permissions => {
   return permissionsValidator(getAppPermissions(), permissions);
 };
 
+/**
+ * Checks whether passed objectId is a valid mongoose objectId.
+ *
+ * @returns {*}
+ * @param objectIds
+ */
+const objectIdsAreValid = objectIds => {
+  let valid = true;
+
+  objectIds.forEach(objectId => {
+    if (!ObjectId.isValid(`${objectId}`)) {
+      valid = false;
+    }
+  });
+
+  return valid;
+};
+
 module.exports = {
   generateAuthToken,
   decodeAuthToken,
   checkPassword,
   getAppPermissions,
-  validatePermissions
+  validatePermissions,
+  objectIdsAreValid
 };

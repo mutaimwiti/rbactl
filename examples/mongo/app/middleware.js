@@ -31,7 +31,7 @@ module.exports = {
    * @param next
    * @returns {Promise<*>}
    */
-  authenticate: (req, res, next) => {
+  authenticate: async (req, res, next) => {
     // if the route is not protected proceed to the next handler
     if (req.url === "/" || req.url === "/auth/login") return next();
     // If this were session based auth system we would be verifying the
@@ -42,7 +42,7 @@ module.exports = {
       // Adding the user object to the request object so that all proceeding
       // handlers e.g. authorize middleware will know the authenticated
       // user.
-      req.user = User.findByUsername(username);
+      req.user = await User.findOne({ username });
       return next();
     } catch (e) {
       return res.status(401).json({
@@ -63,11 +63,11 @@ module.exports = {
    * @returns {Function}
    */
   can: (action, entity) => {
-    return (req, res, next) => {
+    return async (req, res, next) => {
       try {
         // If any of your policies use the express req object you must pass it.
         // The req parameter is optional.
-        const userPermissions = User.getPermissions(req.user.id);
+        const userPermissions = await req.user.permissions;
         if (!authorize(action, entity, userPermissions, policies, req)) {
           return res.status(403).json({
             message: `You are not authorized to perform this action.`
@@ -96,15 +96,16 @@ module.exports = {
    * @param next
    * @returns {Promise<*>}
    */
-  processArticleParam: (req, res, next) => {
-    const article = Article.find(Number(req.params.id));
-    if (!article) {
+  processArticleParam: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      req.context.article = await Article.findOne({ _id: id }).orFail();
+      return next();
+    } catch (e) {
       return res.status(404).json({
         message: "The article does not exist."
       });
     }
-    req.context.article = article;
-    return next();
   },
 
   /**
@@ -118,15 +119,16 @@ module.exports = {
    * @param next
    * @returns {Promise<*>}
    */
-  processRoleParam: (req, res, next) => {
-    const role = Role.find(Number(req.params.id));
-    if (!role) {
+  processRoleParam: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      req.context.role = await Role.findOne({ _id: id }).orFail();
+      return next();
+    } catch (e) {
       return res.status(404).json({
         message: "The role does not exist."
       });
     }
-    req.context.role = role;
-    return next();
   },
 
   /**
@@ -140,14 +142,15 @@ module.exports = {
    * @param next
    * @returns {Promise<*>}
    */
-  processUserParam: (req, res, next) => {
-    const user = User.find(Number(req.params.id));
-    if (!user) {
+  processUserParam: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      req.context.user = await User.findOne({ _id: id }).orFail();
+      return next();
+    } catch (e) {
       return res.status(404).json({
         message: "The user does not exist."
       });
     }
-    req.context.user = user;
-    return next();
   }
 };
