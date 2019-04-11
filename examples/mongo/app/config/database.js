@@ -11,4 +11,8 @@ const connect = (callback = null) => {
   return mongoose.connect(config.mongoUrl, options, callback);
 };
 
-module.exports = { connect };
+const disconnect = (callback = null) => {
+  return mongoose.disconnect(callback);
+};
+
+module.exports = { connect, disconnect };

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test jest --colors",
+    "test": "NODE_ENV=test jest --colors --detectOpenHandles",
     "start": "cd app && yarn nodemon server.js",
     "seed": "node app/seeder.js"
   },
@@ -26,6 +26,9 @@
   },
   "jest": {
     "verbose": true,
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>tests/setupTests.js"
+    ]
   }
 }

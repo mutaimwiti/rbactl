@@ -2,16 +2,18 @@ image: node:latest
 
 services:
   - postgres:latest
+  - mongo:latest
 
 variables:
   POSTGRES_DB: ci_db
   POSTGRES_USER: ci_user
   POSTGRES_PASSWORD: ""
+  TEST_DB_URL: mongodb://mongo:27017/test
 
 cache:
   paths:
     - node_modules/
-    - examples/simple/node_modules/
+    - examples/mongo/node_modules/
     - examples/postgres/node_modules/
 
 stages:
@@ -24,8 +26,8 @@ build:
     # lib
     - yarn
     - yarn build
-    # simple example
-    - yarn --cwd examples/simple
+    # mongo example
+    - yarn --cwd examples/mongo
     # postgres example
     - yarn --cwd examples/postgres
     # lint all
@@ -37,12 +39,12 @@ test:
   script:
     - yarn test
 
-# simple example
-test:simple:
+# mongo example
+test:mongo:
   stage: test
   script:
     - yarn build # need lib
-    - yarn --cwd examples/simple test
+    - yarn --cwd examples/mongo test
 
 # postgres example
 test:postgres:

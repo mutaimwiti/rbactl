@@ -9,7 +9,7 @@ const allConfig = {
     mongoUrl: process.env.DB_URL
   },
   test: {
-    mongoUrl: process.env.TEST_DB_URL || "ci_mongo_db"
+    mongoUrl: process.env.TEST_DB_URL
   }
 };
 
