@@ -99,7 +99,9 @@ module.exports = {
   processArticleParam: async (req, res, next) => {
     try {
       const { id } = req.params;
-      req.context.article = await Article.findOne({ _id: id }).orFail();
+      req.context.article = await Article.findOne({ _id: id })
+        .populate("owner", "-password")
+        .orFail();
       return next();
     } catch (e) {
       return res.status(404).json({
@@ -145,7 +147,9 @@ module.exports = {
   processUserParam: async (req, res, next) => {
     try {
       const { id } = req.params;
-      req.context.user = await User.findOne({ _id: id }).orFail();
+      req.context.user = await User.findOne({ _id: id })
+        .populate("roles")
+        .orFail();
       return next();
     } catch (e) {
       return res.status(404).json({

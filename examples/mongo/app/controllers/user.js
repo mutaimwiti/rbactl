@@ -3,7 +3,9 @@ const { objectIdsAreValid } = require("../utils");
 
 module.exports = {
   list: async (req, res) => {
-    const users = await User.find({});
+    const users = await User.find({})
+      .populate("roles")
+      .select("-password");
     return res.json({ users });
   },
 
@@ -28,11 +30,13 @@ module.exports = {
 
     const { user } = req.context;
     user.roles = roleIds;
-    await user.save();
+    user.save();
+
+    const updated = await User.findOne({ _id: user._id }).populate("roles");
 
     return res.json({
       message: "Successfully updated user roles.",
-      user
+      user: updated
     });
   }
 };

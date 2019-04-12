@@ -2,7 +2,7 @@ const { Article } = require("../models");
 
 module.exports = {
   list: async (req, res) => {
-    const articles = await Article.find({});
+    const articles = await Article.find({}).populate("owner", "-password");
     return res.json({ articles });
   },
 
@@ -11,7 +11,7 @@ module.exports = {
   },
 
   create: async (req, res) => {
-    const article = await Article.create({ ...req.body, ownerId: req.user.id });
+    const article = await Article.create({ ...req.body, owner: req.user.id });
     return res.json({ article, message: "Article created successfully." });
   },
 

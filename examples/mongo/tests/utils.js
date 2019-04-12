@@ -22,6 +22,7 @@ const createUser = async (overrides = {}, permissions = []) => {
   return User.create({
     name: faker.fake("{{name.firstName}} {{name.lastName}}"),
     username: faker.internet.userName(),
+    email: faker.internet.email(),
     password: faker.internet.password(),
     roles,
     ...overrides
@@ -33,7 +34,7 @@ const createArticle = async (owner, overrides = {}) => {
   return Article.create({
     title: faker.lorem.sentence(1),
     body: faker.lorem.paragraph(1),
-    ownerId: articleOwner._id,
+    owner: articleOwner._id,
     ...overrides
   });
 };

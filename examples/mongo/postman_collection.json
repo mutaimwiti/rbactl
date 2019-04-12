@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "55bb262c-d60c-4afe-a691-d407adfed88f",
-		"name": "simple-example",
+		"name": "mongo-example",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -10,6 +10,20 @@
 			"item": [
 				{
 					"name": "list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e1c39c6c-2c34-40b9-9da6-ea31dc9c2972",
+								"exec": [
+									"var res = JSON.parse(responseBody);",
+									"",
+									"pm.environment.set('existingArticle', res.articles[0]._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -46,13 +60,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/article/1",
+							"raw": "{{url}}/article/{{existingArticle}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"article",
-								"1"
+								"{{existingArticle}}"
 							]
 						}
 					},
@@ -60,6 +74,20 @@
 				},
 				{
 					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fd5926ea-9185-4826-b4a1-4df6ecda3eb6",
+								"exec": [
+									"var res = JSON.parse(responseBody);",
+									"",
+									"pm.environment.set('createdArticle', res.article._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -110,13 +138,13 @@
 							"raw": "{\n\t\"title\": \"My updated article\",\n    \"body\": \"See? I'm updated.\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/article/3",
+							"raw": "{{url}}/article/{{createdArticle}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"article",
-								"3"
+								"{{createdArticle}}"
 							]
 						}
 					},
@@ -132,13 +160,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/article/3",
+							"raw": "{{url}}/article/{{createdArticle}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"article",
-								"3"
+								"{{createdArticle}}"
 							]
 						}
 					},
@@ -173,6 +201,22 @@
 			"item": [
 				{
 					"name": "list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7e7f6ddf-b00c-45ca-8cd2-88d330f06bab",
+								"exec": [
+									"var res = JSON.parse(responseBody);",
+									"",
+									"pm.environment.set('existingRole', res.roles[0]._id);",
+									"",
+									"pm.environment.set('existingRole2', res.roles[1]._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -209,13 +253,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/role/1",
+							"raw": "{{url}}/role/{{existingRole}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"role",
-								"1"
+								"{{existingRole}}"
 							]
 						}
 					},
@@ -223,6 +267,20 @@
 				},
 				{
 					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aeb44110-5c83-4c12-88e6-bff43d28e754",
+								"exec": [
+									"var res = JSON.parse(responseBody);",
+									"",
+									"pm.environment.set('createdRole', res.role._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -273,13 +331,13 @@
 							"raw": "{\n\t\"name\": \"My updated role\",\n\t\"permissions\": [\n\t\t\"article.create\"\n\t]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/role/4",
+							"raw": "{{url}}/role/{{createdRole}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"role",
-								"4"
+								"{{createdRole}}"
 							]
 						}
 					},
@@ -295,13 +353,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/role/6",
+							"raw": "{{url}}/role/{{createdRole}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"role",
-								"6"
+								"{{createdRole}}"
 							]
 						}
 					},
@@ -336,6 +394,20 @@
 			"item": [
 				{
 					"name": "list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8a0bd08d-97f6-4b75-b6aa-813ed8c1360c",
+								"exec": [
+									"var res = JSON.parse(responseBody);",
+									"",
+									"pm.environment.set('existingUser', res.users[0]._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -372,13 +444,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/user/1",
+							"raw": "{{url}}/user/{{existingUser}}",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"user",
-								"1"
+								"{{existingUser}}"
 							]
 						}
 					},
@@ -398,16 +470,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"roleIds\": [1, 3]\n}"
+							"raw": "{\n\t\"roleIds\": [\"{{existingRole}}\", \"{{existingRole2}}\"]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/user/4/role",
+							"raw": "{{url}}/user/{{existingUser}}/role",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"user",
-								"4",
+								"{{existingUser}}",
 								"role"
 							]
 						}

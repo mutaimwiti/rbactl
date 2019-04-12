@@ -32,22 +32,26 @@ const getUsers = () => {
     // admin
     {
       name: "Foo Bar",
-      username: "foobar"
+      username: "foobar",
+      email: "foobar@mail.com"
     },
     // simple user 1
     {
       name: "Bar Baz",
-      username: "barbaz"
+      username: "barbaz",
+      email: "barbaz@mail.com"
     },
     // simple user 2
     {
       name: "John Doe",
-      username: "johndoe"
+      username: "johndoe",
+      email: "johndoe@mail.com"
     },
     // simple user 3
     {
       name: "Jane Doe",
-      username: "janedoe"
+      username: "janedoe",
+      email: "janedoe@mail.com"
     }
   ].map(user => {
     const newData = user;
@@ -67,7 +71,7 @@ const getArticles = users =>
       body: "This is how to code"
     }
   ].map((user, i) => {
-    return { ...user, ownerId: users[i]._id };
+    return { ...user, owner: users[i]._id };
   });
 
 const setUserRoles = async (users, roles) => {

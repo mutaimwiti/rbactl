@@ -2,7 +2,7 @@ const { getAllPermissionsFor } = require("../../../lib");
 const { getAppPermissions } = require("./utils");
 
 const isArticleOwner = req => {
-  return req.user && req.user._id.equals(req.context.article.ownerId);
+  return req.user && req.user._id.equals(req.context.article.owner._id);
 };
 
 module.exports = {
