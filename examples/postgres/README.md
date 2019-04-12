@@ -53,10 +53,9 @@ The key files and directories to look at are:
 
 The application permissions are defined in the `permissions` directory. Each permission file is given the name of the
 entity it represents on the system. Permissions are defined as an object with the keys representing actions and the
-values representing the definition of the permission. On a system with many entities the best approach is to define each
-permission on a separate file and load them using the `loadPermissions` method. On a small system they can be defined on
-a single file. In this example we define permissions for `article`, `permission`, `role` and `user` which are system
-entities.
+values representing the definition of the permission. On a small system the best approach is to define all permissions
+in one file as a nested object and parse them using the `parsePermissions` method. In this example we define permissions
+for `article`, `permission`, `role` and `user` which are system entities.
 
 #### Policies
 
@@ -80,7 +79,7 @@ policies for `article`, `permission`, `role` and `user` which are system entitie
 #### Middleware
 
 When a request is received the aim is to invoke a controller method to process it. Before the controller method is hit
-we have middleware to perform checks. The key ones are:
+we have middleware to perform checks. Breaking down middleware:
 
 1. `init` - sets `req.context` to an empty object. req.context is used to add our custom request values to avoid polluting
    or accidentally overriding important `req` object values.
@@ -168,7 +167,7 @@ $ yarn test
 
 ### Testing manually (using Postman)
 
-A Postman collection that you can import is included on the root of the project. Before testing the endpoints on 
+A Postman collection that you can import is included on the root of the project. Before testing the endpoints on
 Postman, be sure to migrate the schema and seed the database. The following users will be seeded:
 
 ```text

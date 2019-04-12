@@ -2,8 +2,8 @@
 
 #### Quick intro
 
-In this app the key features of the library are demonstrated in an express app that is implemented with in-memory data
-storage.
+In this app the key features of the library are demonstrated in an express app that is implemented with `MongoDB`
+using the [Mongoose](https://mongoosejs.com/) ODM.
 
 #### Endpoints
 
@@ -43,27 +43,27 @@ The app exposes an api with the following endpoints:
 
 The key files and directories to look at are:
 
-1. `permissions/`
-2. `policies/`
+1. `permissions.js`
+2. `policies.js`
 3. `middleware.js`
 4. `routes/`
 5. `utils.js`
 
 #### Permissions
 
-The application permissions are defined in the `permissions` directory. Each permission file is given the name of the
-entity it represents on the system. Permissions are defined as an object with the keys representing actions and the
-values representing the definition of the permission. On a system with many entities the best approach is to define each
-permission on a separate file and load them using the `loadPermissions` method. On a small system they can be defined on
-a single file. In this example we define permissions for `article`, `permission`, `role` and `user` which are system
-entities.
+The application permissions are defined in the `permissions.js` file. Permissions are defined as a nested object with
+top level keys representing entities. Inner keys represent actions and values represent the definition of the
+permission. On a system with many entities the best approach is to define each permission on a separate file and load
+them using the `loadPermissions` method. On a small system they can be defined on a single file. In this example we
+define permissions for `article`, `permission`, `role` and `user` which are system entities.
 
 #### Policies
 
 Policies are the rules that determine what actions a user is allowed to perform on the system. The application policies
-are defined in the `policies` directory. Rules are defined as an object with the keys representing actions and values
-representing the rules that determine how the decision on the users to allow is arrived at. In this example we define
-policies for `article`, `permission`, `role` and `user` which are system entities. A breakdown of the article policy:
+are defined in the `policies.js` file. Rules are defined as a nested object with top level keys representing entities.
+Inner keys represent actions and values represent the rules that determine how the decision on the users to allow is
+arrived at. In this example we define policies for `article`, `permission`, `role` and `user` which are system entities.
+A breakdown of the article policy:
 
 1. `view` - determines whether the user can see articles either by listing or getting one. Where needed, it can be
    broken down into two e.g. `index` and `get`. From the rules, it is only possible to view articles if you have any of
@@ -80,7 +80,7 @@ policies for `article`, `permission`, `role` and `user` which are system entitie
 #### Middleware
 
 When a request is received the aim is to invoke a controller method to process it. Before the controller method is hit
-we have middleware to perform checks. The key ones are:
+we have middleware to perform checks. Breaking down middleware:
 
 1. `init` - sets `req.context` to an empty object. req.context is used to add our custom request values to avoid polluting
    or accidentally overriding important `req` object values.
@@ -128,11 +128,28 @@ we are most interested in are:
 
 ### Installing packages
 
-Ensure that you're on the `examples/postgres/` directory of this repository.
+Ensure that you're on the `examples/mongo/` directory of this repository.
 
 ```bash
 $ yarn
 ```
+
+### Setting up environment
+
+This guide assumes that you have `mongoDB` set up on your computer and have enough knowledge to interact with mongoDB
+databases. Refer to this [resource](https://www.quackit.com/mongodb/tutorial/) for quick reference. Follow the following
+steps:
+
+1. Copy `.env.example` to `.env` and edit the environment variables to match the names that you want for your
+   development and test databases.
+2. Seed the database with some data.
+   ```bash
+   yarn seed
+   ```
+   To undo this step run:
+   ```bash
+   yarn seed:undo
+   ```
 
 ### Running tests
 
@@ -142,8 +159,10 @@ $ yarn test
 
 ### Testing manually (using Postman)
 
-A Postman collection that you can import is included on the root of the project. The following users are available when
-the application is started:
+A Postman collection that you can import is included on the root of the project. It makes extensive use of variables and
+tests to eliminate the effort of copying and pasting mongoDB object ids. This is achieved by storing values from
+preceding requests in Postman environment and using them on other requests. The following users are available when the
+application is started:
 
 ```text
 1. Foo Bar => username: foobar
@@ -209,7 +228,7 @@ To interact with the user module make the following requests:
 3. `PUT user/:id/role`
    ```json
    {
-     "roleIds": [1, 2]
+     "roleIds": ["5cb0535ce4ae20b496259fd5", "5cb0535ce4ae20b496259fd6"]
    }
    ```
 
@@ -235,5 +254,5 @@ To interact with the article module CRUD make the following requests:
    ```
 5. `DELETE article/:id`
 
-Confirm that it is impossible for any user to update an article that is created by another. Also, confirm that only the 
+Confirm that it is impossible for any user to update an article that is created by another. Also, confirm that only the
 owner or a user with `article.delete` permission can delete an article.
