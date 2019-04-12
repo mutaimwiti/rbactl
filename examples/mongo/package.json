@@ -5,7 +5,8 @@
   "scripts": {
     "test": "NODE_ENV=test jest --colors --detectOpenHandles",
     "start": "cd app && yarn nodemon server.js",
-    "seed": "node app/seeder.js"
+    "seed": "node app/seeder/seed.js",
+    "seed:undo": "node app/seeder/undo.js"
   },
   "author": "Mutai Mwiti",
   "license": "MIT",
