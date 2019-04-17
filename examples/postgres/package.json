@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "main": "server.js",
   "scripts": {
+    "build:lib": "cd ../../ && yarn && yarn clean && yarn build",
+    "pretest": "yarn build:lib",
+    "prestart": "yarn build:lib",
     "migrate": "cd app && sequelize db:migrate",
     "migrate:undo": "cd app && sequelize db:migrate:undo:all",
     "seed": "cd app && sequelize db:seed:all",
