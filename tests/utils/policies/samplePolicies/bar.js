@@ -46,5 +46,17 @@ export default {
   // a nested promise callback - not supported
   share: {
     $and: [{ any: ["bar.g"] }, async () => true]
+  },
+  start: {
+    $and: ["bar.r", "bar.s"]
+  },
+  pause: {
+    $or: ["bar.x", "bar.y"]
+  },
+  stop: {
+    $and: ["bar.m", "bar.n", { $or: ["bar.a", "bar.b", "bar.c"] }]
+  },
+  restart: {
+    $and: ["bar.g", "bar.h", { any: ["bar.j", "bar.k", "bar.l"] }]
   }
 };
