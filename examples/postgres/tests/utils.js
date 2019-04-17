@@ -31,7 +31,7 @@ const createArticle = async (owner, overrides = {}) => {
   return Article.create({
     ownerId: articleOwner.id,
     title: faker.lorem.sentence(1),
-    body: faker.lorem.paragraph(1),
+    body: faker.lorem.sentence(1),
     ...overrides
   });
 };
