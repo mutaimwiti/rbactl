@@ -3,7 +3,7 @@ export { loadPolicies } from "./policies";
 export {
   loadPermissions,
   parsePermissions,
+  getPermissionsMap,
   validatePermissions,
-  getAllPermissionsFor,
-  getPermissionsMapArray
+  getAllPermissionsFor
 } from "./permissions";

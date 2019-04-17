@@ -70,14 +70,14 @@ export const validatePermissions: (systemPermissions, permissions) => object;
 export const getAllPermissionsFor: (systemPermissions, entity) => Array<string>;
 
 /**
- * Get an array containing mappings (key : description) of permissions. These are
- * against the system pe
+ * Get an object containing mappings (key : description) of permissions. The mapping
+ * is based on the defined system permissions.
  *
  * @param systemPermissions
  * @param permissions
- * @returns {Array}
+ * @returns {*}
  */
-export const getPermissionsMapArray: (
+export const getPermissionsMap: (
   systemPermissions,
   permissions
 ) => Array<object>;

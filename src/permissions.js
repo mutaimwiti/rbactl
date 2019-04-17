@@ -141,21 +141,21 @@ export const validatePermissions = (systemPermissions, permissions) => {
 };
 
 /**
- * Get an array containing mappings (key : description) of permissions. These are
- * against the system pe
+ * Get an object containing mappings (key : description) of permissions. The mapping
+ * is based on the defined system permissions.
  *
  * @param systemPermissions
  * @param permissions
- * @returns {Array}
+ * @returns {*}
  */
-export const getPermissionsMapArray = (systemPermissions, permissions) => {
-  const permissionsArray = [];
+export const getPermissionsMap = (systemPermissions, permissions) => {
+  const permissionsMap = {};
 
   permissions.forEach(permission => {
-    permissionsArray.push({ [permission]: systemPermissions[permission] });
+    permissionsMap[permission] = systemPermissions[permission];
   });
 
-  return permissionsArray;
+  return permissionsMap;
 };
 
 /**
