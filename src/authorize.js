@@ -1,4 +1,5 @@
 import { hasAllPermissions, hasAnyPermission } from "./permissions";
+import { createException } from "./utils";
 
 /**
  * Credit - https://stackoverflow.com/questions/55240828
@@ -29,7 +30,7 @@ export const authorizeActionAgainstPolicy = (
     if (typeof policy === "function") {
       const result = policy(req);
       if (result instanceof Promise && callCount > 1) {
-        throw Error("Unexpected nested promise callback.");
+        throw createException("Unexpected nested promise callback.");
       }
       return result;
     }
@@ -78,7 +79,9 @@ export const authorize = (
         throw e;
       }
     }
-    throw Error(`The [${entity}] policy does not define action [${action}].`);
+    throw createException(
+      `The [${entity}] policy does not define action [${action}].`
+    );
   }
-  throw Error(`The [${entity}] policy is not defined.`);
+  throw createException(`The [${entity}] policy is not defined.`);
 };
