@@ -1,7 +1,9 @@
 import { loadPolicies } from "../../src/policies";
 import { authorize } from "../../src";
 
-const policies = loadPolicies(`${__dirname}/policies/samplePolicies`);
+export const systemPolicies = loadPolicies(
+  `${__dirname}/policies/samplePolicies`
+);
 
 /**
  * This is a wrapper that allows us to test authorize() without having to supply
@@ -14,5 +16,5 @@ const policies = loadPolicies(`${__dirname}/policies/samplePolicies`);
  * @returns {*}
  */
 export default (entity, action, userPermissions, req) => {
-  return authorize(action, entity, userPermissions, policies, req);
+  return authorize(action, entity, userPermissions, systemPolicies, req);
 };

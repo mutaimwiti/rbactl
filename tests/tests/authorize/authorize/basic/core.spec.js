@@ -1,5 +1,5 @@
-import authorize from "../../../utils/authorize";
-import { createException } from "../../../../src/utils";
+import authorize from "../../../../utils/authorize";
+import { createException } from "../../../../../src/utils";
 
 describe("authorize.js - core", () => {
   it("should fail if policy is not defined", () => {

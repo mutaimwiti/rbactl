@@ -1,5 +1,5 @@
-import authorize from "../../../utils/authorize";
-import { createException } from "../../../../src/utils";
+import authorize from "../../../../utils/authorize";
+import { createException } from "../../../../../src/utils";
 
 describe("authorize.js - complex - case 6", () => {
   it("should throw exception when nested promise callback id found", async () => {

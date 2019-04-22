@@ -1,4 +1,4 @@
-import authorize from "../../../utils/authorize";
+import authorize from "../../../../utils/authorize";
 
 describe("authorize.js - complex - case 5", () => {
   it("should check for authorization correctly - success", () => {

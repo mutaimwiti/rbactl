@@ -1,4 +1,4 @@
-import { authorize } from "../../../../src";
+import { authorize } from "../../../../../src";
 
 /*
 A simple policies definition in an object. Can be very useful for small apps.

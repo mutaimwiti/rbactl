@@ -1,4 +1,4 @@
-export { authorize } from "./authorize";
+export { authorize, createCan } from "./authorize";
 export { loadPolicies } from "./policies";
 export {
   loadPermissions,

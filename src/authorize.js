@@ -51,7 +51,7 @@ export const authorizeActionAgainstPolicy = (
  * Authorize a user action on an entity based on the user permissions and
  * system policies. All occurrences of the callback rule are called with
  * the req object. This allows the user to authorize based on req
- * parameters.
+ * paramet`ers.
  *
  * @param action
  * @param entity
@@ -84,4 +84,51 @@ export const authorize = (
     );
   }
   throw createException(`The [${entity}] policy is not defined.`);
+};
+
+/**
+ * Create a 'can' function for your app based on system policies. The can function
+ * is used to create authorization middleware for a specific action on a specific
+ * entity. createCan expects the following arguments:
+ *
+ * - policies - the system policies definition.
+ * - userPermissionsResolver - an handler that is triggered to get user permissions.
+ * - unauthorizedRequestHandler - an handler that is triggered if the user is not
+ *   authorized to make the request.
+ * - authorizationExceptionHandler - an handler that is triggered if an exception
+ *   occurs when trying to get user permissions, check authorization or when
+ *   triggering unauthorizedRequestHandler.
+ *
+ * @param policies
+ * @param userPermissionsResolver
+ * @param unauthorizedRequestHandler
+ * @param authorizationExceptionHandler
+ * @returns {function(*=, *=): Function}
+ */
+export const createCan = (
+  policies,
+  userPermissionsResolver,
+  unauthorizedRequestHandler,
+  authorizationExceptionHandler
+) => {
+  return (action, entity) => {
+    return async (req, res, next) => {
+      try {
+        if (
+          !(await authorize(
+            action,
+            entity,
+            await userPermissionsResolver(req),
+            policies,
+            req
+          ))
+        ) {
+          return unauthorizedRequestHandler(req, res, next);
+        }
+        return next();
+      } catch (e) {
+        return authorizationExceptionHandler(req, res, next, e);
+      }
+    };
+  };
 };
