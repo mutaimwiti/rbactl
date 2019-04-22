@@ -51,7 +51,7 @@ export const authorizeActionAgainstPolicy = (
  * Authorize a user action on an entity based on the user permissions and
  * system policies. All occurrences of the callback rule are called with
  * the req object. This allows the user to authorize based on req
- * paramet`ers.
+ * parameters.
  *
  * @param action
  * @param entity
