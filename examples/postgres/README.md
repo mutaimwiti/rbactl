@@ -45,7 +45,7 @@ The key files and directories to look at are:
 
 1. `permissions/`
 2. `policies/`
-3. `middleware.js`
+3. `middleware/`
 4. `routes/`
 5. `utils.js`
 
@@ -54,8 +54,8 @@ The key files and directories to look at are:
 The application permissions are defined in the `permissions` directory. Each permission file is given the name of the
 entity it represents on the system. Permissions are defined as an object with the keys representing actions and the
 values representing the definition of the permission. On a small system the best approach is to define all permissions
-in one file as a nested object and parse them using the `parsePermissions` method. In this example we define permissions
-for `article`, `permission`, `role` and `user` which are system entities.
+in one file as a nested object and parse them using the `parsePermissions` function. In this example we define
+permissions for `article`, `permission`, `role` and `user` which are system entities.
 
 #### Policies
 
@@ -78,32 +78,36 @@ policies for `article`, `permission`, `role` and `user` which are system entitie
 
 #### Middleware
 
-When a request is received the aim is to invoke a controller method to process it. Before the controller method is hit
-we have middleware to perform checks. Breaking down middleware:
+When a request is received the aim is to invoke a controller function to process it. Before the controller function is
+hit we have middleware to perform checks. A breakdown of middleware:
 
-1. `init` - sets `req.context` to an empty object. req.context is used to add our custom request values to avoid polluting
-   or accidentally overriding important `req` object values.
+1. `init` - sets `req.context` to an empty object. req.context is used to add our custom request values to avoid
+   polluting or accidentally overriding important `req` object values.
 2. `authenticate` - determines identity of the user that is making the request. It does this by checking the jwt token
    passed via the authorization header. If the authorization header is not provided or the user it identifies does not
    exist authentication fails. This causes the request to fail with a `401 status`. If the user exists it adds the user
    object to the req object (`req.user`) to be used by the next handlers.
-3. `can` - checks whether the user is authorized to perform the action that they are trying to perform on a given
-   entity. In the implementation, it makes use of the `authorize` method to create an express middleware method to
-   authorize a specific action. The authorize method takes the following parameters: `action`, `entity`,
-   `authenticated user permissions`, `policies` and the `req express object`. The last parameter is optional so long as
-   none of the app policies make use of it.
-4. `processArticleParam` - checks whether the article represented by the `id` parameter exists. If not the request fails
-   with a `404 status`. If it exists it adds the article object to the req.context object and the request is allowed to
-   proceed to the next handler. Note that this middleware is only relevant for requests that have the id parameter i.e.
-   get one, update and delete.
-5. `processRoleParam` - checks whether the role represented by the `id` parameter exists. If not the request fails
-   with a `404 status`. If it exists it adds the role object to the `req.context` object and the request is allowed to
-   proceed to the next handler. The middleware is only relevant for requests that have the id parameter i.e. get one,
-   update and delete.
-6. `processUserParam` - checks whether the user represented by the `id` parameter exists. If not the request fails with
-   a `404 status`. If it exists it adds the user object to the `req.context` object and the request is allowed to
-   proceed to the next handler. The middleware is only relevant for requests that have the is parameter i.e. get one,
-   and setRoles.
+3. `processParam` - a set of middleware functions that check whether the entity represented by the `id` parameter
+   exists. If not the request fails with a `404 status`. If it exists it adds the entity object to the req.context
+   object and the request is allowed to proceed to the next handler. Note that these middleware are only relevant for
+   requests that have the id parameter like get one, update and delete. The app has the following param processing
+   middleware: `processArticleParam`, `processRoleParam` and `processUserParam`.
+4. `can` - a function that when invoked creates a middleware function that checks whether the user is authorized to
+   perform the action that they are trying to perform on a given entity. There are two functions that can be used to
+   create the can function:
+   - `authorize()` - this function checks whether a user is allowed to perform the action that they're trying to
+     perform on a given entity. It accepts the following parameters:
+     - `action` - the user action to check.
+     - `entity` - the entity to check the action against.
+     - `userPermissions` - the permissions of the user making the request.
+     - `policies` - an object that defines all the system policies.
+     - `req` - this is the express req object. This parameter is optional so long as none of the app policies make
+       use of it.
+   - `createCan()` - this function generates the can function for you. It accepts the following parameters:
+     - `userPermissionsResolver` - an handler that is triggered to get user permissions.
+     - `unauthorizedRequestHandler` - an handler that is triggered if the user is not authorized to make the request.
+     - `authorizationExceptionHandler` - an handler that is triggered if an exception occurs when trying to get user
+       permissions, check authorization or when triggering unauthorizedRequestHandler.
 
 #### Routes
 
@@ -121,9 +125,9 @@ The `utils.js` file defines functions that are used throughout the app to simpli
 we are most interested in are:
 
 1. `getAppPermissions()` - loads the application permissions defined in the `permissions` directory by making use of the
-   `loadPermissions` helper method.
+   `loadPermissions` helper function.
 2. `validatePermissions()` - validates a list of permissions against the system permissions using the
-   `validatePermissions` helper method.
+   `validatePermissions` helper function.
 
 ### Installing packages
 
