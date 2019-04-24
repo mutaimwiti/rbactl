@@ -93,7 +93,7 @@ hit we have middleware to perform checks. A breakdown of middleware:
    object and the request is allowed to proceed to the next handler. Note that these middleware are only relevant for
    requests that have the id parameter like get one, update and delete. The app has the following param processing
    middleware: `processArticleParam`, `processRoleParam` and `processUserParam`.
-4. `can` - a function that when invoked creates a middleware function that checks whether the user is authorized to
+4. `can` - when invoked it creates a middleware function that can be used to check whether the user is authorized to
    perform the action that they are trying to perform on a given entity. There are two functions that can be used to
    create the can function:
    - `authorize()` - this function checks whether a user is allowed to perform the action that they're trying to
