@@ -1,5 +1,5 @@
-const app = require("./app");
-const { connect } = require("./app/config/database");
+const app = require('./app');
+const { connect } = require('./app/config/database');
 
 (async () => {
   await connect();

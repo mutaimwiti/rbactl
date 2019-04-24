@@ -1,6 +1,6 @@
-const router = require("express").Router();
-const { can, processArticleParam } = require("../middleware");
-const { article } = require("../controllers");
+const router = require('express').Router();
+const { can, processArticleParam } = require('../middleware');
+const { article } = require('../controllers');
 
 /**
  * A helper function to create an authorization middleware specific
@@ -9,14 +9,14 @@ const { article } = require("../controllers");
  * @param action
  * @returns {*}
  */
-const authorize = action => {
-  return can(action, "article");
+const authorize = (action) => {
+  return can(action, 'article');
 };
 
-router.get("/", authorize("view"), article.list);
-router.get("/:id", processArticleParam, authorize("view"), article.get);
-router.post("/", authorize("create"), article.create);
-router.put("/:id", processArticleParam, authorize("update"), article.update);
-router.delete("/:id", processArticleParam, authorize("delete"), article.delete);
+router.get('/', authorize('view'), article.list);
+router.get('/:id', processArticleParam, authorize('view'), article.get);
+router.post('/', authorize('create'), article.create);
+router.put('/:id', processArticleParam, authorize('update'), article.update);
+router.delete('/:id', processArticleParam, authorize('delete'), article.delete);
 
 module.exports = router;

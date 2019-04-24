@@ -1,7 +1,7 @@
 const data = {
   likes: true,
   dislikes: false,
-  ownerId: 3
+  ownerId: 3,
 };
 
 /**
@@ -11,52 +11,55 @@ export default {
   create: {
     $or: [
       {
-        $and: [{ any: ["bar.a", "bar.b"] }, { all: ["bar.m", "bar.n"] }]
+        $and: [{ any: ['bar.a', 'bar.b'] }, { all: ['bar.m', 'bar.n'] }],
       },
-      { any: ["bar.j", "bar.k"] }
-    ]
+      { any: ['bar.j', 'bar.k'] },
+    ],
   },
   edit: {
     $or: [
       {
-        $and: [{ any: ["bar.p", "bar.q"] }, () => data.likes]
+        $and: [{ any: ['bar.p', 'bar.q'] }, () => data.likes],
       },
-      { any: ["bar.n", "bar.o"] }
-    ]
+      { any: ['bar.n', 'bar.o'] },
+    ],
   },
   list: {
     $and: [
       {
-        $or: [{ any: ["bar.c", "bar.d"] }, { all: ["bar.e", "bar.f"] }]
+        $or: [{ any: ['bar.c', 'bar.d'] }, { all: ['bar.e', 'bar.f'] }],
       },
-      { all: ["bar.l", "bar.m"] }
-    ]
+      { all: ['bar.l', 'bar.m'] },
+    ],
   },
   remove: {
     $or: [
       {
-        $and: [{ any: ["bar.g", "bar.h"] }, { all: ["bar.i", "bar.j"] }]
+        $and: [{ any: ['bar.g', 'bar.h'] }, { all: ['bar.i', 'bar.j'] }],
       },
-      { $or: [{ any: ["bar.r", "bar.s"] }, () => data.dislikes] }
-    ]
+      { $or: [{ any: ['bar.r', 'bar.s'] }, () => data.dislikes] },
+    ],
   },
   archive: {
-    $and: [req => req.params.id === data.ownerId, { any: ["bar.x", "bar.y"] }]
+    $and: [
+      (req) => req.params.id === data.ownerId,
+      { any: ['bar.x', 'bar.y'] },
+    ],
   },
   // a nested promise callback - not supported
   share: {
-    $and: [{ any: ["bar.g"] }, async () => true]
+    $and: [{ any: ['bar.g'] }, async () => true],
   },
   start: {
-    $and: ["bar.r", "bar.s"]
+    $and: ['bar.r', 'bar.s'],
   },
   pause: {
-    $or: ["bar.x", "bar.y"]
+    $or: ['bar.x', 'bar.y'],
   },
   stop: {
-    $and: ["bar.m", "bar.n", { $or: ["bar.a", "bar.b", "bar.c"] }]
+    $and: ['bar.m', 'bar.n', { $or: ['bar.a', 'bar.b', 'bar.c'] }],
   },
   restart: {
-    $and: ["bar.g", "bar.h", { any: ["bar.j", "bar.k", "bar.l"] }]
-  }
+    $and: ['bar.g', 'bar.h', { any: ['bar.j', 'bar.k', 'bar.l'] }],
+  },
 };

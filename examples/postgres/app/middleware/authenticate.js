@@ -1,5 +1,5 @@
-const { User } = require("../models");
-const { decodeAuthToken } = require("../utils");
+const { User } = require('../models');
+const { decodeAuthToken } = require('../utils');
 
 /**
  * This middleware identifies the user making the request via the
@@ -15,7 +15,7 @@ const { decodeAuthToken } = require("../utils");
  */
 const authenticate = async (req, res, next) => {
   // if the route is not protected proceed to the next handler
-  if (req.url === "/" || req.url === "/auth/login") return next();
+  if (req.url === '/' || req.url === '/auth/login') return next();
   // If this were session based auth system we would be verifying the
   // username/email and password combination against the session
   // in this step.
@@ -28,7 +28,7 @@ const authenticate = async (req, res, next) => {
     return next();
   } catch (e) {
     return res.status(401).json({
-      message: "Sorry :( Log in and try again."
+      message: 'Sorry :( Log in and try again.',
     });
   }
 };

@@ -1,11 +1,11 @@
-const { User, Role } = require("../models");
-const { objectIdsAreValid } = require("../utils");
+const { User, Role } = require('../models');
+const { objectIdsAreValid } = require('../utils');
 
 module.exports = {
   list: async (req, res) => {
     const users = await User.find({})
-      .populate("roles")
-      .select("-password");
+      .populate('roles')
+      .select('-password');
     return res.json({ users });
   },
 
@@ -24,7 +24,7 @@ module.exports = {
 
     if (!(roleCount === roleIds.length)) {
       return res.status(400).json({
-        message: "One or more of the role ids you provided are invalid."
+        message: 'One or more of the role ids you provided are invalid.',
       });
     }
 
@@ -32,11 +32,11 @@ module.exports = {
     user.roles = roleIds;
     user.save();
 
-    const updated = await User.findOne({ _id: user._id }).populate("roles");
+    const updated = await User.findOne({ _id: user._id }).populate('roles');
 
     return res.json({
-      message: "Successfully updated user roles.",
-      user: updated
+      message: 'Successfully updated user roles.',
+      user: updated,
     });
-  }
+  },
 };

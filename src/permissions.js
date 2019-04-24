@@ -1,4 +1,4 @@
-import requireAll from "require-all";
+import requireAll from 'require-all';
 
 /**
  * Generate the full group permission string for the passed permission i.e if
@@ -9,11 +9,11 @@ import requireAll from "require-all";
  * @param permission
  * @returns {*}
  */
-export const getFullGroupPermission = permission => {
-  if (permission.indexOf("*") >= 0) {
+export const getFullGroupPermission = (permission) => {
+  if (permission.indexOf('*') >= 0) {
     return permission;
   }
-  return `${permission.substr(0, permission.lastIndexOf("."))}.*`;
+  return `${permission.substr(0, permission.lastIndexOf('.'))}.*`;
 };
 
 /**
@@ -31,7 +31,7 @@ export const hasAnyPermission = (userPermissions, validPermissions) => {
 
   let hasAnyValid = false;
 
-  validPermissions.forEach(permission => {
+  validPermissions.forEach((permission) => {
     if (
       userPermissions.indexOf(permission) >= 0 ||
       userPermissions.indexOf(getFullGroupPermission(permission)) >= 0
@@ -54,7 +54,7 @@ export const hasAnyPermission = (userPermissions, validPermissions) => {
 export const hasAllPermissions = (userPermissions, requiredPermissions) => {
   let hasAllRequired = true;
 
-  requiredPermissions.forEach(permission => {
+  requiredPermissions.forEach((permission) => {
     if (
       userPermissions.indexOf(permission) < 0 &&
       userPermissions.indexOf(getFullGroupPermission(permission)) < 0
@@ -74,17 +74,17 @@ export const hasAllPermissions = (userPermissions, requiredPermissions) => {
  * @param pathName
  * @returns {{$all: {}}}
  */
-export const loadPermissions = pathName => {
+export const loadPermissions = (pathName) => {
   const permissions = {
-    $all: {}
+    $all: {},
   };
   const permissionsObj = requireAll(pathName);
-  Object.keys(permissionsObj).forEach(permission => {
+  Object.keys(permissionsObj).forEach((permission) => {
     const actions = {};
     const actionsObj = permissionsObj[permission].default
       ? permissionsObj[permission].default
       : permissionsObj[permission];
-    Object.keys(actionsObj).forEach(action => {
+    Object.keys(actionsObj).forEach((action) => {
       actions[`${permission}.${action}`] = actionsObj[action];
     });
     permissions.$all = { ...permissions.$all, ...actions };
@@ -102,14 +102,14 @@ export const loadPermissions = pathName => {
  * @returns {{$all: {}}}
  * @param permissionsObj
  */
-export const parsePermissions = permissionsObj => {
+export const parsePermissions = (permissionsObj) => {
   const permissions = {
-    $all: {}
+    $all: {},
   };
-  Object.keys(permissionsObj).forEach(permission => {
+  Object.keys(permissionsObj).forEach((permission) => {
     const actions = {};
     const actionsObj = permissionsObj[permission];
-    Object.keys(actionsObj).forEach(action => {
+    Object.keys(actionsObj).forEach((action) => {
       actions[`${permission}.${action}`] = actionsObj[action];
     });
     permissions.$all = { ...permissions.$all, ...actions };
@@ -131,7 +131,7 @@ export const validatePermissions = (systemPermissions, permissions) => {
   let isValid = true;
   const invalids = [];
   const systemPermissionKeys = Object.keys(systemPermissions);
-  permissions.forEach(permission => {
+  permissions.forEach((permission) => {
     if (systemPermissionKeys.indexOf(permission) < 0) {
       isValid = false;
       invalids.push(permission);
@@ -151,7 +151,7 @@ export const validatePermissions = (systemPermissions, permissions) => {
 export const getPermissionsMap = (systemPermissions, permissions) => {
   const permissionsMap = {};
 
-  permissions.forEach(permission => {
+  permissions.forEach((permission) => {
     permissionsMap[permission] = systemPermissions[permission];
   });
 
@@ -167,7 +167,7 @@ export const getPermissionsMap = (systemPermissions, permissions) => {
  * @returns {string[]}
  */
 export const getAllPermissionsFor = (systemPermissions, entity) => {
-  return Object.keys(systemPermissions).filter(permission =>
-    permission.startsWith(entity)
+  return Object.keys(systemPermissions).filter((permission) =>
+    permission.startsWith(entity),
   );
 };

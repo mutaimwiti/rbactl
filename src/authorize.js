@@ -1,5 +1,5 @@
-import { hasAllPermissions, hasAnyPermission } from "./permissions";
-import { createException } from "./utils";
+import { hasAllPermissions, hasAnyPermission } from './permissions';
+import { createException } from './utils';
 
 /**
  * Credit - https://stackoverflow.com/questions/55240828
@@ -12,33 +12,33 @@ import { createException } from "./utils";
 export const authorizeActionAgainstPolicy = (
   userPermissions,
   actionPolicy,
-  req
+  req,
 ) => {
   let callCount = 0;
 
-  const authorize = policy => {
+  const authorize = (policy) => {
     callCount += 1;
-    const operators = { $or: "some", $and: "every" };
+    const operators = { $or: 'some', $and: 'every' };
     const fns = {
-      any: permissions => hasAnyPermission(userPermissions, permissions),
-      all: permissions => hasAllPermissions(userPermissions, permissions)
+      any: (permissions) => hasAnyPermission(userPermissions, permissions),
+      all: (permissions) => hasAllPermissions(userPermissions, permissions),
     };
 
-    if (typeof policy === "string")
+    if (typeof policy === 'string')
       return hasAllPermissions(userPermissions, [policy]);
 
-    if (typeof policy === "function") {
+    if (typeof policy === 'function') {
       const result = policy(req);
       if (result instanceof Promise) {
         if (callCount > 1) {
-          throw createException("Unexpected nested promise callback.");
+          throw createException('Unexpected nested promise callback.');
         }
       } else {
         const resultType = typeof result;
 
-        if (resultType !== "boolean") {
+        if (resultType !== 'boolean') {
           throw createException(
-            `Unexpected return type [${resultType}] from a callback.`
+            `Unexpected return type [${resultType}] from a callback.`,
           );
         }
       }
@@ -46,7 +46,7 @@ export const authorizeActionAgainstPolicy = (
       return result;
     }
 
-    if (!policy || typeof policy !== "object") return false;
+    if (!policy || typeof policy !== 'object') return false;
 
     const [key, value] = Object.entries(policy)[0];
 
@@ -76,7 +76,7 @@ export const authorize = (
   entity,
   userPermissions,
   policies,
-  req = {}
+  req = {},
 ) => {
   const policy = policies[entity];
 
@@ -93,7 +93,7 @@ export const authorize = (
       }
     }
     throw createException(
-      `The [${entity}] policy does not define action [${action}].`
+      `The [${entity}] policy does not define action [${action}].`,
     );
   }
   throw createException(`The [${entity}] policy is not defined.`);
@@ -122,7 +122,7 @@ export const createCan = (
   policies,
   userPermissionsResolver,
   unauthorizedRequestHandler,
-  authorizationExceptionHandler
+  authorizationExceptionHandler,
 ) => {
   return (action, entity) => {
     return async (req, res, next) => {
@@ -133,7 +133,7 @@ export const createCan = (
             entity,
             await userPermissionsResolver(req),
             policies,
-            req
+            req,
           )) !== true
         ) {
           return unauthorizedRequestHandler(req, res, next);

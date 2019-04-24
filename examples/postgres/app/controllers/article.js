@@ -1,4 +1,4 @@
-const { Article } = require("../models");
+const { Article } = require('../models');
 
 module.exports = {
   list: async (req, res) => {
@@ -13,18 +13,18 @@ module.exports = {
   create: async (req, res) => {
     const article = await Article.create({
       ownerId: req.user.id,
-      ...req.body
+      ...req.body,
     });
-    return res.json({ article, message: "Article created successfully." });
+    return res.json({ article, message: 'Article created successfully.' });
   },
 
   update: async (req, res) => {
     const article = await req.context.article.update({ ...req.body });
-    return res.json({ article, message: "Article updated successfully." });
+    return res.json({ article, message: 'Article updated successfully.' });
   },
 
   delete: async (req, res) => {
     await req.context.article.destroy();
-    return res.json({ message: "Article deleted successfully." });
-  }
+    return res.json({ message: 'Article deleted successfully.' });
+  },
 };

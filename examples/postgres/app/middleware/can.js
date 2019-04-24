@@ -1,5 +1,5 @@
-const { authorize, createCan } = require("../../../../lib");
-const { getAppPolicies } = require("../utils");
+const { authorize, createCan } = require('../../../../lib');
+const { getAppPolicies } = require('../utils');
 
 const policies = getAppPolicies();
 
@@ -24,7 +24,7 @@ const can1 = (action, entity) => {
       // optional.
       if (authorize(action, entity, userPermissions, policies, req) !== true) {
         return res.status(403).json({
-          message: `You are not authorized to perform this action.`
+          message: `You are not authorized to perform this action.`,
         });
       }
       return next();
@@ -34,7 +34,7 @@ const can1 = (action, entity) => {
       // three exceptions are possible: missing policy, missing policy action or
       // unexpected nested promise callback
       return res.status(500).json({
-        message: "Sorry :( Something bad happened."
+        message: 'Sorry :( Something bad happened.',
       });
     }
   };
@@ -50,17 +50,17 @@ const can1 = (action, entity) => {
  */
 const can2 = createCan(
   policies,
-  async req => req.user.getPermissions(),
+  async (req) => req.user.getPermissions(),
   (req, res) => {
     return res.status(403).json({
-      message: `You are not authorized to perform this action.`
+      message: `You are not authorized to perform this action.`,
     });
   },
   (req, res) => {
     return res.status(500).json({
-      message: "Sorry :( Something bad happened."
+      message: 'Sorry :( Something bad happened.',
     });
-  }
+  },
 );
 
 module.exports = can2;

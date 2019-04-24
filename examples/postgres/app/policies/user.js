@@ -1,6 +1,6 @@
 module.exports = {
   view: {
-    any: ["user.view", "user.setRoles"]
+    any: ['user.view', 'user.setRoles'],
   },
-  setRoles: "user.setRoles"
+  setRoles: 'user.setRoles',
 };

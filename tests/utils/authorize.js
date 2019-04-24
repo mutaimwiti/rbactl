@@ -1,8 +1,8 @@
-import { loadPolicies } from "../../src/policies";
-import { authorize } from "../../src";
+import { loadPolicies } from '../../src/policies';
+import { authorize } from '../../src';
 
 export const systemPolicies = loadPolicies(
-  `${__dirname}/policies/samplePolicies`
+  `${__dirname}/policies/samplePolicies`,
 );
 
 /**

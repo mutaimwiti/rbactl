@@ -1,24 +1,24 @@
-import authorize from "../../../../utils/authorize";
+import authorize from '../../../../utils/authorize';
 
-describe("authorize.js - complex - case 8", () => {
-  it("should check for authorization correctly - success", () => {
+describe('authorize.js - complex - case 8', () => {
+  it('should check for authorization correctly - success', () => {
     const successCombinations = [
-      ["bar.x"],
-      ["bar.y"],
-      ["bar.x", "bar.y"],
-      ["bar.x", "bar.y", "bar.g"]
+      ['bar.x'],
+      ['bar.y'],
+      ['bar.x', 'bar.y'],
+      ['bar.x', 'bar.y', 'bar.g'],
     ];
 
-    successCombinations.forEach(permissions => {
-      expect(authorize("pause", "bar", permissions)).toEqual(true);
+    successCombinations.forEach((permissions) => {
+      expect(authorize('pause', 'bar', permissions)).toEqual(true);
     });
   });
 
-  it("should check for authorization correctly - failure", () => {
-    const failureCombinations = [[], ["bar.g"]];
+  it('should check for authorization correctly - failure', () => {
+    const failureCombinations = [[], ['bar.g']];
 
-    failureCombinations.forEach(permissions => {
-      expect(authorize("pause", "bar", permissions)).toEqual(false);
+    failureCombinations.forEach((permissions) => {
+      expect(authorize('pause', 'bar', permissions)).toEqual(false);
     });
   });
 });

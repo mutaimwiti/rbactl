@@ -1,10 +1,10 @@
-const { User, Role } = require("../models");
-const { visibleUserAttributes } = require("../utils");
+const { User, Role } = require('../models');
+const { visibleUserAttributes } = require('../utils');
 
 module.exports = {
   list: async (req, res) => {
     const users = await User.findAll({
-      attributes: visibleUserAttributes
+      attributes: visibleUserAttributes,
     });
     return res.json({ users });
   },
@@ -20,15 +20,15 @@ module.exports = {
 
     if (!(roleCount === roleIds.length)) {
       return res.status(400).json({
-        message: "One or more of the role ids you provided are invalid."
+        message: 'One or more of the role ids you provided are invalid.',
       });
     }
 
     await req.context.user.setRoles(roleIds);
 
     return res.json({
-      message: "Successfully updated user roles.",
-      user: await req.context.user.reload()
+      message: 'Successfully updated user roles.',
+      user: await req.context.user.reload(),
     });
-  }
+  },
 };

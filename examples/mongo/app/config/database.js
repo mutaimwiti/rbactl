@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
-const { config } = require("./config");
+const mongoose = require('mongoose');
+const { config } = require('./config');
 
 const options = {
   promiseLibrary: global.Promise,
   useNewUrlParser: true,
-  useFindAndModify: false
+  useFindAndModify: false,
 };
 
 const connect = (callback = null) => {

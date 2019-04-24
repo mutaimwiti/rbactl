@@ -1,32 +1,32 @@
-import authorize from "../../../../utils/authorize";
+import authorize from '../../../../utils/authorize';
 
-describe("authorize.js - complex - case 9", () => {
-  it("should check for authorization correctly - success", () => {
+describe('authorize.js - complex - case 9', () => {
+  it('should check for authorization correctly - success', () => {
     const successCombinations = [
-      ["bar.g", "bar.h", "bar.j"],
-      ["bar.g", "bar.h", "bar.k"],
-      ["bar.g", "bar.h", "bar.l"],
-      ["bar.g", "bar.h", "bar.j", "bar.k"],
-      ["bar.g", "bar.h", "bar.j", "bar.l"],
-      ["bar.g", "bar.h", "bar.k", "bar.l"]
+      ['bar.g', 'bar.h', 'bar.j'],
+      ['bar.g', 'bar.h', 'bar.k'],
+      ['bar.g', 'bar.h', 'bar.l'],
+      ['bar.g', 'bar.h', 'bar.j', 'bar.k'],
+      ['bar.g', 'bar.h', 'bar.j', 'bar.l'],
+      ['bar.g', 'bar.h', 'bar.k', 'bar.l'],
     ];
 
-    successCombinations.forEach(permissions => {
-      expect(authorize("restart", "bar", permissions)).toEqual(true);
+    successCombinations.forEach((permissions) => {
+      expect(authorize('restart', 'bar', permissions)).toEqual(true);
     });
   });
 
-  it("should check for authorization correctly - failure", () => {
+  it('should check for authorization correctly - failure', () => {
     const failureCombinations = [
       [],
-      ["bar.g"],
-      ["bar.h"],
-      ["bar.g", "bar.h"],
-      ["bar.g", "bar.h", "bar.z"]
+      ['bar.g'],
+      ['bar.h'],
+      ['bar.g', 'bar.h'],
+      ['bar.g', 'bar.h', 'bar.z'],
     ];
 
-    failureCombinations.forEach(permissions => {
-      expect(authorize("restart", "bar", permissions)).toEqual(false);
+    failureCombinations.forEach((permissions) => {
+      expect(authorize('restart', 'bar', permissions)).toEqual(false);
     });
   });
 });

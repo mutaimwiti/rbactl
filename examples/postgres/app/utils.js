@@ -1,10 +1,10 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const {
   loadPolicies,
   loadPermissions,
-  validatePermissions: permissionsValidator
-} = require("../../../lib");
+  validatePermissions: permissionsValidator,
+} = require('../../../lib');
 
 /**
  * Generate a jwt token based on the details of the user object
@@ -14,15 +14,15 @@ const {
  * @returns {Promise<*>}
  * @throws Error
  */
-const generateAuthToken = async user => {
+const generateAuthToken = async (user) => {
   const { name, username } = user;
   return jwt.sign(
     {
       name,
       username,
-      permissions: await user.getPermissions()
+      permissions: await user.getPermissions(),
     },
-    process.env.SECRET_KEY || "$3cr3T"
+    process.env.SECRET_KEY || '$3cr3T',
   );
 };
 
@@ -34,16 +34,16 @@ const generateAuthToken = async user => {
  * @param req
  * @throws Error
  */
-const decodeAuthToken = req => {
+const decodeAuthToken = (req) => {
   const { authorization } = req.headers;
 
   if (!authorization || authorization.trim().length === 0) {
-    throw Error("The authentication token is required.");
+    throw Error('The authentication token is required.');
   }
 
-  const token = authorization.replace("Bearer ", "");
+  const token = authorization.replace('Bearer ', '');
 
-  return jwt.verify(token, process.env.SECRET_KEY || "$3cr3T");
+  return jwt.verify(token, process.env.SECRET_KEY || '$3cr3T');
 };
 
 /**
@@ -73,7 +73,7 @@ const getAppPermissions = () => {
  * @param permissions
  * @returns {object}
  */
-const validatePermissions = permissions => {
+const validatePermissions = (permissions) => {
   return permissionsValidator(getAppPermissions(), permissions);
 };
 
@@ -83,12 +83,12 @@ const getAppPolicies = () => {
 };
 
 const visibleUserAttributes = [
-  "id",
-  "name",
-  "email",
-  "username",
-  "createdAt",
-  "updatedAt"
+  'id',
+  'name',
+  'email',
+  'username',
+  'createdAt',
+  'updatedAt',
 ];
 
 module.exports = {
@@ -98,5 +98,5 @@ module.exports = {
   getAppPermissions,
   getAppPolicies,
   validatePermissions,
-  visibleUserAttributes
+  visibleUserAttributes,
 };

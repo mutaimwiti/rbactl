@@ -1,7 +1,7 @@
-const { getAllPermissionsFor } = require("../../../lib");
-const { getAppPermissions } = require("./utils");
+const { getAllPermissionsFor } = require('../../../lib');
+const { getAppPermissions } = require('./utils');
 
-const isArticleOwner = req => {
+const isArticleOwner = (req) => {
   return req.user && req.user._id.equals(req.context.article.owner._id);
 };
 
@@ -10,37 +10,37 @@ module.exports = {
     // since roles have permissions we allow anyone with any role permission
     // to view permissions
     view: {
-      any: getAllPermissionsFor(getAppPermissions(), "role")
-    }
+      any: getAllPermissionsFor(getAppPermissions(), 'role'),
+    },
   },
 
   role: {
     view: {
-      any: ["role.view", "role.create", "role.update", "role.delete"]
+      any: ['role.view', 'role.create', 'role.update', 'role.delete'],
     },
-    create: "role.create",
-    update: "role.update",
-    delete: "role.delete"
+    create: 'role.create',
+    update: 'role.update',
+    delete: 'role.delete',
   },
 
   user: {
     view: {
-      any: ["user.view", "user.setRoles"]
+      any: ['user.view', 'user.setRoles'],
     },
-    setRoles: "user.setRoles"
+    setRoles: 'user.setRoles',
   },
 
   article: {
     view: {
       any: [
-        "article.view",
-        "article.create",
-        "article.update",
-        "article.delete"
-      ]
+        'article.view',
+        'article.create',
+        'article.update',
+        'article.delete',
+      ],
     },
-    create: "article.create",
+    create: 'article.create',
     update: isArticleOwner,
-    delete: { $or: [isArticleOwner, "article.delete"] }
-  }
+    delete: { $or: [isArticleOwner, 'article.delete'] },
+  },
 };

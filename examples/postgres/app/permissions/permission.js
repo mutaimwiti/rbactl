@@ -1,3 +1,3 @@
 module.exports = {
-  view: "View permissions"
+  view: 'View permissions',
 };

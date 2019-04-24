@@ -1,12 +1,12 @@
-const { env } = require("../config/config");
-const { connect } = require("../config/database");
-const { User, Role, Article } = require("../models");
+const { env } = require('../config/config');
+const { connect } = require('../config/database');
+const { User, Role, Article } = require('../models');
 const {
   getRoles,
   getUsers,
   getArticles,
-  setUserRoles
-} = require("../__mock__");
+  setUserRoles,
+} = require('../__mock__');
 
 const seed = async () => {
   /* eslint-disable*/

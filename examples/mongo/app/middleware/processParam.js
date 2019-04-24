@@ -1,4 +1,4 @@
-const { User, Role, Article } = require("../models");
+const { User, Role, Article } = require('../models');
 
 /**
  * This middleware checks whether the article whose id is passed as a
@@ -15,12 +15,12 @@ const processArticleParam = async (req, res, next) => {
   try {
     const { id } = req.params;
     req.context.article = await Article.findOne({ _id: id })
-      .populate("owner", "-password")
+      .populate('owner', '-password')
       .orFail();
     return next();
   } catch (e) {
     return res.status(404).json({
-      message: "The article does not exist."
+      message: 'The article does not exist.',
     });
   }
 };
@@ -43,7 +43,7 @@ const processRoleParam = async (req, res, next) => {
     return next();
   } catch (e) {
     return res.status(404).json({
-      message: "The role does not exist."
+      message: 'The role does not exist.',
     });
   }
 };
@@ -63,12 +63,12 @@ const processUserParam = async (req, res, next) => {
   try {
     const { id } = req.params;
     req.context.user = await User.findOne({ _id: id })
-      .populate("roles")
+      .populate('roles')
       .orFail();
     return next();
   } catch (e) {
     return res.status(404).json({
-      message: "The user does not exist."
+      message: 'The user does not exist.',
     });
   }
 };
@@ -76,5 +76,5 @@ const processUserParam = async (req, res, next) => {
 module.exports = {
   processArticleParam,
   processRoleParam,
-  processUserParam
+  processUserParam,
 };

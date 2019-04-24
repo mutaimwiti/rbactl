@@ -1,23 +1,23 @@
-const supertest = require("supertest");
-const faker = require("faker");
-const { generateAuthToken } = require("../app/utils");
-const appDef = require("../app");
-const { User, Role, Article } = require("../app/models");
+const supertest = require('supertest');
+const faker = require('faker');
+const { generateAuthToken } = require('../app/utils');
+const appDef = require('../app');
+const { User, Role, Article } = require('../app/models');
 
 const createRole = async (permissions = []) => {
   return Role.create({
     name: faker.name.jobTitle(),
-    permissions
+    permissions,
   });
 };
 
 const createUser = async (overrides = {}, permissions = []) => {
   const user = await User.create({
-    name: faker.fake("{{name.firstName}} {{name.lastName}}"),
+    name: faker.fake('{{name.firstName}} {{name.lastName}}'),
     username: faker.internet.userName(),
     password: faker.internet.password(),
     email: faker.internet.email(),
-    ...overrides
+    ...overrides,
   });
   if (permissions.length) {
     const role = await createRole(permissions);
@@ -32,7 +32,7 @@ const createArticle = async (owner, overrides = {}) => {
     ownerId: articleOwner.id,
     title: faker.lorem.sentence(1),
     body: faker.lorem.sentence(1),
-    ...overrides
+    ...overrides,
   });
 };
 
@@ -85,7 +85,7 @@ const app = {
    * @returns {*}
    */
   addAuthorization(request) {
-    return this.token ? request.set("authorization", `${this.token}`) : request;
+    return this.token ? request.set('authorization', `${this.token}`) : request;
   },
 
   /**
@@ -138,7 +138,7 @@ const app = {
     const request = this.req.delete(url);
 
     return this.addAuthorization(request);
-  }
+  },
 };
 
 /**
@@ -164,5 +164,5 @@ module.exports = {
   eachPermission,
   createRole,
   createUser,
-  createArticle
+  createArticle,
 };

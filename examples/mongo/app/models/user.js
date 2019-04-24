@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const { authorize } = require("../../../../lib");
-const policies = require("../policies");
+const mongoose = require('mongoose');
+const { authorize } = require('../../../../lib');
+const policies = require('../policies');
 
 const { Schema } = mongoose;
 
@@ -9,17 +9,17 @@ const UserSchema = mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  roles: [{ type: Schema.Types.ObjectId, ref: "Role" }]
+  roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
 });
 
-UserSchema.virtual("permissions").get(async function f() {
-  const Role = mongoose.model("Role");
+UserSchema.virtual('permissions').get(async function f() {
+  const Role = mongoose.model('Role');
 
   const roles = await Role.find({ _id: { $in: this.roles.toObject() } });
 
   let permissions = [];
 
-  roles.forEach(role => {
+  roles.forEach((role) => {
     permissions = permissions.concat(role.permissions);
   });
 
@@ -43,4 +43,4 @@ UserSchema.methods.can = async function f(action, entity, req = null) {
   );
 };
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model('User', UserSchema);

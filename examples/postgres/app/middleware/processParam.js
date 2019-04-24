@@ -1,5 +1,5 @@
-const { User, Role, Article } = require("../models");
-const { visibleUserAttributes } = require("../utils");
+const { User, Role, Article } = require('../models');
+const { visibleUserAttributes } = require('../utils');
 
 /**
  * This middleware checks whether the article whose id is passed as a
@@ -14,11 +14,11 @@ const { visibleUserAttributes } = require("../utils");
  */
 const processArticleParam = async (req, res, next) => {
   const article = await Article.findOne({
-    where: { id: req.params.id }
+    where: { id: req.params.id },
   });
   if (!article) {
     return res.status(404).json({
-      message: "The article does not exist."
+      message: 'The article does not exist.',
     });
   }
   req.context.article = article;
@@ -39,11 +39,11 @@ const processArticleParam = async (req, res, next) => {
 const processRoleParam = async (req, res, next) => {
   const role = await Role.findOne({
     where: { id: req.params.id },
-    include: { model: User, as: "users" }
+    include: { model: User, as: 'users' },
   });
   if (!role) {
     return res.status(404).json({
-      message: "The role does not exist."
+      message: 'The role does not exist.',
     });
   }
   req.context.role = role;
@@ -65,11 +65,11 @@ const processUserParam = async (req, res, next) => {
   const user = await User.findOne({
     where: { id: req.params.id },
     attributes: visibleUserAttributes,
-    include: { model: Role, as: "roles" }
+    include: { model: Role, as: 'roles' },
   });
   if (!user) {
     return res.status(404).json({
-      message: "The user does not exist."
+      message: 'The user does not exist.',
     });
   }
   req.context.user = user;
@@ -79,5 +79,5 @@ const processUserParam = async (req, res, next) => {
 module.exports = {
   processArticleParam,
   processRoleParam,
-  processUserParam
+  processUserParam,
 };

@@ -1,4 +1,4 @@
-import requireAll from "require-all";
+import requireAll from 'require-all';
 
 /**
  * Loads the policies defined on the specified path. When loading, the policy
@@ -6,10 +6,10 @@ import requireAll from "require-all";
  *
  * @param pathName
  */
-export const loadPolicies = pathName => {
+export const loadPolicies = (pathName) => {
   const policies = {};
   const policiesObj = requireAll(pathName);
-  Object.keys(policiesObj).forEach(policy => {
+  Object.keys(policiesObj).forEach((policy) => {
     policies[policy] = policiesObj[policy].default
       ? policiesObj[policy].default
       : policiesObj[policy];

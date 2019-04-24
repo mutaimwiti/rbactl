@@ -1,28 +1,28 @@
-const { app, eachPermission, createRole } = require("../../utils");
+const { app, eachPermission, createRole } = require('../../utils');
 
 const apiUpdate = (roleId, data) => {
   return app.put(`/role/${roleId}`).send(data);
 };
 
-describe("role - delete", () => {
+describe('role - delete', () => {
   let roleId;
 
   beforeEach(async () => {
     roleId = (await createRole())._id;
   });
 
-  it("should not allow unauthenticated users", async () => {
+  it('should not allow unauthenticated users', async () => {
     const res = await apiUpdate(roleId);
 
     expect(res.status).toEqual(401);
   });
 
-  it("should not allow unauthorized users", async () => {
+  it('should not allow unauthorized users', async () => {
     const unauthorizedPermissions = [
-      "role.view",
-      "role.create",
-      "role.delete",
-      "role.something"
+      'role.view',
+      'role.create',
+      'role.delete',
+      'role.something',
     ];
     await eachPermission(unauthorizedPermissions, async () => {
       const res = await apiUpdate(roleId);
@@ -31,23 +31,23 @@ describe("role - delete", () => {
     });
   });
 
-  it("should reject data with invalid system permissions", async () => {
-    await app.loginRandom(["role.update"]);
+  it('should reject data with invalid system permissions', async () => {
+    await app.loginRandom(['role.update']);
 
     const res = await apiUpdate(roleId, {
-      name: "My role",
-      permissions: ["something.create"]
+      name: 'My role',
+      permissions: ['something.create'],
     });
 
     expect(res.status).toBe(400);
-    expect(res.body.invalids).toEqual(["something.create"]);
+    expect(res.body.invalids).toEqual(['something.create']);
   });
 
-  it("should only allow authorized users", async () => {
-    await eachPermission(["role.*", "role.update"], async () => {
+  it('should only allow authorized users', async () => {
+    await eachPermission(['role.*', 'role.update'], async () => {
       const res = await apiUpdate(roleId, {
-        name: "My role",
-        permissions: ["article.create", "article.delete"]
+        name: 'My role',
+        permissions: ['article.create', 'article.delete'],
       });
 
       expect(res.status).toBe(200);
