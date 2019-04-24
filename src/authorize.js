@@ -29,9 +29,20 @@ export const authorizeActionAgainstPolicy = (
 
     if (typeof policy === "function") {
       const result = policy(req);
-      if (result instanceof Promise && callCount > 1) {
-        throw createException("Unexpected nested promise callback.");
+      if (result instanceof Promise) {
+        if (callCount > 1) {
+          throw createException("Unexpected nested promise callback.");
+        }
+      } else {
+        const resultType = typeof result;
+
+        if (resultType !== "boolean") {
+          throw createException(
+            `Unexpected return type [${resultType}] from a callback.`
+          );
+        }
       }
+
       return result;
     }
 
@@ -75,7 +86,9 @@ export const authorize = (
       try {
         return authorizeActionAgainstPolicy(userPermissions, actionPolicy, req);
       } catch (e) {
-        // an exception occurs if a promise callback is encountered
+        // an exception is thrown when:
+        // - a nested promise callback is encountered
+        // - a callback returns a non-boolean value - does not apply to promise callbacks
         throw e;
       }
     }
@@ -115,13 +128,13 @@ export const createCan = (
     return async (req, res, next) => {
       try {
         if (
-          !(await authorize(
+          (await authorize(
             action,
             entity,
             await userPermissionsResolver(req),
             policies,
             req
-          ))
+          )) !== true
         ) {
           return unauthorizedRequestHandler(req, res, next);
         }

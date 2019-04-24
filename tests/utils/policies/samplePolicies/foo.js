@@ -20,5 +20,7 @@ export default {
   proceed: () =>
     new Promise(resolve => {
       return resolve(false);
-    })
+    }),
+  // a non-boolean returning callback - not supported
+  renew: () => "some string"
 };

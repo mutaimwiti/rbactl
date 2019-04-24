@@ -20,7 +20,7 @@ const can1 = (action, entity) => {
       // If any of your policies use the express req object you must pass it.
       // The req parameter is optional.
       const userPermissions = await req.user.permissions;
-      if (!authorize(action, entity, userPermissions, policies, req)) {
+      if (authorize(action, entity, userPermissions, policies, req) !== true) {
         return res.status(403).json({
           message: `You are not authorized to perform this action.`
         });
