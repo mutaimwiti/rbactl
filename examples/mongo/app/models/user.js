@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { authorize } = require("../../../../lib");
+const policies = require("../policies");
 
 const { Schema } = mongoose;
 
@@ -23,5 +25,22 @@ UserSchema.virtual("permissions").get(async function f() {
 
   return permissions;
 });
+
+/**
+ * This method can be used to conveniently check whether the user can perform
+ * a given action on an entity. This can prove useful if you still need to
+ * perform an authorization check without necessary doing it at the
+ * routing level.
+ *
+ * @param action
+ * @param entity
+ * @param req
+ * @returns {Promise<boolean>}
+ */
+UserSchema.methods.can = async function f(action, entity, req = null) {
+  return (
+    authorize(action, entity, await this.permissions, policies, req) === true
+  );
+};
 
 module.exports = mongoose.model("User", UserSchema);

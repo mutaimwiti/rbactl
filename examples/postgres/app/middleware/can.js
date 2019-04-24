@@ -1,7 +1,7 @@
-const { authorize, createCan, loadPolicies } = require("../../../../lib");
+const { authorize, createCan } = require("../../../../lib");
+const { getAppPolicies } = require("../utils");
 
-// load policies required by authorize method of the lib
-const policies = loadPolicies(`${__dirname}/../policies`);
+const policies = getAppPolicies();
 
 /**
  * This middleware returns a middleware function that is able to authorize

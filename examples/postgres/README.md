@@ -128,6 +128,8 @@ we are most interested in are:
    `loadPermissions` helper function.
 2. `validatePermissions()` - validates a list of permissions against the system permissions using the
    `validatePermissions` helper function.
+3. `getAppPolicies` - loads the application policies defined in the `policies` directory by making use of the
+   `loadPolicies` helper function.
 
 ### Installing packages
 

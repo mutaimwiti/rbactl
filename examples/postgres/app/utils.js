@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {
+  loadPolicies,
   loadPermissions,
   validatePermissions: permissionsValidator
 } = require("../../../lib");
@@ -76,6 +77,11 @@ const validatePermissions = permissions => {
   return permissionsValidator(getAppPermissions(), permissions);
 };
 
+const getAppPolicies = () => {
+  // load policies required by authorize method of the lib
+  return loadPolicies(`${__dirname}/policies`);
+};
+
 const visibleUserAttributes = [
   "id",
   "name",
@@ -90,6 +96,7 @@ module.exports = {
   decodeAuthToken,
   checkPassword,
   getAppPermissions,
+  getAppPolicies,
   validatePermissions,
   visibleUserAttributes
 };
