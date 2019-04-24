@@ -6,7 +6,7 @@ describe("authorize.js - basic", () => {
     const successCombinations = [["foo.q"], ["foo.q", "foo.r"]];
 
     successCombinations.forEach(permissions => {
-      expect(authorize("foo", "dive", permissions)).toEqual(true);
+      expect(authorize("dive", "foo", permissions)).toEqual(true);
     });
   });
 
@@ -15,7 +15,7 @@ describe("authorize.js - basic", () => {
     const failureCombinations = [[], ["foo.r"]];
 
     failureCombinations.forEach(permissions => {
-      expect(authorize("foo", "dive", permissions)).toEqual(false);
+      expect(authorize("dive", "foo", permissions)).toEqual(false);
     });
   });
 });

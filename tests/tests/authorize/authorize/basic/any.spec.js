@@ -12,7 +12,7 @@ describe("authorize.js - any", () => {
     ];
 
     successCombinations.forEach(permissions => {
-      expect(authorize("foo", "release", permissions)).toEqual(true);
+      expect(authorize("release", "foo", permissions)).toEqual(true);
     });
   });
 
@@ -21,7 +21,7 @@ describe("authorize.js - any", () => {
     const failureCombinations = [[], ["foo.p", "foo.q", "foo.r"]];
 
     failureCombinations.forEach(permissions => {
-      expect(authorize("foo", "release", permissions)).toEqual(false);
+      expect(authorize("release", "foo", permissions)).toEqual(false);
     });
   });
 });

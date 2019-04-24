@@ -20,7 +20,7 @@ describe("authorize.js - complex - case 4", () => {
     ];
 
     successCombinations.forEach(permissions => {
-      expect(authorize("bar", "remove", permissions)).toEqual(true);
+      expect(authorize("remove", "bar", permissions)).toEqual(true);
     });
   });
 
@@ -28,7 +28,7 @@ describe("authorize.js - complex - case 4", () => {
     const failureCombinations = [[], ["bar.i"], ["bar.j"]];
 
     failureCombinations.forEach(permissions => {
-      expect(authorize("bar", "remove", permissions)).toEqual(false);
+      expect(authorize("remove", "bar", permissions)).toEqual(false);
     });
   });
 });

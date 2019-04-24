@@ -10,7 +10,7 @@ describe("authorize.js - complex - case 5", () => {
     ];
 
     successCombinations.forEach(item => {
-      expect(authorize("bar", "archive", item.perm, item.req)).toEqual(true);
+      expect(authorize("archive", "bar", item.perm, item.req)).toEqual(true);
     });
   });
 
@@ -26,7 +26,7 @@ describe("authorize.js - complex - case 5", () => {
     ];
 
     failureCombinations.forEach(item => {
-      expect(authorize("bar", "archive", item.perm, item.req)).toEqual(false);
+      expect(authorize("archive", "bar", item.perm, item.req)).toEqual(false);
     });
   });
 });

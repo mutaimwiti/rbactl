@@ -25,11 +25,11 @@ describe("authorize.js - complex - case 2", () => {
     ];
 
     successCombinations.forEach(permissions => {
-      expect(authorize("bar", "edit", permissions)).toEqual(true);
+      expect(authorize("edit", "bar", permissions)).toEqual(true);
     });
   });
 
   it("should check for authorization correctly - failure", () => {
-    expect(authorize("bar", "edit", [])).toEqual(false);
+    expect(authorize("edit", "bar", [])).toEqual(false);
   });
 });

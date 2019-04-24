@@ -12,7 +12,7 @@ describe("authorize.js - complex - case 9", () => {
     ];
 
     successCombinations.forEach(permissions => {
-      expect(authorize("bar", "stop", permissions)).toEqual(true);
+      expect(authorize("stop", "bar", permissions)).toEqual(true);
     });
   });
 
@@ -26,7 +26,7 @@ describe("authorize.js - complex - case 9", () => {
     ];
 
     failureCombinations.forEach(permissions => {
-      expect(authorize("bar", "stop", permissions)).toEqual(false);
+      expect(authorize("stop", "bar", permissions)).toEqual(false);
     });
   });
 });
