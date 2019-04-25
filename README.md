@@ -431,7 +431,8 @@ This allows access if the user has all of the permissions that are specified. An
 
 Callback rules allow you to specify a callback to be executed to determine whether the user should get access. The
 library injects the `req` object when executing callbacks. This means that if you make your decision based on some
-property on the req object you can use it as an argument to your callback. Examples:
+property on the req object you can use it as an argument to your callback. Callback rules must explicitly return
+boolean values to avoid the ambiguity of relying on truthiness. Examples:
 
 ###### `simple callback`
 
@@ -629,7 +630,7 @@ This rule combines OR and AND rules.
 
   > Rules can be nested in any fashion to achieve the desired logical check.
 
-**IMPORTANT NOTES ON POLICY RULES**
+##### IMPORTANT NOTES ON POLICY RULES
 
 1. An asynchronous call can be made inside a callback rule function. Currently, the library does not support promise
    returning callbacks on nested rules. If one is found an exception is thrown. Promise returning callback rules are
@@ -637,12 +638,17 @@ This rule combines OR and AND rules.
    the authorization middleware. In the callback example above (`req callback`), that's exactly the case - the rule
    expects the article in question to have been queried and resolved by a previous middleware.
 
-2. The fact that a user has a certain permission does not necessarily mean that they can perform the action represented
+2. Callback rules must explicitly return boolean values to avoid the ambiguity of relying on truthiness. Relying on
+   truthiness would pose a serious security loophole. This is because the callback might resolve to true on a
+   non-boolean value accidentally. If the library encounters a callback that resolves to a non-boolean value it throws
+   an exception. See [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) documentation on truthy values.
+
+3. The fact that a user has a certain permission does not necessarily mean that they can perform the action represented
    by the permission; it has to be specified explicitly on the policy definition. For example, if the `article.update`
    action is determined by a callback that ensures that the user is the owner of the article, a user with the
    `article.update` permission but is not the owner cannot update the article.
 
-3. When specifying valid or required permissions, full entity permissions i.e. `entity.*` permissions should not be
+4. When specifying valid or required permissions, full entity permissions i.e. `entity.*` permissions should not be
    specified. This is because they're automatically checked. For example, if it is specified that a user requires
    `blog.delete` permission to delete a blog, the library will automatically determine that a user with `blog.*`
    permission can delete a blog.
@@ -759,13 +765,18 @@ app.put(
 // permissions to authorize an action. Callback rules are the perfect tool for this.
 ```
 
-**IMPORTANT NOTES ON AUTHORIZATION**
+##### IMPORTANT NOTES ON AUTHORIZATION
 
 1. If you have used a promise callback rule BE SURE to use async await when calling `authorize()`. If you don't do this,
    the function will return a promise. This will cause the authorization check to always succeed. A clean way around
    this is to always use `await` when calling `authorize()`. The cleanest solution is to completely avoid having
    promise returning callbacks. As discussed earlier this is easily achieved by resolving all values resulting from
    asynchronous calls before triggering the authorization middleware.
+
+2. When invoking `authorize()` explicitly check for a boolean value i.e. `if( authorize() === true )`. This will
+   correctly handle the case of a promise callback that resolves to a non-boolean value. Do not rely on truthiness but
+   an explicit boolean check because it can accidentally lead to a false positive.
+   See [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) documentation on truthy values.
 
 ### Licence
 
