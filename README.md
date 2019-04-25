@@ -75,7 +75,6 @@ To wrap your head around the entire process carefully go through one or both exa
 #### Functions
 
 - Permission
-  - [authorize()](#authorize) - authorize a user action on an entity based on user permissions and system policies.
   - [loadPermissions()](#loadpermissions) - generate a permissions object from permissions defined on separate files in
     one directory.
   - [parsePermissions()](#parsepermissions) - generate a permissions object from permissions defined on one object.
@@ -83,8 +82,14 @@ To wrap your head around the entire process carefully go through one or both exa
   - [validatePermissions()](#validatepermissions) - validate a list of permissions against system permissions.
   - [getAllPermissionsFor()](#getallpermissionsfor) - get the list of all permissions for a specific entity.
 - Policy
+
   - [loadPolicies()](#loadpolicies) - generate a policies object from policies defined on separate files in one
     directory.
+
+- Authorization
+  - [authorize()](#authorize) - authorize a user action on an entity based on user permissions and system policies.
+  - [createCan()](#createcan) - generate a function, can, that when invoked generates a middleware function that
+    authorizes user action on an entity.
 
 #### Policy rules
 
@@ -653,33 +658,54 @@ This rule combines OR and AND rules.
    `blog.delete` permission to delete a blog, the library will automatically determine that a user with `blog.*`
    permission can delete a blog.
 
-### Authorize
+### Authorization
 
-The library provides a function called `authorize` that builds on permissions and policies to authorize requests. The
-function authorizes a user action on an entity based on their permissions and system policies. The function accepts
-five parameters; `action`, `entity`, `userPermissions`, `policies` and `req`.
+Authorization is the process of determining whether a user is allowed to perform the action that they're trying to. The
+ultimate goal when it comes to authorization is to have a function, `can`, that when invoked generates a middleware
+function that checks whether a user is authorized to perform a specific action on a specific entity. We name it `can`
+because we are checking whether a user **CAN** perform a specific action on a specific entity The library provides two
+functions that your application can utilize to authorize requests; `authorize()` and `createCan`.
 
-1. `action` and `entity` are clear. An example would be: `action: "create"` and `entity: "blog"`.
-2. `userPermissions` - the list of permissions for the authenticated user (example: `["user.create", "user.view"]`).
-   This list is determined from the roles of a user. The `Role` model is ideally composed of a `name` and `permissions`
-   (a list). One of the properties of the User model is `roles`. The relationship is such that a user can have many
-   roles and a role can have many users. The user model can have a function that returns a list of all permissions for
-   the user. See the `Role` and `User` model definitions for the two examples; [mongo](examples/mongo/app/models) and
-   [postgres](examples/postgres/app/models). In a very simple system roles can be statically defined in code. For
-   example where we know that we will have three roles like `Superadmin`, `Admin` and `Ordinary User`.
-3. `policies` - an object that defines all the system policies. The policy definition can either be from an object
-   defining all policies or one that is returned by the `loadPolicies()` helper function. See how they are defined in
-   the two examples; [mongo](examples/mongo/app/policies.js) and [postgres](examples/postgres/app/policies).
-4. `req` - the `express req` object. This is optional and can be omitted if none of your policies (callback policies)
-   make use of it. Note that the library does not in any way mutate the object. Only your callback can do so because
-   all the library does is invoke your callback with the object.
+##### `authorize()`
+
+This function authorizes a user action on an entity based on their permissions and system policies. It can be used to
+define the `can` function. The function accepts the following parameters:
+
+- `action` - the user action to check.
+- `entity` - the entity to check the action against.
+- `userPermissions` - the list of permissions for the authenticated user (example: `['user.create', 'user.view']`).
+  This list is determined from the roles of a user. The `Role` model is ideally composed of a `name` and `permissions`
+  (a list). One of the properties of the User model is `roles`. The relationship is such that a user can have many
+  roles and a role can have many users. The user model can have a function that returns a list of all permissions for
+  the user. See the `Role` and `User` model definitions for the two examples; [mongo](examples/mongo/app/models) and
+  [postgres](examples/postgres/app/models). In a very simple system roles can be statically defined in code. For
+  example where we know that we will have three roles like `Superadmin`, `Admin` and `Ordinary User`.
+- `policies` - an object that defines all the system policies. The policy definition can either be from an object
+  defining all policies or one that is returned by the `loadPolicies()` helper function. See how they are defined in
+  the two examples; [mongo](examples/mongo/app/policies.js) and [postgres](examples/postgres/app/policies).
+- `req` - the `express req` object. This is optional and can be omitted if none of your policies (callback policies)
+  make use of it. Note that the library does not in any way mutate the object. Only your callback can do so because
+  all the library does is invoke your callback with the object.
+
+##### `createCan`
+
+This function generates the can function for you. It is the cleanest way because it masks the call to `authorize()` and
+all associated logic. This leaves very little room for errors and makes your authorization code very short and elegant.
+The function expects the following parameters:
+
+- `policies` - the system policies definition.
+- `userPermissionsResolver` - an handler that is triggered to get user permissions.
+- `unauthorizedRequestHandler` - an handler that is triggered if the user is not authorized to make the request.
+- `authorizationExceptionHandler` - an handler that is triggered if an exception occurs when trying to get user
+  permissions, check authorization or when triggering unauthorizedRequestHandler.
+
+> See how the two authorization functions are used on the two examples;
+> [mongo](examples/mongo/app/middleware/can.js) and [postgres](examples/postgres/app/middleware/can.js).
 
 ### The solution
 
 We now know the user that is making the request (`req.user`) because we are past the authentication middleware. As you
-might have guessed, we will make use of `authorize()` to authorize the request. `Authorize()` only checks whether the
-user making the request is authorized as per their permissions and system policies. We will need to create a middleware
-to perform authorization using `authorize()`.
+might have guessed, we will make use of `authorize()` or `createCan` to create the logic for authorizing requests.
 
 ```javascript
 // middleware.js
