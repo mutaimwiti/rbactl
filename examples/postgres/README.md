@@ -103,7 +103,8 @@ hit we have middleware to perform checks. A breakdown of middleware:
      - `policies` - an object that defines all the system policies.
      - `req` - this is the express req object. This parameter is optional so long as none of the app policies make
        use of it.
-   - `createCan()` - this function generates the can function for you. It accepts the following parameters:
+   - `createCan()` - this function generates the can function for you. It expects the following parameters:
+     - `policies` - the system policies definition.
      - `userPermissionsResolver` - an handler that is triggered to get user permissions.
      - `unauthorizedRequestHandler` - an handler that is triggered if the user is not authorized to make the request.
      - `authorizationExceptionHandler` - an handler that is triggered if an exception occurs when trying to get user
