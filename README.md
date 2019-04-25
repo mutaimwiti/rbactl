@@ -167,17 +167,17 @@ of a role or a user.
 ```javascript
 const permissions = {
   role: {
-    "*": "Full roles access",
-    view: "View roles",
-    create: "Create roles",
-    update: "Update roles",
-    delete: "Delete roles"
+    '*': 'Full roles access',
+    view: 'View roles',
+    create: 'Create roles',
+    update: 'Update roles',
+    delete: 'Delete roles',
   },
   user: {
-    "*": "Full users access",
-    view: "View users",
-    setRoles: "Update user roles"
-  }
+    '*': 'Full users access',
+    view: 'View users',
+    setRoles: 'Update user roles',
+  },
 };
 ```
 
@@ -204,39 +204,39 @@ Sample output:
 ```
 {
   role: {
-    "role.*": "Full roles access",
-    "role.view": "View roles",
-    "role.create": "Create roles",
-    "role.update": "Update roles",
-    "role.delete": "Delete roles"
+    'role.*': 'Full roles access',
+    'role.view': 'View roles',
+    'role.create': 'Create roles',
+    'role.update': 'Update roles',
+    'role.delete': 'Delete roles',
   },
   user: {
-    "user.*": "Full users access",
-    "user.view": "View users",
-    "user.setRoles": "Update user roles"
+    'user.*': 'Full users access',
+    'user.view': 'View users',
+    'user.setRoles': 'Update user roles',
   },
   article: {
-    "article.*": "Full articles access",
-    "article.view": "View articles",
-    "article.create": "Create articles",
-    "article.update": "Update articles",
-    "article.delete": "Delete articles"
+    'article.*': 'Full articles access',
+    'article.view': 'View articles',
+    'article.create': 'Create articles',
+    'article.update': 'Update articles',
+    'article.delete': 'Delete articles',
   },
   $all: {
-    "role.*": "Full roles access",
-    "role.view": "View roles",
-    "role.create": "Create roles",
-    "role.update": "Update roles",
-    "role.delete": "Delete roles",
-    "user.*": "Full users access",
-    "user.view": "View users",
-    "user.setRoles": "Update user roles",
-    "article.*": "Full articles access",
-    "article.view": "View articles",
-    "article.create": "Create articles",
-    "article.update": "Update articles",
-    "article.delete": "Delete articles"
-  }
+    'role.*': 'Full roles access',
+    'role.view': 'View roles',
+    'role.create': 'Create roles',
+    'role.update': 'Update roles',
+    'role.delete': 'Delete roles',
+    'user.*': 'Full users access',
+    'user.view': 'View users',
+    'user.setRoles': 'Update user roles',
+    'article.*': 'Full articles access',
+    'article.view': 'View articles',
+    'article.create': 'Create articles',
+    'article.update': 'Update articles',
+    'article.delete': 'Delete articles',
+  },
 }
 ```
 
@@ -257,9 +257,9 @@ permissions. `permissions` is the list of permissions for which to get a permiss
 ```javascript
 const systemPermisions = parsePermissions(permissions).$all;
 getPermissionsMap(systemPermissions, [
-  "article.create",
-  "user.view",
-  "role.delete"
+  'article.create',
+  'user.view',
+  'role.delete',
 ]);
 ```
 
@@ -267,9 +267,9 @@ Sample output:
 
 ```
 {
-  "article.create": "Create articles" ,
-  "user.view": "View users" ,
-  "role.delete": "Delete roles"
+  'article.create': 'Create articles',
+  'user.view': 'View users',
+  'role.delete': 'Delete roles',
 }
 ```
 
@@ -283,8 +283,8 @@ permissions. `permissions` is the list of permissions to validate. Example:
 ```javascript
 const systemPermisions = parsePermissions(permissions).$all;
 const validation = validatePermissions(systemPermissions, [
-  "article.create",
-  "article.something"
+  'article.create',
+  'article.something',
 ]);
 ```
 
@@ -294,7 +294,7 @@ Output:
 // console.log(validation)
 {
   valid: false,
-  invalids: ["article.something"]
+  invalids: ['article.something'],
 }
 ```
 
@@ -306,18 +306,18 @@ Example:
 
 ```javascript
 const systemPermisions = loadPermissions(`${__dirname}/permissions`).$all;
-const rolePermissions = getAllPermissionsFor(systemPermissions, "role");
+const rolePermissions = getAllPermissionsFor(systemPermissions, 'role');
 ```
 
 Sample output:
 
 ```
 {
-  "role.*": "Full roles access",
-  "role.view": "View roles",
-  "role.create": "Create roles",
-  "role.update": "Update roles",
-  "role.delete": "Delete roles"
+  'role.*': 'Full roles access',
+  'role.view': 'View roles',
+  'role.create': 'Create roles',
+  'role.update': 'Update roles',
+  'role.delete': 'Delete roles',
 }
 ```
 
@@ -350,19 +350,19 @@ Sample output:
 {
   role: {
     view: {
-      any: ["role.view", "role.create", "role.update", "role.delete"]
+      any: ['role.view', 'role.create', 'role.update', 'role.delete'],
     },
-    create: "role.create",
-    update: "role.update",
-    delete: "role.delete"
+    create: 'role.create',
+    update: 'role.update',
+    delete: 'role.delete',
   },
 
   user: {
     view: {
-      any: ["user.view", "user.setRoles"]
+      any: ['user.view', 'user.setRoles'],
     },
-    setRoles: "user.setRoles"
-  }
+    setRoles: 'user.setRoles',
+  },
 }
 ```
 
@@ -382,7 +382,7 @@ This rule just specifies the permission that is required to perform an action. A
 ```
 {
   article: {
-    view: "article.view";
+    view: "article.view"
   }
 }
 ```
@@ -398,13 +398,13 @@ This allows access if the user has any of the permissions that are specified. An
   article: {
     view: {
       any: [
-        "article.view",
-        "article.create",
-        "article.update",
-        "article.delete"
-      ]
-    }
-  }
+        'article.view',
+        'article.create',
+        'article.update',
+        'article.delete',
+      ],
+    },
+  },
 }
 ```
 
@@ -419,9 +419,9 @@ This allows access if the user has all of the permissions that are specified. An
 {
   user: {
     delete: {
-      all: ["user.manage", "user.delete"]
-    }
-  }
+      all: ['user.manage', 'user.delete'],
+    },
+  },
 }
 ```
 
@@ -441,7 +441,7 @@ property on the req object you can use it as an argument to your callback. Examp
     view: () => {
       // som code ...
       return x === y;
-    };
+    }
   }
 }
 ```
@@ -455,7 +455,7 @@ property on the req object you can use it as an argument to your callback. Examp
   article: {
     update: req => {
       return req.user && req.user.id === req.context.article.owner_id;
-    };
+    }
   }
 }
 ```
@@ -487,8 +487,8 @@ This rule performs a logical OR on the provided rules.
   ```
   {
     foo: {
-      delete: { $or: [someCheck, "foo.delete"] }
-    }
+      delete: { $or: [someCheck, 'foo.delete'] },
+    },
   }
   ```
 
@@ -501,9 +501,9 @@ This rule performs a logical OR on the provided rules.
   {
     foo: {
       activate: {
-        $or: [{ any: ["foo.x", "foo.y"] }, someCheck];
-      }
-    }
+        $or: [{ any: ['foo.x', 'foo.y'] }, someCheck],
+      },
+    },
   }
   ```
 
@@ -516,9 +516,9 @@ This rule performs a logical OR on the provided rules.
   {
     foo: {
       activate: {
-        $or: [{ any: ["foo.x", "foo.y"] }, { $or: ["bar.m", "bar.n"] }];
-      }
-    }
+        $or: [{ any: ['foo.x', 'foo.y'] }, { $or: ['bar.m', 'bar.n'] }],
+      },
+    },
   }
   ```
 
@@ -533,8 +533,8 @@ This rule performs a logical AND on the provided rules.
   ```
   {
     foo: {
-      delete: { $and: [someCheck, "foo.delete"] }
-    }
+      delete: { $and: [someCheck, 'foo.delete'] },
+    },
   }
   ```
 
@@ -547,9 +547,9 @@ This rule performs a logical AND on the provided rules.
   {
     foo: {
       activate: {
-        $and: [{ all: ["foo.x", "foo.y"] }, someCheck]
-      }
-    }
+        $and: [{ all: ['foo.x', 'foo.y'] }, someCheck],
+      },
+    },
   }
   ```
 
@@ -562,9 +562,9 @@ This rule performs a logical AND on the provided rules.
   {
     foo: {
       activate: {
-        $and: [{ any: ["foo.x", "foo.y"] }, { $and: ["bar.m", "bar.n"] }]
-      }
-    }
+        $and: [{ any: ['foo.x', 'foo.y'] }, { $and: ['bar.m', 'bar.n'] }],
+      },
+    },
   }
   ```
 
@@ -580,9 +580,9 @@ This rule combines OR and AND rules.
   {
     foo: {
       activate: {
-        $and: [{ $and: ["foo.x", "foo.y"] }, { $or: ["bar.m", "bar.n"] }]
-      }
-    }
+        $and: [{ $and: ['foo.x', 'foo.y'] }, { $or: ['bar.m', 'bar.n'] }],
+      },
+    },
   }
   ```
 
@@ -597,13 +597,13 @@ This rule combines OR and AND rules.
     foo: {
       deactivate: {
         $or: [
-          { all: ["foo.x", "foo.y", "foo.z"] },
+          { all: ['foo.x', 'foo.y', 'foo.z'] },
           {
-            $and: [{ any: ["foo.r", "foo.s", "foo.t"] }, someCheck]
-          }
-        ];
-      }
-    }
+            $and: [{ any: ['foo.r', 'foo.s', 'foo.t'] }, someCheck],
+          },
+        ],
+      },
+    },
   }
   ```
 
@@ -614,16 +614,16 @@ This rule combines OR and AND rules.
     foo: {
       deactivate: {
         $or: [
-          { all: ["foo.x", "foo.y", "foo.z"] },
+          { all: ['foo.x', 'foo.y', 'foo.z'] },
           {
             $and: [
-              { any: ["foo.r", "foo.s", "foo.t"] },
-              { $or: [someCheck, "foo.x"] }
-            ]
-          }
-        ];
-      }
-    }
+              { any: ['foo.r', 'foo.s', 'foo.t'] },
+              { $or: [someCheck, 'foo.x'] },
+            ],
+          },
+        ],
+      },
+    },
   }
   ```
 
@@ -679,10 +679,10 @@ to perform authorization using `authorize()`.
 // middleware.js
 
 // import the functions that we require from the library
-const { authorize, loadPolicies } = require("xps-rbac");
+const { authorize, loadPolicies } = require('xps-rbac');
 
 // if we have defined our policies in one file we simply import them
-const policies = require("./policies");
+const policies = require('./policies');
 
 // if we have defined our policies in one directory on a separate file each, we load them
 const policies = loadPolicies(`${__dirname}/policies`);
@@ -707,17 +707,17 @@ const authenticate = (req, res, next) => {
 // - can('create', 'article')
 // - can('update', 'article')
 const can = (action, entity) => {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     try {
       // retrieve the user's permissions - totally based on your persistence system
       const userPermissions = await req.user.permissions();
 
       // we are using authorize() method to check whether the user is allowed.
       // if any of your policies use req object, you MUST pass it
-      if (!await authorize(action, entity, userPermissions, policies, req)) {
+      if (!(await authorize(action, entity, userPermissions, policies, req))) {
         // authorization failed - the user is not allowed to make the action
         return res.status(403).json({
-          message: `You are not authorized to perform this action.`
+          message: `You are not authorized to perform this action.`,
         });
       }
 
@@ -727,7 +727,7 @@ const can = (action, entity) => {
       // three exceptions can be thrown by the authorize function:
       // missing policy, missing policy action or unexpected nested promise callback
       return res.status(500).json({
-        message: "Sorry :( Something bad happened."
+        message: 'Sorry :( Something bad happened.',
       });
     }
   };
@@ -737,18 +737,18 @@ const can = (action, entity) => {
 // assuming we have our simple app ...
 const app = express();
 
-app.post("/article/", authenticate, can("create", "article"), () => {
+app.post('/article/', authenticate, can('create', 'article'), () => {
   // user is allowed to create article
 });
 
 app.put(
-  "/article/:id",
+  '/article/:id',
   authenticate,
   processArticleParam,
-  can("update", "article"),
+  can('update', 'article'),
   () => {
     // user is allowed to update the article
-  }
+  },
 );
 
 // the processArticleParam middleware tries to get the article and bind it to the request
