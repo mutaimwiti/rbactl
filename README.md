@@ -89,7 +89,7 @@ To wrap your head around the entire process carefully go through one or both exa
 - Authorization
   - [authorize()](#authorize) - authorize a user action on an entity based on user permissions and system policies.
   - [createCan()](#createcan) - generate a function, can, that when invoked generates a middleware function that
-    authorizes user action on an entity.
+    authorizes a user action on an entity.
 
 #### Policy rules
 
@@ -387,8 +387,8 @@ This rule just specifies the permission that is required to perform an action. A
 ```
 {
   article: {
-    view: "article.view"
-  }
+    view: 'article.view',
+  },
 }
 ```
 
@@ -427,7 +427,7 @@ This allows access if the user has all of the permissions that are specified. An
       all: ['user.manage', 'user.delete'],
     },
   },
-}
+}``
 ```
 
 > This rule means that a user needs to have both `user.manage` and `user.delete` permission to delete a user.
@@ -707,19 +707,12 @@ The function expects the following parameters:
 We now know the user that is making the request (`req.user`) because we are past the authentication middleware. As you
 might have guessed, we will make use of `authorize()` or `createCan` to create the logic for authorizing requests.
 
+##### Authentication
+
 ```javascript
-// middleware.js
+// authenticate.js
 
-// import the functions that we require from the library
-const { authorize, loadPolicies } = require('xps-rbac');
-
-// if we have defined our policies in one file we simply import them
-const policies = require('./policies');
-
-// if we have defined our policies in one directory on a separate file each, we load them
-const policies = loadPolicies(`${__dirname}/policies`);
-
-// [authentication middleware] - this is just a snippet ...
+// this is just a snippet ...
 const authenticate = (req, res, next) => {
   // ... more logic ...
   // .
@@ -732,12 +725,34 @@ const authenticate = (req, res, next) => {
   // .
   // ...more logic...
 };
+```
 
-// [authorization middleware creator]
-// we call it [can] because it returns a middleware that checks whether user can perform
-// an action (on an entity). when we trigger it it will be something like:
-// - can('create', 'article')
-// - can('update', 'article')
+##### Authorization
+
+###### Prerequisites - Policies
+
+```javascript
+// can.js
+
+// import the functions that we require from the library
+const { loadPolicies } = require('xps-rbac');
+
+// if we have defined our policies in one file we simply import them
+const policies = require('./policies');
+
+// if we have defined our policies in one directory on a separate file each, we load them
+const policies = loadPolicies(`${__dirname}/policies`);
+```
+
+###### Using authorize()
+
+```javascript
+// can.js
+
+// import authorize() from the library
+const { authorize } = require('xps-rbac');
+
+// authorization middleware creator
 const can = (action, entity) => {
   return async (req, res, next) => {
     try {
@@ -764,8 +779,41 @@ const can = (action, entity) => {
     }
   };
 };
+```
 
-// using the middleware in our routes
+###### Using createCan()
+
+```javascript
+// can.js
+
+// import authorize() from the library
+const { authorize } = require('xps-rbac');
+
+// authorization middleware creator
+const can = createCan(
+  policies,
+  async (req) => req.user.permissions(),
+  (req, res) => {
+    return res.status(403).json({
+      message: `You are not authorized to perform this action.`,
+    });
+  },
+  (req, res) => {
+    return res.status(500).json({
+      message: 'Sorry :( Something bad happened.',
+    });
+  },
+);
+```
+
+##### Routing
+
+```javascript
+// app.js
+
+// import can from our middleware definitions
+const { can } = require('./middleware');
+
 // assuming we have our simple app ...
 const app = express();
 
@@ -782,14 +830,10 @@ app.put(
     // user is allowed to update the article
   },
 );
-
-// the processArticleParam middleware tries to get the article and bind it to the request
-// object. This is useful if the update article policy utilizes a callback rule that requires
-// the article to be bound on the req object e.g. [req.context.article]. This can be very
-// useful if for instance your callback checks whether the authenticated user owns the article.
-// This is a classic problem - relying on properties of an object rather than permissions user
-// permissions to authorize an action. Callback rules are the perfect tool for this.
 ```
+
+> The `processArticleParam` middleware tries to get the article and bind it to the request object. It is documented on
+> the examples; [mongo](examples/mongo/README.md#middleware) and [postgres](examples/postgres/README.md#middleware).
 
 ##### IMPORTANT NOTES ON AUTHORIZATION
 
