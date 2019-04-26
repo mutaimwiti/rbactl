@@ -75,46 +75,73 @@ To wrap your head around the entire process carefully go through one or both exa
 > These may still not make everything crystal clear. Go through the [documentation](#documentation) to understand all
 > key concepts.
 
-### Quick reference
-
-#### Functions
-
-- Permission
-  - [loadPermissions()](#loadpermissions) - generate a permissions object from permissions defined on separate files in
-    one directory.
-  - [parsePermissions()](#parsepermissions) - generate a permissions object from permissions defined on one object.
-  - [getPermissionsMap()](#getpermissionsmap) - get a mapping of a list of permissions with their descriptions.
-  - [validatePermissions()](#validatepermissions) - validate a list of permissions against system permissions.
-  - [getAllPermissionsFor()](#getallpermissionsfor) - get the list of all permissions for a specific entity.
-- Policy
-
-  - [loadPolicies()](#loadpolicies) - generate a policies object from policies defined on separate files in one
-    directory.
-
-- Authorization
-  - [authorize()](#authorize) - authorize a user action on an entity based on user permissions and system policies.
-  - [createCan()](#createcan) - generate a function, can, that when invoked generates a middleware function that
-    authorizes a user action on an entity.
-
-#### Policy rules
-
-- Permission rules
-  - [simple rule](#simple-rule) - specifies a single permission that is required for access.
-  - [any rule](#any-rule) - specifies a list of permissions of which a user requires at least one for access.
-  - [all rule](#any-rule) - specifies a list of permissions that are all required by a user for access.
-- Callback rules
-
-  - [simple](#simple-callback) - specifies a callback that determines whether a user should be granted access.
-  - [req rule](#req-callback) - same as simple callback rule but makes use of the `req` express object to determine
-    whether the user should be granted access.
-
-- Logical rules
-  - [OR rule](#or-rule) - allows specification of rules that require logical ORing.
-  - [AND rule](#and-rule) - allows specification of rules that require logical ANDing.
-  - [compound rule](#compound-rule) - allows combination of rules using logical ORs and ANDs in any fashion that
-    achieves the desired logical check.
-
 ### **Documentation**
+
+1. [The problem](#the-problem-authorization)
+2. [Dealing with the problem](#dealing-with-the-problem)
+3. [Entities](#entities)
+4. [Permissions](#permissions)
+
+   - [Functions](#permission-functions)
+     - [loadPermissions()](#loadpermissions) - generate a permissions object from permissions defined on separate files in
+       one directory.
+     - [parsePermissions()](#parsepermissions) - generate a permissions object from permissions defined on one object.
+     - [getPermissionsMap()](#getpermissionsmap) - get a mapping of a list of permissions with their descriptions.
+     - [validatePermissions()](#validatepermissions) - validate a list of permissions against system permissions.
+     - [getAllPermissionsFor()](#getallpermissionsfor) - get the list of all permissions for a specific entity.
+
+5. [Policies](#policies)
+
+   - [Functions](#policy-functions)
+
+     - [loadPolicies()](#loadpolicies) - generate a policies object from policies defined on separate files in one
+       directory.
+
+   - [Rules](#available-policy-rules)
+
+     - [Permission rules](#permission-rules)
+
+       - [simple rule](#simple-rule) - specifies a single permission that is required for access.
+       - [any rule](#any-rule) - specifies a list of permissions of which a user requires at least one for access.
+       - [all rule](#any-rule) - specifies a list of permissions that are all required by a user for access.
+
+     - [Callback rules](#callback-rules)
+
+       - [simple](#simple-callback) - specifies a callback that determines whether a user should be granted access.
+       - [req rule](#req-callback) - same as simple callback rule but makes use of the `req` express object to determine
+         whether the user should be granted access.
+
+     - [Logical rules](#logical-rules)
+
+       - [OR rule](#or-rule) - allows specification of rules that require logical ORing.
+       - [AND rule](#and-rule) - allows specification of rules that require logical ANDing.
+       - [compound rule](#compound-rule) - allows combination of rules using logical ORs and ANDs in any fashion that
+         achieves the desired logical check.
+
+     - [Important notes](#important-notes-on-policy-rules)
+
+6. [Authorization](#authorization)
+
+   - [Functions](#authorization-functions)
+
+     - [authorize()](#authorize) - authorize a user action on an entity based on user permissions and system policies.
+     - [createCan()](#createcan) - generate a function, can, that when invoked generates a middleware function that
+       authorizes a user action on an entity.
+
+   - [User model can](#user-model-can)
+
+   - [Important notes](#important-notes-on-authorization)
+
+7. [The solution](#the-solution)
+
+   - [Authentication](#step-1-authentication)
+   - [Authorization](#step-2-authorization)
+
+     - [Prerequisite - Policies](#prerequisite---policies)
+     - [Using authorize()](#using-authorize)
+     - [Using createCan()](#using-createcan)
+
+   - [Routing](#step-3-routing)
 
 ### The problem (authorization)
 
@@ -735,12 +762,25 @@ const doSomething = async () => {
 > See how the user model `can` method can be defined on the two examples:
 > [mongo](examples/mongo/app/models/user.js) and [postgres](examples/postgres/app/models/user.js).
 
+##### IMPORTANT NOTES ON AUTHORIZATION
+
+1. If you have used a promise callback rule BE SURE to use async await when calling `authorize()`. If you don't do this,
+   the function will return a promise. This will cause the authorization check to always succeed. A clean way around
+   this is to always use `await` when calling `authorize()`. The cleanest solution is to completely avoid having
+   promise returning callbacks. As discussed earlier this is easily achieved by resolving all values resulting from
+   asynchronous calls before triggering the authorization middleware.
+
+2. When invoking `authorize()` explicitly check for a boolean value i.e. `if( authorize() === true )`. This will
+   correctly handle the case of a promise callback that resolves to a non-boolean value. Do not rely on truthiness but
+   an explicit boolean check because it can accidentally lead to a false positive.
+   See [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) documentation on truthy values.
+
 ### The solution
 
 We now know the user that is making the request (`req.user`) because we are past the authentication middleware. As you
 might have guessed, we will make use of `authorize()` or `createCan` to create the logic for authorizing requests.
 
-##### Authentication
+##### Step 1 - Authentication
 
 ```javascript
 // authenticate.js
@@ -760,9 +800,9 @@ const authenticate = (req, res, next) => {
 };
 ```
 
-##### Authorization
+##### Step 2 - Authorization
 
-###### Prerequisites - Policies
+###### Prerequisite - Policies
 
 ```javascript
 // can.js
@@ -839,7 +879,7 @@ const can = createCan(
 );
 ```
 
-##### Routing
+##### Step 3 - Routing
 
 ```javascript
 // app.js
@@ -867,19 +907,6 @@ app.put(
 
 > The `processArticleParam` middleware tries to get the article and bind it to the request object. It is documented on
 > the examples; [mongo](examples/mongo/README.md#middleware) and [postgres](examples/postgres/README.md#middleware).
-
-##### IMPORTANT NOTES ON AUTHORIZATION
-
-1. If you have used a promise callback rule BE SURE to use async await when calling `authorize()`. If you don't do this,
-   the function will return a promise. This will cause the authorization check to always succeed. A clean way around
-   this is to always use `await` when calling `authorize()`. The cleanest solution is to completely avoid having
-   promise returning callbacks. As discussed earlier this is easily achieved by resolving all values resulting from
-   asynchronous calls before triggering the authorization middleware.
-
-2. When invoking `authorize()` explicitly check for a boolean value i.e. `if( authorize() === true )`. This will
-   correctly handle the case of a promise callback that resolves to a non-boolean value. Do not rely on truthiness but
-   an explicit boolean check because it can accidentally lead to a false positive.
-   See [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) documentation on truthy values.
 
 ### Licence
 
