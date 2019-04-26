@@ -60,10 +60,10 @@ $ yarn add xps-rbac
 
 9. Apply both the authentication and authorization middleware as required on your routes.
 
-10. You might consider defining an authorization check method (`can`) on your user model.
+10. Consider defining an authorization checking method (`can`) on your user model.
 
-    This can prove useful if you still need to perform an authorization check without necessary doing it at the routing
-    level. See the [authorization docs]().
+    This can prove convenient if you still need to perform an authorization check without necessarily doing it at the
+    routing level.
 
 ### Complete examples
 
@@ -649,16 +649,16 @@ This rule combines OR and AND rules.
    expects the article in question to have been queried and resolved by a previous middleware.
 
 2. Callback rules must explicitly return boolean values to avoid the ambiguity of relying on truthiness. Relying on
-   truthiness would pose a serious security loophole. This is because the callback might resolve to true on a
-   non-boolean value accidentally. If the library encounters a callback that resolves to a non-boolean value it throws
-   an exception. See [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) documentation on truthy values.
+   truthiness would pose a serious security loophole. This is because the callback might accidentally resolve to true
+   on a non-boolean value. If the library encounters a callback that resolves to a non-boolean value it throws an
+   exception. See [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) documentation on truthy values.
 
 3. The fact that a user has a certain permission does not necessarily mean that they can perform the action represented
    by the permission; it has to be specified explicitly on the policy definition. For example, if the `article.update`
    action is determined by a callback that ensures that the user is the owner of the article, a user with the
    `article.update` permission but is not the owner cannot update the article.
 
-4. When specifying valid or required permissions, full entity permissions i.e. `entity.*` permissions should not be
+4. When specifying valid or required permissions, full entity permissions i.e. `<entity>.*` permissions should not be
    specified. This is because they're automatically checked. For example, if it is specified that a user requires
    `blog.delete` permission to delete a blog, the library will automatically determine that a user with `blog.*`
    permission can delete a blog.
@@ -666,16 +666,16 @@ This rule combines OR and AND rules.
 ### Authorization
 
 Authorization is the process of determining whether a user is allowed to perform the action that they're trying to. The
-ultimate goal when it comes to authorization is to have a function, `can`, that when invoked generates a middleware
-function that checks whether a user is authorized to perform a specific action on a specific entity. We name it `can`
-because we are checking whether a user **CAN** perform a specific action on a specific entity.
+ultimate goal when it comes to authorization is to have a function, `can()`, that when invoked generates a middleware
+function that checks whether a user is authorized to perform an action. We name it `can` because it checks whether a
+user **CAN** perform a specific action on a specific entity.
 
 #### Authorization functions
 
 ##### `authorize()`
 
 This function authorizes a user action on an entity based on their permissions and system policies. It can be used to
-define the `can` function. The function accepts the following parameters:
+define the `can()` function. It function accepts the following parameters:
 
 - `action` - the user action to check.
 - `entity` - the entity to check the action against.
@@ -693,8 +693,6 @@ define the `can` function. The function accepts the following parameters:
   make use of it. Note that the library does not in any way mutate the object. Only your callback can do so because
   all the library does is invoke your callback with the object.
 
-> See how the functions can be used on the [postgres example](examples/postgres/app/middleware/can.js).
-
 ##### `createCan`
 
 This function generates the can function for you. It is the cleanest way because it masks the call to `authorize()` and
@@ -707,14 +705,15 @@ The function expects the following parameters:
 - `authorizationExceptionHandler` - an handler that is triggered if an exception occurs when trying to get user
   permissions, check authorization or when triggering unauthorizedRequestHandler.
 
-> See how the functions can be used on the [mongo example](examples/mongo/app/middleware/can.js).
+See how `authorize()` and `createCan()` can be used on the two examples;
+[mongo](examples/mongo/app/middleware/can.js) and [postgres](examples/postgres/app/middleware/can.js).
 
 #### User model can
 
-This is an instance method, `can()` defined on the user model that can be used to conveniently check whether a user can
+This is an instance method, `can()`, defined on the user model that can be used to conveniently check whether a user can
 perform a given action on an entity. This can prove useful if you still need to perform an authorization check without
-necessary doing it at the routing level. Internally the method will make use of the `authorize()` function. The method
-should accept the following parameters:
+necessarily doing it at the routing level. Internally, the method will make use of `authorize()`. The method, should
+accept the following parameters:
 
 - `action` - the action to check.
 - `entity` - the entity to check the action against.
