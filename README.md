@@ -33,9 +33,9 @@ $ yarn add xps-rbac
 
 4. Add or update user and role models.
 
-   These should be based on the persistence system of your choice. The role model should have a property that stores
-   permissions (an array). A relationship should exist such that a user can have many roles and a role can have many
-   users. The user model should have a property or a function that returns the user's list of permissions.
+   The role model should have a property that stores permissions (an array). A relationship should exist such that a
+   user can have many roles and a role can have many users. The user model should have a property or a function that
+   returns the user's list of permissions based on their roles.
 
 5. Add or update user and role control logic.
 
@@ -59,6 +59,11 @@ $ yarn add xps-rbac
    user permissions and system policies.
 
 9. Apply both the authentication and authorization middleware as required on your routes.
+
+10. You might consider defining an authorization check method (`can`) on your user model.
+
+    This can prove useful if you still need to perform an authorization check without necessary doing it at the routing
+    level. See the [authorization docs]().
 
 ### Complete examples
 
@@ -191,7 +196,7 @@ const permissions = {
 - [mongo](examples/mongo/app/permissions.js)
 - [postgres](examples/postgres/app/permissions)
 
-#### Permissions helper functions
+#### Permission functions
 
 ##### `loadPermissions()`
 
@@ -337,7 +342,7 @@ access is controlled.
 - [mongo](examples/mongo/app/policies.js) - [documentation](examples/mongo/README.md#policies)
 - [postgres](examples/postgres/app/policies) - [documentation](examples/postgres/README.md#policies)
 
-#### Policy helper functions
+#### Policy functions
 
 ##### `loadPolicies()`
 
@@ -663,8 +668,9 @@ This rule combines OR and AND rules.
 Authorization is the process of determining whether a user is allowed to perform the action that they're trying to. The
 ultimate goal when it comes to authorization is to have a function, `can`, that when invoked generates a middleware
 function that checks whether a user is authorized to perform a specific action on a specific entity. We name it `can`
-because we are checking whether a user **CAN** perform a specific action on a specific entity The library provides two
-functions that your application can utilize to authorize requests; `authorize()` and `createCan`.
+because we are checking whether a user **CAN** perform a specific action on a specific entity.
+
+#### Authorization functions
 
 ##### `authorize()`
 
@@ -681,11 +687,13 @@ define the `can` function. The function accepts the following parameters:
   [postgres](examples/postgres/app/models). In a very simple system roles can be statically defined in code. For
   example where we know that we will have three roles like `Superadmin`, `Admin` and `Ordinary User`.
 - `policies` - an object that defines all the system policies. The policy definition can either be from an object
-  defining all policies or one that is returned by the `loadPolicies()` helper function. See how they are defined in
-  the two examples; [mongo](examples/mongo/app/policies.js) and [postgres](examples/postgres/app/policies).
+  defining all policies or one that is returned by the `loadPolicies()` function. See how they are defined in the two
+  examples; [mongo](examples/mongo/app/policies.js) and [postgres](examples/postgres/app/policies).
 - `req` - the `express req` object. This is optional and can be omitted if none of your policies (callback policies)
   make use of it. Note that the library does not in any way mutate the object. Only your callback can do so because
   all the library does is invoke your callback with the object.
+
+> See how the functions can be used on the [postgres example](examples/postgres/app/middleware/can.js).
 
 ##### `createCan`
 
@@ -699,8 +707,34 @@ The function expects the following parameters:
 - `authorizationExceptionHandler` - an handler that is triggered if an exception occurs when trying to get user
   permissions, check authorization or when triggering unauthorizedRequestHandler.
 
-> See how the two authorization functions are used on the two examples;
-> [mongo](examples/mongo/app/middleware/can.js) and [postgres](examples/postgres/app/middleware/can.js).
+> See how the functions can be used on the [mongo example](examples/mongo/app/middleware/can.js).
+
+#### User model can
+
+This is an instance method, `can()` defined on the user model that can be used to conveniently check whether a user can
+perform a given action on an entity. This can prove useful if you still need to perform an authorization check without
+necessary doing it at the routing level. Internally the method will make use of the `authorize()` function. The method
+should accept the following parameters:
+
+- `action` - the action to check.
+- `entity` - the entity to check the action against.
+- `req` - the express req object. This is only required if the action in question uses a callback that relies on the
+  req object.
+
+```javascript
+// an example - do something requiring user to have authorization to create a report
+
+const doSomething = async () => {
+  if (await user.can('create', 'report')) {
+    // the user is authorized to create reports
+  } else {
+    // the user is not authorized to create reports
+  }
+};
+```
+
+> See how the user model `can` method can be defined on the two examples:
+> [mongo](examples/mongo/app/models/user.js) and [postgres](examples/postgres/app/models/user.js).
 
 ### The solution
 
