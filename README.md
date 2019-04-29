@@ -60,7 +60,7 @@ $ yarn add xps-rbac
 
 9. Apply both the authentication and authorization middleware as required on your routes.
 
-10. Consider defining an authorization checking method (`can`) on your user model.
+10. Consider defining an authorization check method, `can`, on your user model.
 
     This can prove convenient if you still need to perform an authorization check without necessarily doing it at the
     routing level.
