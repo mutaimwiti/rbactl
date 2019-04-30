@@ -2,7 +2,7 @@
   "name": "xps-rbac",
   "version": "0.1.0-beta.1",
   "description": "Easy and intuitive role based access control on Express.",
-  "main": "./index.js",
+  "main": "index.js",
   "directories": {
     "test": "tests"
   },
@@ -12,30 +12,39 @@
     "test:watch": "jest --colors --watch",
     "build": "babel -d lib src/ && cp src/index.d.ts lib/index.d.ts",
     "lint": "eslint .",
-    "prepublishOnly": "yarn clean && yarn lint && yarn test && yarn build"
+    "prepublishOnly": "yarn clean && yarn build && yarn lint && yarn test"
   },
   "pre-commit": [
+    "clean",
+    "build",
     "lint",
     "test"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mutaimwiti/flex-rbac.git"
+    "url": "git+https://gitlab.com/mutaimwiti/xps-rbac.git"
   },
   "keywords": [
-    "flex",
+    "xps",
     "rbac",
-    "flex-rbac",
+    "xps-rbac",
     "node",
+    "node-rbac",
     "nodejs",
-    "express"
+    "nodejs-rbac",
+    "express",
+    "express-rbac",
+    "authorize",
+    "express-authorize",
+    "authorization",
+    "express-authorization"
   ],
   "author": "Mutai Mwiti",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mutaimwiti/flex-rbac/issues"
+    "url": "https://gitlab.com/mutaimwiti/xps-rbac/issues"
   },
-  "homepage": "https://github.com/mutaimwiti/flex-rbac#readme",
+  "homepage": "https://gitlab.com/mutaimwiti/xps-rbac#readme",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
