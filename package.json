@@ -1,6 +1,6 @@
 {
   "name": "xps-rbac",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "Easy and intuitive role-based access control library for Express apps.",
   "main": "index.js",
   "directories": {
