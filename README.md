@@ -1,5 +1,11 @@
 ## xps-rbac
 
+[![build](https://gitlab.com/mutaimwiti/xps-rbac/badges/master/build.svg)](https://gitlab.com/mutaimwiti/xps-rbac/pipelines)
+[![coverage](https://gitlab.com/mutaimwiti/xps-rbac/badges/master/coverage.svg)](https://gitlab.com/mutaimwiti/xps-rbac/commits/master)
+[![version](https://img.shields.io/npm/v/xps-rbac.svg)](https://www.npmjs.com/package/xps-rbac)
+[![downloads](https://img.shields.io/npm/dw/xps-rbac.svg)](https://www.npmjs.com/package/xps-rbac)
+[![license](https://img.shields.io/npm/l/xps-rbac.svg)](https://www.npmjs.com/package/xps-rbac)
+
 **xps-rbac** is an easy to use and intuitive role-based access control library for [Express](https://expressjs.com/)
 apps. The library embraces the unopinionated and minimalist approach of express and can also be used with other
 frameworks built on top of express. Your app decides how to store and retrieve roles (plus permissions) and the
