@@ -1,6 +1,6 @@
 {
   "name": "xps-rbac",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "description": "Easy and intuitive role-based access control library for Express apps.",
   "main": "index.js",
   "directories": {
@@ -48,9 +48,8 @@
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.3.4",
-    "@babel/runtime": "^7.4.3",
-    "babel-loader": "^8.0.5",
     "eslint": "^5.15.2",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^4.1.0",
@@ -59,8 +58,7 @@
     "expect": "^24.5.0",
     "jest": "^24.5.0",
     "pre-commit": "^1.2.2",
-    "prettier": "^1.16.4",
-    "regenerator-runtime": "^0.13.2"
+    "prettier": "^1.16.4"
   },
   "jest": {
     "roots": [
@@ -84,7 +82,7 @@
     ]
   },
   "dependencies": {
-    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/runtime": "^7.4.4",
     "require-all": "^3.0.0"
   }
 }
