@@ -1,26 +1,26 @@
-## xps-rbac
+## rbac.js
 
-[![build](https://gitlab.com/mutaimwiti/xps-rbac/badges/master/build.svg)](https://gitlab.com/mutaimwiti/xps-rbac/pipelines)
-[![coverage](https://gitlab.com/mutaimwiti/xps-rbac/badges/master/coverage.svg)](https://gitlab.com/mutaimwiti/xps-rbac/commits/master)
-[![version](https://img.shields.io/npm/v/xps-rbac.svg)](https://www.npmjs.com/package/xps-rbac)
-[![downloads](https://img.shields.io/npm/dm/xps-rbac.svg)](https://www.npmjs.com/package/xps-rbac)
-[![license](https://img.shields.io/npm/l/xps-rbac.svg)](https://www.npmjs.com/package/xps-rbac)
+[![build](https://gitlab.com/mutaimwiti/rbac.js/badges/master/build.svg)](https://gitlab.com/mutaimwiti/rbac.js/pipelines)
+[![coverage](https://gitlab.com/mutaimwiti/rbac.js/badges/master/coverage.svg)](https://gitlab.com/mutaimwiti/rbac.js/commits/master)
+[![version](https://img.shields.io/npm/v/rbac-js.svg)](https://www.npmjs.com/package/rbac-js)
+[![downloads](https://img.shields.io/npm/dm/rbac-js.svg)](https://www.npmjs.com/package/rbac-js)
+[![license](https://img.shields.io/npm/l/rbac-js.svg)](https://www.npmjs.com/package/rbac-js)
 
-**xps-rbac** is an easy to use and intuitive role-based access control library for [Express](https://expressjs.com/)
+**rbac.js** is an easy to use and intuitive role-based access control library for [Express](https://expressjs.com/)
 apps. The library embraces the unopinionated and minimalist approach of express and can also be used with other
 frameworks built on top of express. Your app decides how to store and retrieve roles (plus permissions) and the
 authentication logic. The library only comes in to simplify the process of building your authorization logic.
 
-> Repo : [GitLab](https://gitlab.com/mutaimwiti/xps-rbac) | [GitHub](https://github.com/mutaimwiti/xps-rbac)
+> Repo : [GitLab](https://gitlab.com/mutaimwiti/rbac.js) | [GitHub](https://github.com/mutaimwiti/rbac.js)
 
 ### Installation
 
 Use one of the two based on your project's dependency manager.
 
 ```bash
-$ npm install xps-rbac --save
+$ npm install rbac-js --save
 
-$ yarn add xps-rbac
+$ yarn add rbac-js
 ```
 
 ### Getting started
@@ -76,7 +76,7 @@ $ yarn add xps-rbac
 ##### Define permissions
 
 ```javascript
-const { parsePermissions } = require('xps-rbac');
+const { parsePermissions } = require('rbac-js');
 
 const permissions = parsePermissions({
   article: {
@@ -223,7 +223,7 @@ const authenticate = async (req, res, next) => {
 ##### Define authorization middleware - can
 
 ```javascript
-const { createCan } = require('xps-rbac');
+const { createCan } = require('rbac-js');
 
 const can = createCan(
   // the system policies
@@ -947,8 +947,8 @@ See how `authorize()` and `createCan()` can be used on the two examples;
 
 This is an instance method, `can()`, defined on the user model that can be used to conveniently check whether a user can
 perform a given action on an entity. This can prove useful if you still need to perform an authorization check without
-necessarily doing it at the routing level. Internally, the method will make use of `authorize()`. The method, should
-accept the following parameters:
+necessarily doing it at the routing level. Internally, the method will make use of `authorize()`. The method accepts the 
+following parameters:
 
 - `action` - the action to check.
 - `entity` - the entity to check the action against.
@@ -1016,7 +1016,7 @@ const authenticate = (req, res, next) => {
 // can.js
 
 // import the functions that we require from the library
-const { loadPolicies } = require('xps-rbac');
+const { loadPolicies } = require('rbac-js');
 
 // if we have defined our policies in one file we simply import them
 const policies = require('./policies');
@@ -1031,7 +1031,7 @@ const policies = loadPolicies(`${__dirname}/policies`);
 // can.js
 
 // import authorize() from the library
-const { authorize } = require('xps-rbac');
+const { authorize } = require('rbac-js');
 
 // authorization middleware creator
 const can = (action, entity) => {
@@ -1068,7 +1068,7 @@ const can = (action, entity) => {
 // can.js
 
 // import authorize() from the library
-const { authorize } = require('xps-rbac');
+const { createCan } = require('rbac-js');
 
 // authorization middleware creator
 const can = createCan(

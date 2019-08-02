@@ -8,7 +8,7 @@ describe('authorize.js - can()', () => {
   let express;
 
   const createCanWithMockParams = () => {
-    can = new function f() {
+    can = new (function f() {
       this.userPermissionsResolver = jest.fn();
       this.unauthorizedRequestHandler = jest.fn();
       this.authorizationExceptionHandler = jest.fn();
@@ -37,12 +37,12 @@ describe('authorize.js - can()', () => {
         this.unauthorizedRequestHandler,
         this.authorizationExceptionHandler,
       );
-    }();
+    })();
   };
 
   const createExpressMock = () => {
     // create express mock
-    express = new function f() {
+    express = new (function f() {
       // request mock
       this.request = { user: { permissions: () => ['blog.list', 'bar.g'] } };
       this.resStatus = jest.fn();
@@ -57,7 +57,7 @@ describe('authorize.js - can()', () => {
       this.callMiddleware = async (middleware) => {
         await middleware(this.request, this.response, this.next);
       };
-    }();
+    })();
   };
 
   beforeEach(() => {

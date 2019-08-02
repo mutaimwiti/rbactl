@@ -1,3 +1,3 @@
 export const createException = (message) => {
-  return Error(`[xps-rbac]: ${message}`);
+  return Error(`[rbac-js]: ${message}`);
 };

@@ -1,10 +1,10 @@
 {
-  "name": "xps-rbac",
-  "version": "0.1.0-beta.3",
+  "name": "rbac-js",
+  "version": "0.1.0",
   "description": "Easy and intuitive role-based access control library for Express apps.",
   "main": "index.js",
   "directories": {
-    "test": "tests"
+    "test": "test"
   },
   "scripts": {
     "clean": "rimraf lib",
@@ -22,12 +22,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/mutaimwiti/xps-rbac.git"
+    "url": "git+https://gitlab.com/mutaimwiti/rbac.js.git"
   },
   "keywords": [
-    "xps",
     "rbac",
-    "xps-rbac",
+    "rbac-js",
     "node",
     "node-rbac",
     "nodejs",
@@ -42,9 +41,9 @@
   "author": "Mutai Mwiti",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/mutaimwiti/xps-rbac/issues"
+    "url": "https://gitlab.com/mutaimwiti/rbac.js/issues"
   },
-  "homepage": "https://gitlab.com/mutaimwiti/xps-rbac#readme",
+  "homepage": "https://gitlab.com/mutaimwiti/rbac.js#readme",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
@@ -62,7 +61,7 @@
   },
   "jest": {
     "roots": [
-      "tests"
+      "test"
     ],
     "verbose": true,
     "setupFiles": [
