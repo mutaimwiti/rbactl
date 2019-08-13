@@ -1,26 +1,26 @@
-## rbac.js
+## rbactrl
 
-[![build](https://gitlab.com/mutaimwiti/rbac.js/badges/master/build.svg)](https://gitlab.com/mutaimwiti/rbac.js/pipelines)
-[![coverage](https://gitlab.com/mutaimwiti/rbac.js/badges/master/coverage.svg)](https://gitlab.com/mutaimwiti/rbac.js/commits/master)
-[![version](https://img.shields.io/npm/v/rbac-js.svg)](https://www.npmjs.com/package/rbac-js)
-[![downloads](https://img.shields.io/npm/dm/rbac-js.svg)](https://www.npmjs.com/package/rbac-js)
-[![license](https://img.shields.io/npm/l/rbac-js.svg)](https://www.npmjs.com/package/rbac-js)
+[![build](https://gitlab.com/mutaimwiti/rbactrl/badges/master/build.svg)](https://gitlab.com/mutaimwiti/rbactrl/pipelines)
+[![coverage](https://gitlab.com/mutaimwiti/rbactrl/badges/master/coverage.svg)](https://gitlab.com/mutaimwiti/rbactrl/commits/master)
+[![version](https://img.shields.io/npm/v/rbactrl.svg)](https://www.npmjs.com/package/rbactrl)
+[![downloads](https://img.shields.io/npm/dm/rbactrl.svg)](https://www.npmjs.com/package/rbactrl)
+[![license](https://img.shields.io/npm/l/rbactrl.svg)](https://www.npmjs.com/package/rbactrl)
 
-**rbac.js** is an easy to use and intuitive role-based access control library for [Express](https://expressjs.com/)
+**rbactrl** is an easy to use and intuitive role-based access control library for [Express](https://expressjs.com/)
 apps. The library embraces the unopinionated and minimalist approach of express and can also be used with other
 frameworks built on top of express. Your app decides how to store and retrieve roles (plus permissions) and the
 authentication logic. The library only comes in to simplify the process of building your authorization logic.
 
-> Repo : [GitLab](https://gitlab.com/mutaimwiti/rbac.js) | [GitHub](https://github.com/mutaimwiti/rbac.js)
+> Repo : [GitLab](https://gitlab.com/mutaimwiti/rbactrl) | [GitHub](https://github.com/mutaimwiti/rbactrl)
 
 ### Installation
 
 Use one of the two based on your project's dependency manager.
 
 ```bash
-$ npm install rbac-js --save
+$ npm install rbactrl --save
 
-$ yarn add rbac-js
+$ yarn add rbactrl
 ```
 
 ### Getting started
@@ -76,7 +76,7 @@ $ yarn add rbac-js
 ##### Define permissions
 
 ```javascript
-const { parsePermissions } = require('rbac-js');
+const { parsePermissions } = require('rbactrl');
 
 const permissions = parsePermissions({
   article: {
@@ -223,7 +223,7 @@ const authenticate = async (req, res, next) => {
 ##### Define authorization middleware - can
 
 ```javascript
-const { createCan } = require('rbac-js');
+const { createCan } = require('rbactrl');
 
 const can = createCan(
   // the system policies
@@ -1016,7 +1016,7 @@ const authenticate = (req, res, next) => {
 // can.js
 
 // import the functions that we require from the library
-const { loadPolicies } = require('rbac-js');
+const { loadPolicies } = require('rbactrl');
 
 // if we have defined our policies in one file we simply import them
 const policies = require('./policies');
@@ -1031,7 +1031,7 @@ const policies = loadPolicies(`${__dirname}/policies`);
 // can.js
 
 // import authorize() from the library
-const { authorize } = require('rbac-js');
+const { authorize } = require('rbactrl');
 
 // authorization middleware creator
 const can = (action, entity) => {
@@ -1068,7 +1068,7 @@ const can = (action, entity) => {
 // can.js
 
 // import authorize() from the library
-const { createCan } = require('rbac-js');
+const { createCan } = require('rbactrl');
 
 // authorization middleware creator
 const can = createCan(
