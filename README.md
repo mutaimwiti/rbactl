@@ -1,26 +1,26 @@
-## rbactrl
+## rbactl
 
-[![build](https://gitlab.com/mutaimwiti/rbactrl/badges/master/build.svg)](https://gitlab.com/mutaimwiti/rbactrl/pipelines)
-[![coverage](https://gitlab.com/mutaimwiti/rbactrl/badges/master/coverage.svg)](https://gitlab.com/mutaimwiti/rbactrl/commits/master)
-[![version](https://img.shields.io/npm/v/rbactrl.svg)](https://www.npmjs.com/package/rbactrl)
-[![downloads](https://img.shields.io/npm/dm/rbactrl.svg)](https://www.npmjs.com/package/rbactrl)
-[![license](https://img.shields.io/npm/l/rbactrl.svg)](https://www.npmjs.com/package/rbactrl)
+[![build](https://gitlab.com/mutaimwiti/rbactl/badges/master/build.svg)](https://gitlab.com/mutaimwiti/rbactl/pipelines)
+[![coverage](https://gitlab.com/mutaimwiti/rbactl/badges/master/coverage.svg)](https://gitlab.com/mutaimwiti/rbactl/commits/master)
+[![version](https://img.shields.io/npm/v/rbactl.svg)](https://www.npmjs.com/package/rbactl)
+[![downloads](https://img.shields.io/npm/dm/rbactl.svg)](https://www.npmjs.com/package/rbactl)
+[![license](https://img.shields.io/npm/l/rbactl.svg)](https://www.npmjs.com/package/rbactl)
 
-**rbactrl** is an easy to use and intuitive role-based access control library for [Express](https://expressjs.com/)
+**rbactl** is an easy to use and intuitive role-based access control library for [Express](https://expressjs.com/)
 apps. The library embraces the unopinionated and minimalist approach of express and can also be used with other
 frameworks built on top of express. Your app decides how to store and retrieve roles (plus permissions) and the
 authentication logic. The library only comes in to simplify the process of building your authorization logic.
 
-> Repo : [GitLab](https://gitlab.com/mutaimwiti/rbactrl) | [GitHub](https://github.com/mutaimwiti/rbactrl)
+> Repo : [GitLab](https://gitlab.com/mutaimwiti/rbactl) | [GitHub](https://github.com/mutaimwiti/rbactl)
 
 ### Installation
 
 Use one of the two based on your project's dependency manager.
 
 ```bash
-$ npm install rbactrl --save
+$ npm install rbactl --save
 
-$ yarn add rbactrl
+$ yarn add rbactl
 ```
 
 ### Getting started
@@ -76,7 +76,7 @@ $ yarn add rbactrl
 ##### Define permissions
 
 ```javascript
-const { parsePermissions } = require('rbactrl');
+const { parsePermissions } = require('rbactl');
 
 const permissions = parsePermissions({
   article: {
@@ -223,7 +223,7 @@ const authenticate = async (req, res, next) => {
 ##### Define authorization middleware - can
 
 ```javascript
-const { createCan } = require('rbactrl');
+const { createCan } = require('rbactl');
 
 const can = createCan(
   // the system policies

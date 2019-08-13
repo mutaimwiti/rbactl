@@ -1,5 +1,5 @@
 {
-  "name": "rbactrl",
+  "name": "rbactl",
   "version": "0.1.0",
   "description": "Easy and intuitive role-based access control library for Express apps.",
   "main": "index.js",
@@ -22,11 +22,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/mutaimwiti/rbactrl.git"
+    "url": "git+https://gitlab.com/mutaimwiti/rbactl.git"
   },
   "keywords": [
     "rbac",
-    "rbactrl",
+    "rbactl",
     "node",
     "node-rbac",
     "nodejs",
@@ -41,9 +41,9 @@
   "author": "Mutai Mwiti",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/mutaimwiti/rbactrl/issues"
+    "url": "https://gitlab.com/mutaimwiti/rbactl/issues"
   },
-  "homepage": "https://gitlab.com/mutaimwiti/rbactrl#readme",
+  "homepage": "https://gitlab.com/mutaimwiti/rbactl#readme",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",

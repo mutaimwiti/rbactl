@@ -1,3 +1,3 @@
 export const createException = (message) => {
-  return Error(`[rbactrl]: ${message}`);
+  return Error(`[rbactl]: ${message}`);
 };

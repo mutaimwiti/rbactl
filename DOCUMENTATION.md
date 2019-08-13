@@ -731,7 +731,7 @@ const authenticate = (req, res, next) => {
 // can.js
 
 // import the functions that we require from the library
-const { loadPolicies } = require('rbactrl');
+const { loadPolicies } = require('rbactl');
 
 // if we have defined our policies in one file we simply import them
 const policies = require('./policies');
@@ -746,7 +746,7 @@ const policies = loadPolicies(`${__dirname}/policies`);
 // can.js
 
 // import authorize() from the library
-const { authorize } = require('rbactrl');
+const { authorize } = require('rbactl');
 
 // authorization middleware creator
 const can = (action, entity) => {
@@ -783,7 +783,7 @@ const can = (action, entity) => {
 // can.js
 
 // import authorize() from the library
-const { createCan } = require('rbactrl');
+const { createCan } = require('rbactl');
 
 // authorization middleware creator
 const can = createCan(
