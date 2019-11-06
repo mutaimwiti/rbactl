@@ -5,6 +5,7 @@ const options = {
   promiseLibrary: global.Promise,
   useNewUrlParser: true,
   useFindAndModify: false,
+  useUnifiedTopology: true,
 };
 
 const connect = (callback = null) => {
