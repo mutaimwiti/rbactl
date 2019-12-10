@@ -1,9 +1,11 @@
-const { connect, disconnect } = require('../app/config/database');
+const { connect } = require('../app/config/database');
+
+let connection;
 
 beforeAll(async () => {
-  await connect();
+  connection = await connect();
 });
 
 afterAll(async () => {
-  await disconnect();
+  await connection.disconnect();
 });
