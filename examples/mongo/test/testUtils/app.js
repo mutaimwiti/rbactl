@@ -1,8 +1,8 @@
 const supertest = require('supertest');
 const { createRole, createUser } = require('./modelFactories');
 
-const appDef = require('../../app');
-const { generateAuthToken } = require('../../app/utils');
+const appDef = require('../../src');
+const { generateAuthToken } = require('../../src/utils');
 
 const app = {
   token: null,

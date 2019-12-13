@@ -1,5 +1,5 @@
 const faker = require('faker');
-const { Role, User, Article } = require('../../app/models');
+const { Role, User, Article } = require('../../src/models');
 
 const createRole = async (permissions = []) => {
   return Role.create({

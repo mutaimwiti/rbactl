@@ -7,9 +7,9 @@
     "pretest": "yarn build:lib",
     "prestart": "yarn build:lib",
     "test": "NODE_ENV=test jest --colors --detectOpenHandles",
-    "start": "cd app && yarn nodemon server.js",
-    "seed": "node app/seeder/seed.js",
-    "seed:undo": "node app/seeder/undo.js"
+    "start": "nodemon server.js",
+    "seed": "node seeder/seed.js",
+    "seed:undo": "node seeder/undo.js"
   },
   "author": "Mutai Mwiti",
   "license": "MIT",

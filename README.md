@@ -99,7 +99,7 @@ const permissions = parsePermissions({
 ```
 
 > See an actual example of this;
-> [mongo](examples/mongo/app/permissions.js) or [postgres](examples/postgres/app/permissions).
+> [mongo](examples/mongo/src/permissions.js) or [postgres](examples/postgres/app/permissions).
 >
 > See [permissions documentation](DOCUMENTATION.md#permissions).
 
@@ -135,7 +135,7 @@ const policies = {
 ```
 
 > See an actual example of this;
-> [mongo](examples/mongo/app/policies.js) or [postgres](examples/postgres/app/policies).
+> [mongo](examples/mongo/src/policies.js) or [postgres](examples/postgres/app/policies).
 >
 > See [policies documentation](DOCUMENTATION.md#policies).
 
@@ -165,7 +165,7 @@ const roles = [
 ```
 
 > See an actual example of this;
-> [mongo](examples/mongo/app/models/role.js) or [postgres](examples/postgres/app/models/role.js).
+> [mongo](examples/mongo/src/models/role.js) or [postgres](examples/postgres/app/models/role.js).
 
 ##### Define user permissions resolver
 
@@ -197,7 +197,7 @@ const User = {
 ```
 
 > See an actual example of this;
-> [mongo](examples/mongo/app/models/user.js) or [postgres](examples/postgres/app/models/user.js).
+> [mongo](examples/mongo/src/models/user.js) or [postgres](examples/postgres/app/models/user.js).
 
 ##### Define authentication middleware
 
@@ -217,7 +217,7 @@ const authenticate = async (req, res, next) => {
 ```
 
 > See an actual example of this;
-> [mongo](examples/mongo/app/middleware/authenticate.js) or
+> [mongo](examples/mongo/src/middleware/authenticate.js) or
 > [postgres](examples/postgres/app/middleware/authenticate.js).
 
 ##### Define authorization middleware - can
@@ -249,7 +249,7 @@ const can = createCan(
 ```
 
 > See an actual example of this;
-> [mongo](examples/mongo/app/middleware/can.js) or [postgres](examples/postgres/app/middleware/can.js).
+> [mongo](examples/mongo/src/middleware/can.js) or [postgres](examples/postgres/app/middleware/can.js).
 >
 > See [authorization documentation](DOCUMENTATION.md#authorization).
 
@@ -271,7 +271,7 @@ app.post('/article/', authenticate, can('create', 'article'), () => {
 ```
 
 > See an actual example of this;
-> [mongo](examples/mongo/app/routes) or [postgres](examples/postgres/app/routes).
+> [mongo](examples/mongo/src/routes) or [postgres](examples/postgres/app/routes).
 
 ### Complete examples
 

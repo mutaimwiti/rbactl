@@ -143,7 +143,7 @@ const permissions = {
 
 #### Actual examples of permission definitions
 
-- [mongo](examples/mongo/app/permissions.js)
+- [mongo](examples/mongo/src/permissions.js)
 - [postgres](examples/postgres/app/permissions)
 
 #### Permission functions
@@ -289,7 +289,7 @@ access is controlled.
 
 #### Actual examples of policy definitions
 
-- [mongo](examples/mongo/app/policies.js) - [documentation](examples/mongo/README.md#policies)
+- [mongo](examples/mongo/src/policies.js) - [documentation](examples/mongo/README.md#policies)
 - [postgres](examples/postgres/app/policies) - [documentation](examples/postgres/README.md#policies)
 
 #### Policy functions
@@ -633,12 +633,12 @@ define the `can()` function. It function accepts the following parameters:
   This list is determined from the roles of a user. The `Role` model is ideally composed of a `name` and `permissions`
   (a list). One of the properties of the User model is `roles`. The relationship is such that a user can have many
   roles and a role can have many users. The user model can have a function that returns a list of all permissions for
-  the user. See the `Role` and `User` model definitions for the two examples; [mongo](examples/mongo/app/models) and
+  the user. See the `Role` and `User` model definitions for the two examples; [mongo](examples/mongo/src/models) and
   [postgres](examples/postgres/app/models). In a very simple system roles can be statically defined in code. For
   example where we know that we will have three roles like `Superadmin`, `Admin` and `Ordinary User`.
 - `policies` - an object that defines all the system policies. The policy definition can either be from an object
   defining all policies or one that is returned by the `loadPolicies()` function. See how they are defined in the two
-  examples; [mongo](examples/mongo/app/policies.js) and [postgres](examples/postgres/app/policies).
+  examples; [mongo](examples/mongo/src/policies.js) and [postgres](examples/postgres/app/policies).
 - `req` - the `express req` object. This is optional and can be omitted if none of your policies (callback policies)
   make use of it. Note that the library does not in any way mutate the object. Only your callback can do so because
   all the library does is invoke your callback with the object.
@@ -656,7 +656,7 @@ The function expects the following parameters:
   permissions, check authorization or when triggering unauthorizedRequestHandler.
 
 See how `authorize()` and `createCan()` can be used on the two examples;
-[mongo](examples/mongo/app/middleware/can.js) and [postgres](examples/postgres/app/middleware/can.js).
+[mongo](examples/mongo/src/middleware/can.js) and [postgres](examples/postgres/app/middleware/can.js).
 
 #### User model can
 
@@ -683,7 +683,7 @@ const doSomething = async () => {
 ```
 
 > See how the user model `can` method can be defined on the two examples:
-> [mongo](examples/mongo/app/models/user.js) and [postgres](examples/postgres/app/models/user.js).
+> [mongo](examples/mongo/src/models/user.js) and [postgres](examples/postgres/app/models/user.js).
 
 ##### IMPORTANT NOTES ON AUTHORIZATION
 

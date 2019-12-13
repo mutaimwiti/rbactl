@@ -1,6 +1,6 @@
-const { env } = require('../config/config');
-const { connect } = require('../config/database');
-const { User, Role, Article } = require('../models');
+const { env } = require('../src/config/config');
+const { connect } = require('../src/config/database');
+const { User, Role, Article } = require('../src/models');
 
 const undo = async () => {
   /* eslint-disable*/
