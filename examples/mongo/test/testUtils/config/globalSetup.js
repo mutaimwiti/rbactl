@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { connect, disconnect } = require('../app/config/database');
+const { connect, disconnect } = require('../../../app/config/database');
 
 module.exports = async () => {
   await connect();

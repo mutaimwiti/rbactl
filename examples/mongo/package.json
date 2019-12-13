@@ -32,8 +32,8 @@
     "verbose": true,
     "testEnvironment": "node",
     "setupFilesAfterEnv": [
-      "<rootDir>test/setupTests.js"
+      "<rootDir>test/testUtils/config/setup.js"
     ],
-    "globalSetup": "<rootDir>test/globalSetup.js"
+    "globalSetup": "<rootDir>test/testUtils/config/globalSetup.js"
   }
 }

@@ -1,4 +1,5 @@
-const { app, eachPermission, createRole } = require('../../utils');
+const { app, eachPermission } = require('../../testUtils/app');
+const { createRole } = require('../../testUtils/modelFactories');
 
 const apiDelete = (roleId) => {
   return app.delete(`/role/${roleId}`).send();

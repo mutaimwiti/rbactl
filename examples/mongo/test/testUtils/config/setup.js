@@ -1,4 +1,4 @@
-const { connect } = require('../app/config/database');
+const { connect } = require('../../../app/config/database');
 
 let connection;
 

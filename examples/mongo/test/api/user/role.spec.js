@@ -1,4 +1,5 @@
-const { app, eachPermission, createUser, createRole } = require('../../utils');
+const { app, eachPermission } = require('../../testUtils/app');
+const { createUser, createRole } = require('../../testUtils/modelFactories');
 
 const apiUpdate = (userId, data) => {
   return app.put(`/user/${userId}/role`).send(data);
