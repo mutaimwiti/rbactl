@@ -33,6 +33,7 @@
     "testEnvironment": "node",
     "setupFilesAfterEnv": [
       "<rootDir>test/setupTests.js"
-    ]
+    ],
+    "globalSetup": "<rootDir>test/globalSetup.js"
   }
 }
