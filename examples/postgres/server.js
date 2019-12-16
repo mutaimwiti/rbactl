@@ -1,4 +1,4 @@
-const app = require('./app');
+const app = require('./src');
 
 app.listen(3000, () => {
   /* eslint-disable-next-line */

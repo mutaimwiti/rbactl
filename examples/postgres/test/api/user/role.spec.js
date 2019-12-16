@@ -1,4 +1,5 @@
-const { app, eachPermission, createUser, createRole } = require('../../utils');
+const { app, eachPermission } = require('../../testUtils/app');
+const { createUser, createRole } = require('../../testUtils/modelFactories');
 
 const apiUpdate = (userId, data) => {
   return app.put(`/user/${userId}/role`).send(data);
@@ -31,7 +32,7 @@ describe('user - role', () => {
     await app.loginRandom(['user.setRoles']);
 
     const res = await apiUpdate(userId, {
-      roleIds: [20, 50],
+      roleIds: [9999999999, 9999999999],
     });
 
     expect(res.status).toBe(400);

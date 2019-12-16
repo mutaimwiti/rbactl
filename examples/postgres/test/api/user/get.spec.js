@@ -1,4 +1,5 @@
-const { app, eachPermission, createUser } = require('../../utils');
+const { app, eachPermission } = require('../../testUtils/app');
+const { createUser } = require('../../testUtils/modelFactories');
 
 const apiGet = (userId) => {
   return app.get(`/user/${userId}`).send();

@@ -1,4 +1,4 @@
-const { app, eachPermission } = require('../../utils');
+const { app, eachPermission } = require('../../testUtils/app');
 
 const apiList = () => {
   return app.get('/role').send();

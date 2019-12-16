@@ -1,9 +1,5 @@
-const {
-  app,
-  eachPermission,
-  createUser,
-  createArticle,
-} = require('../../utils');
+const { app, eachPermission } = require('../../testUtils/app');
+const { createUser, createArticle } = require('../../testUtils/modelFactories');
 
 const apiUpdate = (articleId) => {
   return app.put(`/article/${articleId}`).send();

@@ -1,4 +1,4 @@
-const { createUser, createArticle } = require('../utils');
+const { createUser, createArticle } = require('../testUtils/modelFactories');
 
 describe('User model', () => {
   describe('can()', () => {

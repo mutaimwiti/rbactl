@@ -64,5 +64,8 @@ typings/
 .vscode
 .idea
 
-#lib
+# lib
 lib
+
+# DS_Store
+.DS_Store
