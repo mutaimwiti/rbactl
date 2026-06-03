@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Easy and intuitive role-based access control library for Express apps.",
   "main": "index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "/lib",
+    "/index.js"
+  ],
   "directories": {
     "test": "test"
   },
@@ -12,6 +17,7 @@
     "test:watch": "jest --colors --watch",
     "build": "babel -d lib src/ && cp src/index.d.ts lib/index.d.ts",
     "lint": "eslint .",
+    "release": "node scripts/release.mjs",
     "prepublishOnly": "yarn clean && yarn build && yarn lint && yarn test"
   },
   "pre-commit": [
@@ -22,7 +28,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/mutaimwiti/rbactl.git"
+    "url": "git+https://github.com/mutaimwiti/rbactl.git"
   },
   "keywords": [
     "rbac",
@@ -38,12 +44,12 @@
     "authorization",
     "express-authorization"
   ],
-  "author": "Mutai Mwiti",
+  "author": "Mutai Mwiti <mutaimwiti40@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/mutaimwiti/rbactl/issues"
+    "url": "https://github.com/mutaimwiti/rbactl/issues"
   },
-  "homepage": "https://gitlab.com/mutaimwiti/rbactl#readme",
+  "homepage": "https://github.com/mutaimwiti/rbactl#readme",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
