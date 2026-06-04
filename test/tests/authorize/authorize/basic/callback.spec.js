@@ -1,5 +1,4 @@
 import authorize from '../../../../utils/authorize';
-import { createException } from '../../../../../src/utils';
 
 describe('authorize.js - callback', () => {
   it('should check for authorization correctly - success', () => {
@@ -32,7 +31,7 @@ describe('authorize.js - callback', () => {
 
   it('should throw exception when a callback returns a non-boolean value', () => {
     expect(() => authorize('renew', 'foo', [])).toThrow(
-      createException(`Unexpected return type [string] from a callback.`),
+      'Unexpected return type [string] from a callback',
     );
   });
 });

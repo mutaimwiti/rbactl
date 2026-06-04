@@ -19,12 +19,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pull request template (`.github/PULL_REQUEST_TEMPLATE.md`).
 - Explicit `types` and `files` fields in `package.json` so the published
   package ships only `lib/` and `index.js`.
+- `$not` and `$nor` logical operators in policy rules, and implicit AND across
+  the multiple keys of a policy object.
 
 ### Changed
 
+- Policy rule evaluation is now delegated to the
+  [`logical-compiler`](https://github.com/mutaimwiti/logical-compiler) library.
+  Promise-returning callbacks are now supported at any nesting depth, including
+  inside `$and`/`$or`/`$not`/`$nor` — previously a promise callback nested in an
+  operator threw `Unexpected nested promise callback`. A callback resolving to a
+  non-boolean value now throws a `LogicalCompilerError` (was a generic `[rbactl]`
+  error). `authorize()` still returns a `boolean` for fully synchronous policies
+  and a `Promise<boolean>` when any rule is asynchronous.
 - Reworked the MongoDB and PostgreSQL example test suites: database
   connections are created and closed separately, a global setup clears the
   database before runs, and shared test utilities are grouped on their own.
+
+### Fixed
+
+- A policy object with multiple keys is now AND-ed together instead of silently
+  evaluating only the first key.
 
 ## [0.1.0] - 2019-08-13
 

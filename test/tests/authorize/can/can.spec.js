@@ -80,6 +80,14 @@ describe('authorize.js - can()', () => {
         message: 'You are not authorized to perform this action.',
       });
     });
+
+    it('should trigger next() for a resolved nested promise rule', async () => {
+      // bar.share nests a promise callback inside $and; the mock user has
+      // 'bar.g', so it resolves to authorized.
+      await express.callMiddleware(can.fn('share', 'bar'));
+
+      expect(express.next).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('handling exceptions', () => {
@@ -118,18 +126,6 @@ describe('authorize.js - can()', () => {
           createException(
             'The [blog] policy does not define action [publish].',
           ),
-        );
-      });
-
-      it('should trigger authorizationExceptionHandler() for unexpected nested promise callbacks', async () => {
-        await express.callMiddleware(can.fn('share', 'bar'));
-
-        expect(can.authorizationExceptionHandler).toHaveBeenCalledTimes(1);
-        expect(can.authorizationExceptionHandler).toHaveBeenCalledWith(
-          express.request,
-          express.response,
-          express.next,
-          createException('Unexpected nested promise callback.'),
         );
       });
     });

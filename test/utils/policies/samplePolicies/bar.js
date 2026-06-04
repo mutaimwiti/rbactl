@@ -46,7 +46,7 @@ export default {
       { any: ['bar.x', 'bar.y'] },
     ],
   },
-  // a nested promise callback - not supported
+  // a promise callback nested inside an operator
   share: {
     $and: [{ any: ['bar.g'] }, async () => true],
   },
@@ -61,5 +61,18 @@ export default {
   },
   restart: {
     $and: ['bar.g', 'bar.h', { any: ['bar.j', 'bar.k', 'bar.l'] }],
+  },
+  // $not - authorized only when the user lacks any of the listed permissions
+  block: {
+    $not: { any: ['bar.x', 'bar.y'] },
+  },
+  // $nor - authorized only when the user has none of the listed permissions
+  gate: {
+    $nor: ['bar.a', 'bar.b'],
+  },
+  // multiple keys are implicitly AND-ed: any(bar.a) AND all(bar.m)
+  combo: {
+    any: ['bar.a'],
+    all: ['bar.m'],
   },
 };
