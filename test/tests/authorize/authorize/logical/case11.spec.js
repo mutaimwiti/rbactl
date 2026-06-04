@@ -31,5 +31,13 @@ describe('authorize.js - complex - case 11', () => {
       expect(authorize('combo', 'bar', ['bar.m'])).toEqual(false);
       expect(authorize('combo', 'bar', [])).toEqual(false);
     });
+
+    // bar.merge = { $or: ['bar.a', 'bar.b'], all: ['bar.m'] }
+    it('AND-s an operator key with a rule key', () => {
+      expect(authorize('merge', 'bar', ['bar.a', 'bar.m'])).toEqual(true);
+      expect(authorize('merge', 'bar', ['bar.b', 'bar.m'])).toEqual(true);
+      expect(authorize('merge', 'bar', ['bar.a'])).toEqual(false);
+      expect(authorize('merge', 'bar', ['bar.m'])).toEqual(false);
+    });
   });
 });

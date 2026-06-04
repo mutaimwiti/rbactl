@@ -75,4 +75,9 @@ export default {
     any: ['bar.a'],
     all: ['bar.m'],
   },
+  // implicit AND mixing an operator and a rule: (bar.a OR bar.b) AND all(bar.m)
+  merge: {
+    $or: ['bar.a', 'bar.b'],
+    all: ['bar.m'],
+  },
 };

@@ -434,6 +434,11 @@ I will use dummy entities and actions. Note that these logical rules are only av
 rules can be defined without breaking a sweat. `someCheck` defined below is a prerequisite callback for the examples to
 avoid repeating its definition over and over again.
 
+> Logical rules are powered by [logical-compiler](https://github.com/mutaimwiti/logical-compiler). It evaluates the
+> boolean expression with proper short-circuiting (an `$and` stops at the first `false`, an `$or` at the first `true`),
+> supports both synchronous and promise-returning callbacks at **any** nesting depth, and treats the multiple keys of a
+> rule object as an implicit `AND`. This is what lets you compose `$and`, `$or`, `$not` and `$nor` freely.
+
 ```javascript
 const someCheck = () => {
   return shouldBeAllowed();
@@ -590,6 +595,62 @@ This rule combines OR and AND rules.
   ```
 
   > Rules can be nested in any fashion to achieve the desired logical check.
+
+###### `NOT rule`
+
+This rule negates the result of the single rule provided to it.
+
+- Example
+
+  ```
+  {
+    foo: {
+      archive: { $not: { any: ['foo.x', 'foo.y'] } },
+    },
+  }
+  ```
+
+  > This rule means that `foo` can be archived only if the user has NEITHER `foo.x` NOR `foo.y` permission.
+
+###### `NOR rule`
+
+This rule performs a logical NOR on the provided rules - it is the negation of `$or`. It passes only when none of the
+provided rules pass.
+
+- Example
+
+  ```
+  {
+    foo: {
+      lock: { $nor: ['foo.x', someCheck] },
+    },
+  }
+  ```
+
+  > This rule means that `foo` can be locked only if the user does NOT have `foo.x` permission AND `someCheck` returns
+  > `false`.
+
+###### `Implicit AND`
+
+When a rule object has more than one key, the keys are implicitly AND-ed together. This holds at any nesting depth, so
+it is rarely needed at the top level but is handy for combining an operator with a permission rule without an extra
+wrapping `$and`.
+
+- Example
+
+  ```
+  {
+    foo: {
+      activate: {
+        $or: ['foo.x', 'foo.y'],
+        all: ['foo.m', 'foo.n'],
+      },
+    },
+  }
+  ```
+
+  > This rule means that for `foo` to be activated, the user must have either `foo.x` or `foo.y`, AND must have both
+  > `foo.m` and `foo.n`. It is equivalent to wrapping both keys in an `$and`.
 
 ##### IMPORTANT NOTES ON POLICY RULES
 
