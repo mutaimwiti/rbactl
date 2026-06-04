@@ -30,5 +30,17 @@ describe('permissions.js', () => {
         invalids: ['article.create'],
       });
     });
+
+    it('should accept a plain array of system permissions', () => {
+      const allowed = ['article.list', 'article.get', 'article.create'];
+
+      expect(
+        validatePermissions(allowed, ['article.list', 'article.get']),
+      ).toEqual({ isValid: true, invalids: [] });
+
+      expect(
+        validatePermissions(allowed, ['article.list', 'article.remove']),
+      ).toEqual({ isValid: false, invalids: ['article.remove'] });
+    });
   });
 });

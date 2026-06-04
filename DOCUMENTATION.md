@@ -238,7 +238,8 @@ Sample output:
 This function checks a list of permissions against the system permissions. It returns an object with two values:
 `valid (boolean)` indicating whether the permissions are valid and `invalids (list)` with any invalid permissions
 found. It expects two parameters; `systemPermissions` and `permissions`. `systemPermissions` is the list all of system
-permissions. `permissions` is the list of permissions to validate. Example:
+permissions - either the permissions map (e.g. `parsePermissions(permissions).$all`) or a plain array of permission
+strings. `permissions` is the list of permissions to validate. Example:
 
 ```javascript
 const systemPermisions = parsePermissions(permissions).$all;
@@ -261,8 +262,8 @@ Output:
 ##### `getAllPermissionsFor()`
 
 This function returns all the permissions for a given system entity. It expects two parameters; `systemPermissions`
-and `entity`. `systemPermissions` is the the list all system permissions. `entity` is very much self explanatory.
-Example:
+and `entity`. `systemPermissions` is the the list all system permissions - either the permissions map or a plain array
+of permission strings. `entity` is very much self explanatory. Example:
 
 ```javascript
 const systemPermisions = loadPermissions(`${__dirname}/permissions`).$all;

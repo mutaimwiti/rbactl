@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   package ships only `lib/` and `index.js`.
 - `$not` and `$nor` logical operators in policy rules, and implicit AND across
   the multiple keys of a policy object.
+- `validatePermissions()` and `getAllPermissionsFor()` now accept the system
+  permissions as a plain array of permission strings, in addition to the
+  permissions map.
 
 ### Changed
 
