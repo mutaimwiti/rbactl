@@ -1,4 +1,3 @@
-import expect from 'expect';
 import { hasAnyPermission } from '../../../src/permissions';
 
 describe('permissions.js', () => {

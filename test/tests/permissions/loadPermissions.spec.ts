@@ -1,18 +1,18 @@
-import expect from 'expect';
-import { parsePermissions } from '../../../src/permissions';
-import { samplePermissionsObject } from '../../utils/permissions/helpers';
+import { loadPermissions } from '../../../src/permissions';
 
 describe('permissions.js', () => {
-  describe('parsePermissions()', () => {
-    const parsed = parsePermissions(samplePermissionsObject);
+  describe('loadPermissions()', () => {
+    const loaded = loadPermissions(
+      `${__dirname}/../../utils/permissions/samplePermissions`,
+    );
 
-    it('should parse all permissions', () => {
-      expect(Object.keys(parsed).length).toEqual(3);
-      expect(parsed).toMatchObject({ article: {}, item: {}, $all: {} });
+    it('should load all permissions', () => {
+      expect(Object.keys(loaded).length).toEqual(3);
+      expect(loaded).toMatchObject({ article: {}, item: {}, $all: {} });
     });
 
-    it('should prefix the permissions with the entity - [entity.action]', () => {
-      expect(parsed).toMatchObject({
+    it('should load permissions prefixed with the entity - [entity.action]', () => {
+      expect(loaded).toMatchObject({
         article: {
           'article.list': 'List articles',
           'article.get': 'Get single article',
@@ -33,7 +33,7 @@ describe('permissions.js', () => {
     });
 
     it('should include an object ($all) with all the permissions', () => {
-      expect(parsed.$all).toEqual({
+      expect(loaded.$all).toEqual({
         'article.list': 'List articles',
         'article.get': 'Get single article',
         'article.create': 'Create articles',

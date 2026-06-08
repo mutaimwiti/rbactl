@@ -1,6 +1,10 @@
-import compile from 'logical-compiler';
+import compile = require('logical-compiler');
 import { hasAllPermissions, hasAnyPermission } from './permissions';
 import { createException } from './utils';
+import { Permission, Permissions, Policies, Rule } from './types';
+
+type Expression = compile.Expression;
+type Fn = compile.Fn;
 
 // Operators whose value is a list of sub-policies.
 const LIST_OPERATORS = ['$and', '$or', '$nor'];
@@ -19,13 +23,12 @@ const LIST_OPERATORS = ['$and', '$or', '$nor'];
  * AND across the keys of an object - is handled by logical-compiler. The any
  * and all rules are passed through untouched and routed to the compiler's
  * `fns` (see authorizeActionAgainstPolicy).
- *
- * @param policy
- * @param userPermissions
- * @param req
- * @returns {*}
  */
-const toExpression = (policy, userPermissions, req) => {
+const toExpression = (
+  policy: Rule,
+  userPermissions: Permissions,
+  req: any,
+): Expression => {
   if (typeof policy === 'string') {
     return () => hasAllPermissions(userPermissions, [policy]);
   }
@@ -34,52 +37,43 @@ const toExpression = (policy, userPermissions, req) => {
     return () => policy(req);
   }
 
-  if (Array.isArray(policy)) {
-    return policy.map((sub) => toExpression(sub, userPermissions, req));
-  }
+  return Object.fromEntries(
+    Object.entries(policy).map(([key, value]) => {
+      if (LIST_OPERATORS.includes(key)) {
+        return [
+          key,
+          (value as Rule[]).map((sub) =>
+            toExpression(sub, userPermissions, req),
+          ),
+        ];
+      }
 
-  if (policy && typeof policy === 'object') {
-    return Object.fromEntries(
-      Object.entries(policy).map(([key, value]) => {
-        if (LIST_OPERATORS.includes(key)) {
-          return [
-            key,
-            value.map((sub) => toExpression(sub, userPermissions, req)),
-          ];
-        }
+      if (key === '$not') {
+        return [key, toExpression(value as Rule, userPermissions, req)];
+      }
 
-        if (key === '$not') {
-          return [key, toExpression(value, userPermissions, req)];
-        }
-
-        // any / all (and any unrecognized key) are left for logical-compiler
-        // to route to `fns` or to reject with a descriptive error.
-        return [key, value];
-      }),
-    );
-  }
-
-  return policy;
+      // any / all (and any unrecognized key) are left for logical-compiler
+      // to route to `fns` or to reject with a descriptive error.
+      return [key, value];
+    }),
+  ) as Expression;
 };
 
 /**
  * Authorize an action policy against the user permissions. The boolean rule
  * evaluation is delegated to logical-compiler; the any and all rules are
  * supplied as compiler functions bound to the user's permissions.
- *
- * @param userPermissions
- * @param actionPolicy
- * @param req
- * @returns {boolean|Promise<boolean>}
  */
 export const authorizeActionAgainstPolicy = (
-  userPermissions,
-  actionPolicy,
-  req,
-) => {
-  const fns = {
-    any: (...permissions) => hasAnyPermission(userPermissions, permissions),
-    all: (...permissions) => hasAllPermissions(userPermissions, permissions),
+  userPermissions: Permissions,
+  actionPolicy: Rule,
+  req: any,
+): boolean | Promise<boolean> => {
+  const fns: Record<string, Fn> = {
+    any: (...permissions: Permission[]) =>
+      hasAnyPermission(userPermissions, permissions),
+    all: (...permissions: Permission[]) =>
+      hasAllPermissions(userPermissions, permissions),
   };
 
   return compile(toExpression(actionPolicy, userPermissions, req), { fns });
@@ -103,21 +97,14 @@ export const authorizeActionAgainstPolicy = (
  * action policy, i.e. authorization is `NOT $deny AND ($grant OR action)`. The
  * action must still be defined; the overrides do not apply to undeclared
  * actions.
- *
- * @param action
- * @param entity
- * @param userPermissions
- * @param policies
- * @param req
- * @returns {*}
  */
 export const authorize = (
-  action,
-  entity,
-  userPermissions,
-  policies,
-  req = {},
-) => {
+  action: string,
+  entity: string,
+  userPermissions: Permissions,
+  policies: Policies,
+  req: any = {},
+): boolean | Promise<boolean> => {
   const policy = policies[entity];
 
   if (policy) {
@@ -127,7 +114,7 @@ export const authorize = (
       // `NOT $deny AND ($grant OR action)`, omitting whichever hooks are not
       // defined. The compiler handles short-circuiting (so `$deny` is checked
       // first and can deny without evaluating the rest) and any async rules.
-      let effectivePolicy = actionPolicy;
+      let effectivePolicy: Rule = actionPolicy;
 
       if (policy.$grant !== undefined) {
         effectivePolicy = { $or: [policy.$grant, effectivePolicy] };
@@ -152,33 +139,32 @@ export const authorize = (
   throw createException(`The [${entity}] policy is not defined.`);
 };
 
+type UserPermissionsResolver = (req: any) => Permissions | Promise<Permissions>;
+type RequestHandler = (req: any, res: any, next: any) => any;
+type ExceptionHandler = (req: any, res: any, next: any, error: unknown) => any;
+
 /**
- * Create a 'can' function for your app based on system policies. The can function
- * is used to create authorization middleware for a specific action on a specific
- * entity. createCan expects the following arguments:
+ * Create a 'can' function for your app based on system policies. The can
+ * function is used to create authorization middleware for a specific action on
+ * a specific entity. createCan expects the following arguments:
  *
  * - policies - the system policies definition.
- * - userPermissionsResolver - an handler that is triggered to get user permissions.
- * - unauthorizedRequestHandler - an handler that is triggered if the user is not
+ * - userPermissionsResolver - a handler that is triggered to get user
+ *   permissions.
+ * - unauthorizedRequestHandler - a handler that is triggered if the user is not
  *   authorized to make the request.
- * - authorizationExceptionHandler - an handler that is triggered if an exception
+ * - authorizationExceptionHandler - a handler that is triggered if an exception
  *   occurs when trying to get user permissions, check authorization or when
  *   triggering unauthorizedRequestHandler.
- *
- * @param policies
- * @param userPermissionsResolver
- * @param unauthorizedRequestHandler
- * @param authorizationExceptionHandler
- * @returns {function(*=, *=): Function}
  */
 export const createCan = (
-  policies,
-  userPermissionsResolver,
-  unauthorizedRequestHandler,
-  authorizationExceptionHandler,
+  policies: Policies,
+  userPermissionsResolver: UserPermissionsResolver,
+  unauthorizedRequestHandler: RequestHandler,
+  authorizationExceptionHandler: ExceptionHandler,
 ) => {
-  return (action, entity) => {
-    return async (req, res, next) => {
+  return (action: string, entity: string) => {
+    return async (req: any, res: any, next: any) => {
       try {
         if (
           (await authorize(
