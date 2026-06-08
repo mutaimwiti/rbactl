@@ -426,12 +426,18 @@ boolean values to avoid the ambiguity of relying on truthiness. Examples:
 
 ##### `Logical rules`
 
-Logical rules allow for combination of other rules using logical operators `AND` and `OR`. The library requires AND to
-be represented using `$and` and OR to be represented using `$or`. The value of any logical operator should be an
-`array`. At this point things get a little more complicated and I don't have many actual examples to demonstrate the
-use of logical rules. Because of that, I will use dummy entities and actions. Note that these logical rules are only
-available to ensure that even complex rules can be defined without breaking a sweat. `someCheck` defined below is a
-prerequisite callback for the examples to avoid repeating its definition over and over again.
+Logical rules allow for combination of other rules using logical operators. The library supports `$and`, `$or`, `$nor`
+(whose values are an `array` of rules) and `$not` (whose value is a single rule). `$not` negates a rule and `$nor`
+negates an `$or`. When an object rule has multiple keys they are implicitly AND-ed together. At this point things get a
+little more complicated and I don't have many actual examples to demonstrate the use of logical rules. Because of that,
+I will use dummy entities and actions. Note that these logical rules are only available to ensure that even complex
+rules can be defined without breaking a sweat. `someCheck` defined below is a prerequisite callback for the examples to
+avoid repeating its definition over and over again.
+
+> Logical rules are powered by [logical-compiler](https://github.com/mutaimwiti/logical-compiler). It evaluates the
+> boolean expression with proper short-circuiting (an `$and` stops at the first `false`, an `$or` at the first `true`),
+> supports both synchronous and promise-returning callbacks at **any** nesting depth, and treats the multiple keys of a
+> rule object as an implicit `AND`. This is what lets you compose `$and`, `$or`, `$not` and `$nor` freely.
 
 ```javascript
 const someCheck = () => {
@@ -590,13 +596,69 @@ This rule combines OR and AND rules.
 
   > Rules can be nested in any fashion to achieve the desired logical check.
 
+###### `NOT rule`
+
+This rule negates the result of the single rule provided to it.
+
+- Example
+
+  ```
+  {
+    foo: {
+      archive: { $not: { any: ['foo.x', 'foo.y'] } },
+    },
+  }
+  ```
+
+  > This rule means that `foo` can be archived only if the user has NEITHER `foo.x` NOR `foo.y` permission.
+
+###### `NOR rule`
+
+This rule performs a logical NOR on the provided rules - it is the negation of `$or`. It passes only when none of the
+provided rules pass.
+
+- Example
+
+  ```
+  {
+    foo: {
+      lock: { $nor: ['foo.x', someCheck] },
+    },
+  }
+  ```
+
+  > This rule means that `foo` can be locked only if the user does NOT have `foo.x` permission AND `someCheck` returns
+  > `false`.
+
+###### `Implicit AND`
+
+When a rule object has more than one key, the keys are implicitly AND-ed together. This holds at any nesting depth, so
+it is rarely needed at the top level but is handy for combining an operator with a permission rule without an extra
+wrapping `$and`.
+
+- Example
+
+  ```
+  {
+    foo: {
+      activate: {
+        $or: ['foo.x', 'foo.y'],
+        all: ['foo.m', 'foo.n'],
+      },
+    },
+  }
+  ```
+
+  > This rule means that for `foo` to be activated, the user must have either `foo.x` or `foo.y`, AND must have both
+  > `foo.m` and `foo.n`. It is equivalent to wrapping both keys in an `$and`.
+
 ##### IMPORTANT NOTES ON POLICY RULES
 
-1. An asynchronous call can be made inside a callback rule function. Currently, the library does not support promise
-   returning callbacks on nested rules. If one is found an exception is thrown. Promise returning callback rules are
-   only allowed ALONE. The clean workaround is to resolve values resulting from asynchronous calls before triggering
-   the authorization middleware. In the callback example above (`req callback`), that's exactly the case - the rule
-   expects the article in question to have been queried and resolved by a previous middleware.
+1. An asynchronous call can be made inside a callback rule function. Promise returning callbacks are supported at any
+   nesting depth, including inside `$and`, `$or`, `$not` and `$nor`. When any rule resolves asynchronously, `authorize()`
+   returns a promise, so be sure to `await` it (see the notes on authorization below). Resolving values from
+   asynchronous calls in a preceding middleware - as in the `req callback` example above - remains the cleanest pattern
+   and keeps the authorization check synchronous.
 
 2. Callback rules must explicitly return boolean values to avoid the ambiguity of relying on truthiness. Relying on
    truthiness would pose a serious security loophole. This is because the callback might accidentally resolve to true
@@ -767,8 +829,8 @@ const can = (action, entity) => {
       // authorization was successful - invoke the next middleware
       return next();
     } catch (e) {
-      // three exceptions can be thrown by the authorize function:
-      // missing policy, missing policy action or unexpected nested promise callback
+      // exceptions thrown by the authorize function include: missing policy,
+      // missing policy action, or a callback resolving to a non-boolean value
       return res.status(500).json({
         message: 'Sorry :( Something bad happened.',
       });

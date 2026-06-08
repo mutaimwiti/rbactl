@@ -1,61 +1,86 @@
+import compile from 'logical-compiler';
 import { hasAllPermissions, hasAnyPermission } from './permissions';
 import { createException } from './utils';
 
+// Operators whose value is a list of sub-policies.
+const LIST_OPERATORS = ['$and', '$or', '$nor'];
+
 /**
- * Credit - https://stackoverflow.com/questions/55240828
+ * Adapt an rbactl policy into a logical-compiler expression.
+ *
+ * rbactl's policy DSL differs from logical-compiler's expression grammar in two
+ * places that need wrapping into the compiler's zero-argument callbacks:
+ *
+ * - a bare string is a permission check (the user must hold that permission);
+ * - a callback is invoked with the request object.
+ *
+ * Everything else - the boolean logic of $and/$or/$not/$nor, short-circuiting,
+ * synchronous vs. promise-returning rules (at any nesting depth) and implicit
+ * AND across the keys of an object - is handled by logical-compiler. The any
+ * and all rules are passed through untouched and routed to the compiler's
+ * `fns` (see authorizeActionAgainstPolicy).
+ *
+ * @param policy
+ * @param userPermissions
+ * @param req
+ * @returns {*}
+ */
+const toExpression = (policy, userPermissions, req) => {
+  if (typeof policy === 'string') {
+    return () => hasAllPermissions(userPermissions, [policy]);
+  }
+
+  if (typeof policy === 'function') {
+    return () => policy(req);
+  }
+
+  if (Array.isArray(policy)) {
+    return policy.map((sub) => toExpression(sub, userPermissions, req));
+  }
+
+  if (policy && typeof policy === 'object') {
+    return Object.fromEntries(
+      Object.entries(policy).map(([key, value]) => {
+        if (LIST_OPERATORS.includes(key)) {
+          return [
+            key,
+            value.map((sub) => toExpression(sub, userPermissions, req)),
+          ];
+        }
+        if (key === '$not') {
+          return [key, toExpression(value, userPermissions, req)];
+        }
+        // any / all (and any unrecognized key) are left for logical-compiler
+        // to route to `fns` or to reject with a descriptive error.
+        return [key, value];
+      }),
+    );
+  }
+
+  return policy;
+};
+
+/**
+ * Authorize an action policy against the user permissions. The boolean rule
+ * evaluation is delegated to logical-compiler; the any and all rules are
+ * supplied as compiler functions bound to the user's permissions.
  *
  * @param userPermissions
  * @param actionPolicy
  * @param req
- * @returns {*|*|*}
+ * @returns {boolean|Promise<boolean>}
  */
 export const authorizeActionAgainstPolicy = (
   userPermissions,
   actionPolicy,
   req,
 ) => {
-  let callCount = 0;
-
-  const authorize = (policy) => {
-    callCount += 1;
-    const operators = { $or: 'some', $and: 'every' };
-    const fns = {
-      any: (permissions) => hasAnyPermission(userPermissions, permissions),
-      all: (permissions) => hasAllPermissions(userPermissions, permissions),
-    };
-
-    if (typeof policy === 'string')
-      return hasAllPermissions(userPermissions, [policy]);
-
-    if (typeof policy === 'function') {
-      const result = policy(req);
-      if (result instanceof Promise) {
-        if (callCount > 1) {
-          throw createException('Unexpected nested promise callback.');
-        }
-      } else {
-        const resultType = typeof result;
-
-        if (resultType !== 'boolean') {
-          throw createException(
-            `Unexpected return type [${resultType}] from a callback.`,
-          );
-        }
-      }
-
-      return result;
-    }
-
-    if (!policy || typeof policy !== 'object') return false;
-
-    const [key, value] = Object.entries(policy)[0];
-
-    if (key in operators) return value[operators[key]](authorize);
-    if (key in fns) return fns[key](value);
-    return false;
+  const fns = {
+    any: (...permissions) => hasAnyPermission(userPermissions, permissions),
+    all: (...permissions) => hasAllPermissions(userPermissions, permissions),
   };
 
-  return authorize(actionPolicy);
+  return compile(toExpression(actionPolicy, userPermissions, req), { fns });
 };
 
 /**
@@ -83,14 +108,7 @@ export const authorize = (
   if (policy) {
     const actionPolicy = policy[action];
     if (actionPolicy) {
-      try {
-        return authorizeActionAgainstPolicy(userPermissions, actionPolicy, req);
-      } catch (e) {
-        // an exception is thrown when:
-        // - a nested promise callback is encountered
-        // - a callback returns a non-boolean value - does not apply to promise callbacks
-        throw e;
-      }
+      return authorizeActionAgainstPolicy(userPermissions, actionPolicy, req);
     }
     throw createException(
       `The [${entity}] policy does not define action [${action}].`,

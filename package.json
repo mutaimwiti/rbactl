@@ -88,6 +88,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.4.4",
+    "logical-compiler": "^0.4.0",
     "require-all": "^3.0.0"
   }
 }
