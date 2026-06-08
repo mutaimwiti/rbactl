@@ -89,6 +89,11 @@ export const authorizeActionAgainstPolicy = (
  * the req object. This allows the user to authorize based on req
  * parameters.
  *
+ * An entity policy may define a `$grant` rule. It is evaluated before the
+ * action policy and, if it passes, authorizes the action regardless of the
+ * action policy - useful for granting a privileged user (e.g. an admin) access
+ * to every action on the entity. The action must still be defined.
+ *
  * @param action
  * @param entity
  * @param userPermissions
@@ -108,7 +113,18 @@ export const authorize = (
   if (policy) {
     const actionPolicy = policy[action];
     if (actionPolicy) {
-      return authorizeActionAgainstPolicy(userPermissions, actionPolicy, req);
+      // `$grant` short-circuits to authorized when it passes; otherwise the
+      // action policy decides. Expressed as `$grant OR action` so the compiler
+      // handles the short-circuit and any async rules.
+      const effectivePolicy =
+        policy.$grant !== undefined
+          ? { $or: [policy.$grant, actionPolicy] }
+          : actionPolicy;
+      return authorizeActionAgainstPolicy(
+        userPermissions,
+        effectivePolicy,
+        req,
+      );
     }
     throw createException(
       `The [${entity}] policy does not define action [${action}].`,

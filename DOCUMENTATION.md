@@ -43,6 +43,8 @@
 
      - [Important notes](#important-notes-on-policy-rules)
 
+   - [The $grant rule](#the-grant-rule) - authorize any action on an entity when a grant rule passes.
+
 6. [Authorization](#authorization)
 
    - [Functions](#authorization-functions)
@@ -675,6 +677,31 @@ wrapping `$and`.
    specified. This is because they're automatically checked. For example, if it is specified that a user requires
    `blog.delete` permission to delete a blog, the library will automatically determine that a user with `blog.*`
    permission can delete a blog.
+
+#### The `$grant` rule
+
+An entity policy may define a `$grant` rule. It is evaluated before the action policy and, if it passes, authorizes
+the action regardless of what the action policy says (it is effectively OR-ed with every action). This is the clean
+way to grant a privileged user - for example an admin - access to every action on the entity without repeating the
+check on each action. The `$grant` value is an ordinary rule, so it may be a permission string, an `any`/`all` rule, a
+callback or a logical combination. Note that `$grant` can only grant access; it never denies an action that the
+per-action policy would allow.
+
+```javascript
+{
+  article: {
+    // a user with full article access may perform any article action
+    $grant: 'article.*',
+    create: 'article.create',
+    update: { $and: ['article.update', isOwner] },
+    remove: 'article.remove',
+  },
+}
+```
+
+> With the policy above, a user holding `article.*` can `create`, `update` or `remove` an article even though they are
+> not the owner. Any other user is still subject to the per-action policy. The action must still be defined on the
+> policy - `$grant` does not grant access to actions the entity does not declare.
 
 ### Authorization
 

@@ -1,4 +1,6 @@
 export default {
+  // grant rule - a user with full foo access may perform any foo action
+  $grant: 'foo.*',
   // basic
   dive: 'foo.q',
   // all

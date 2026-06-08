@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `validatePermissions()` and `getAllPermissionsFor()` now accept the system
   permissions as a plain array of permission strings, in addition to the
   permissions map.
+- `$grant` entity policy rule: when it passes it authorizes any defined action
+  on the entity regardless of the per-action policy (e.g. for admin access).
 
 ### Changed
 
