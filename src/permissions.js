@@ -1,6 +1,19 @@
 import requireAll from 'require-all';
 
 /**
+ * System permissions may be supplied either as the permissions map produced by
+ * loadPermissions()/parsePermissions() (an object keyed by permission) or as a
+ * plain array of permission strings. Normalize either form to a list of keys.
+ *
+ * @param systemPermissions
+ * @returns {string[]}
+ */
+const toPermissionKeys = (systemPermissions) =>
+  Array.isArray(systemPermissions)
+    ? systemPermissions
+    : Object.keys(systemPermissions);
+
+/**
  * Generate the full group permission string for the passed permission i.e if
  * the permission is [user.create] it returns [user.*] which is the full
  * permission for the user permission group. If the permission is
@@ -121,7 +134,8 @@ export const parsePermissions = (permissionsObj) => {
 /**
  * Checks a list of permissions against the system permissions. It returns an
  * object with two values: valid (boolean) indicating whether its valid and
- * invalids (list) with any invalid permission that may be found.
+ * invalids (list) with any invalid permission that may be found. The system
+ * permissions may be the permissions map or a plain array of permissions.
  *
  * @param systemPermissions
  * @param permissions
@@ -130,7 +144,7 @@ export const parsePermissions = (permissionsObj) => {
 export const validatePermissions = (systemPermissions, permissions) => {
   let isValid = true;
   const invalids = [];
-  const systemPermissionKeys = Object.keys(systemPermissions);
+  const systemPermissionKeys = toPermissionKeys(systemPermissions);
   permissions.forEach((permission) => {
     if (systemPermissionKeys.indexOf(permission) < 0) {
       isValid = false;
@@ -160,14 +174,15 @@ export const getPermissionsMap = (systemPermissions, permissions) => {
 
 /**
  * Get all the permissions for an entity. For example passing 'x' will
- * return [ 'x.*', 'x.view', 'c.create', ..., ].
+ * return [ 'x.*', 'x.view', 'c.create', ..., ]. The system permissions may be
+ * the permissions map or a plain array of permissions.
  *
  * @param systemPermissions
  * @param entity
  * @returns {string[]}
  */
 export const getAllPermissionsFor = (systemPermissions, entity) => {
-  return Object.keys(systemPermissions).filter((permission) =>
+  return toPermissionKeys(systemPermissions).filter((permission) =>
     permission.startsWith(entity),
   );
 };
