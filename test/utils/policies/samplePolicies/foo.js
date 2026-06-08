@@ -1,4 +1,8 @@
 export default {
+  // grant rule - a user with full foo access may perform any foo action
+  $grant: 'foo.*',
+  // deny rule - a suspended user may perform no foo action (outranks $grant)
+  $deny: (req) => req.suspended === true,
   // basic
   dive: 'foo.q',
   // all

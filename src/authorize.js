@@ -47,9 +47,11 @@ const toExpression = (policy, userPermissions, req) => {
             value.map((sub) => toExpression(sub, userPermissions, req)),
           ];
         }
+
         if (key === '$not') {
           return [key, toExpression(value, userPermissions, req)];
         }
+
         // any / all (and any unrecognized key) are left for logical-compiler
         // to route to `fns` or to reject with a descriptive error.
         return [key, value];
@@ -89,6 +91,19 @@ export const authorizeActionAgainstPolicy = (
  * the req object. This allows the user to authorize based on req
  * parameters.
  *
+ * An entity policy may define two optional override rules that are evaluated
+ * before the action policy:
+ *
+ * - `$grant` - if it passes, the action is authorized regardless of the action
+ *   policy (e.g. an admin who may perform any action).
+ * - `$deny` - if it passes, the action is denied regardless of `$grant` or the
+ *   action policy (e.g. a suspended user who may perform none).
+ *
+ * `$deny` takes precedence over `$grant`, which takes precedence over the
+ * action policy, i.e. authorization is `NOT $deny AND ($grant OR action)`. The
+ * action must still be defined; the overrides do not apply to undeclared
+ * actions.
+ *
  * @param action
  * @param entity
  * @param userPermissions
@@ -108,12 +123,32 @@ export const authorize = (
   if (policy) {
     const actionPolicy = policy[action];
     if (actionPolicy) {
-      return authorizeActionAgainstPolicy(userPermissions, actionPolicy, req);
+      // Compose the overrides around the action policy as
+      // `NOT $deny AND ($grant OR action)`, omitting whichever hooks are not
+      // defined. The compiler handles short-circuiting (so `$deny` is checked
+      // first and can deny without evaluating the rest) and any async rules.
+      let effectivePolicy = actionPolicy;
+
+      if (policy.$grant !== undefined) {
+        effectivePolicy = { $or: [policy.$grant, effectivePolicy] };
+      }
+
+      if (policy.$deny !== undefined) {
+        effectivePolicy = { $and: [{ $not: policy.$deny }, effectivePolicy] };
+      }
+
+      return authorizeActionAgainstPolicy(
+        userPermissions,
+        effectivePolicy,
+        req,
+      );
     }
+
     throw createException(
       `The [${entity}] policy does not define action [${action}].`,
     );
   }
+
   throw createException(`The [${entity}] policy is not defined.`);
 };
 
