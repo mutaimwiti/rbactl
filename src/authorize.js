@@ -89,10 +89,18 @@ export const authorizeActionAgainstPolicy = (
  * the req object. This allows the user to authorize based on req
  * parameters.
  *
- * An entity policy may define a `$grant` rule. It is evaluated before the
- * action policy and, if it passes, authorizes the action regardless of the
- * action policy - useful for granting a privileged user (e.g. an admin) access
- * to every action on the entity. The action must still be defined.
+ * An entity policy may define two optional override rules that are evaluated
+ * before the action policy:
+ *
+ * - `$grant` - if it passes, the action is authorized regardless of the action
+ *   policy (e.g. an admin who may perform any action).
+ * - `$deny` - if it passes, the action is denied regardless of `$grant` or the
+ *   action policy (e.g. a suspended user who may perform none).
+ *
+ * `$deny` takes precedence over `$grant`, which takes precedence over the
+ * action policy, i.e. authorization is `NOT $deny AND ($grant OR action)`. The
+ * action must still be defined; the overrides do not apply to undeclared
+ * actions.
  *
  * @param action
  * @param entity
@@ -113,13 +121,17 @@ export const authorize = (
   if (policy) {
     const actionPolicy = policy[action];
     if (actionPolicy) {
-      // `$grant` short-circuits to authorized when it passes; otherwise the
-      // action policy decides. Expressed as `$grant OR action` so the compiler
-      // handles the short-circuit and any async rules.
-      const effectivePolicy =
-        policy.$grant !== undefined
-          ? { $or: [policy.$grant, actionPolicy] }
-          : actionPolicy;
+      // Compose the overrides around the action policy as
+      // `NOT $deny AND ($grant OR action)`, omitting whichever hooks are not
+      // defined. The compiler handles short-circuiting (so `$deny` is checked
+      // first and can deny without evaluating the rest) and any async rules.
+      let effectivePolicy = actionPolicy;
+      if (policy.$grant !== undefined) {
+        effectivePolicy = { $or: [policy.$grant, effectivePolicy] };
+      }
+      if (policy.$deny !== undefined) {
+        effectivePolicy = { $and: [{ $not: policy.$deny }, effectivePolicy] };
+      }
       return authorizeActionAgainstPolicy(
         userPermissions,
         effectivePolicy,

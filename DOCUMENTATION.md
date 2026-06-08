@@ -43,7 +43,8 @@
 
      - [Important notes](#important-notes-on-policy-rules)
 
-   - [The $grant rule](#the-grant-rule) - authorize any action on an entity when a grant rule passes.
+   - [The $grant and $deny rules](#the-grant-and-deny-rules) - authorize or deny any action on an entity before the
+     per-action policy is consulted.
 
 6. [Authorization](#authorization)
 
@@ -678,20 +679,27 @@ wrapping `$and`.
    `blog.delete` permission to delete a blog, the library will automatically determine that a user with `blog.*`
    permission can delete a blog.
 
-#### The `$grant` rule
+#### The `$grant` and `$deny` rules
 
-An entity policy may define a `$grant` rule. It is evaluated before the action policy and, if it passes, authorizes
-the action regardless of what the action policy says (it is effectively OR-ed with every action). This is the clean
-way to grant a privileged user - for example an admin - access to every action on the entity without repeating the
-check on each action. The `$grant` value is an ordinary rule, so it may be a permission string, an `any`/`all` rule, a
-callback or a logical combination. Note that `$grant` can only grant access; it never denies an action that the
-per-action policy would allow.
+An entity policy may define two optional rules that are evaluated before the action policy:
+
+- `$grant` - if it passes, the action is authorized regardless of what the action policy says. This is the clean way
+  to grant a privileged user - for example an admin - access to every action on the entity without repeating the
+  check on each action.
+- `$deny` - if it passes, the action is denied regardless of `$grant` or the action policy. This is the clean way to
+  block a user - for example one who is suspended - from every action on the entity.
+
+`$deny` takes precedence over `$grant`, which takes precedence over the action policy. In other words authorization is
+`NOT $deny AND ($grant OR action)`. Each is an ordinary rule (a permission string, an `any`/`all` rule, a callback or
+a logical combination) and each is optional.
 
 ```javascript
 {
   article: {
-    // a user with full article access may perform any article action
+    // a user with full article access may perform any article action ...
     $grant: 'article.*',
+    // ... unless they are suspended, in which case they may perform none
+    $deny: (req) => req.user.isSuspended,
     create: 'article.create',
     update: { $and: ['article.update', isOwner] },
     remove: 'article.remove',
@@ -699,9 +707,9 @@ per-action policy would allow.
 }
 ```
 
-> With the policy above, a user holding `article.*` can `create`, `update` or `remove` an article even though they are
-> not the owner. Any other user is still subject to the per-action policy. The action must still be defined on the
-> policy - `$grant` does not grant access to actions the entity does not declare.
+> With the policy above, a suspended user is denied every action even if they hold `article.*`; a non-suspended
+> `article.*` holder may perform any action; everyone else is subject to the per-action policy. The action must still
+> be defined on the policy - these rules do not apply to actions the entity does not declare.
 
 ### Authorization
 
