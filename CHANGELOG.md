@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pull request template (`.github/PULL_REQUEST_TEMPLATE.md`).
 - Explicit `types` and `files` fields in `package.json` so the published
   package ships only `lib/` and `index.js`.
+- The library CI matrix now also runs on Node 24, and an `engines` field
+  declares the supported floor (`node >= 18`).
 - `$not` and `$nor` logical operators in policy rules, and implicit AND across
   the multiple keys of a policy object.
 - `validatePermissions()` and `getAllPermissionsFor()` now accept the system
