@@ -43,6 +43,9 @@
 
      - [Important notes](#important-notes-on-policy-rules)
 
+   - [The $grant and $deny rules](#the-grant-and-deny-rules) - authorize or deny any action on an entity before the
+     per-action policy is consulted.
+
 6. [Authorization](#authorization)
 
    - [Functions](#authorization-functions)
@@ -238,7 +241,8 @@ Sample output:
 This function checks a list of permissions against the system permissions. It returns an object with two values:
 `valid (boolean)` indicating whether the permissions are valid and `invalids (list)` with any invalid permissions
 found. It expects two parameters; `systemPermissions` and `permissions`. `systemPermissions` is the list all of system
-permissions. `permissions` is the list of permissions to validate. Example:
+permissions - either the permissions map (e.g. `parsePermissions(permissions).$all`) or a plain array of permission
+strings. `permissions` is the list of permissions to validate. Example:
 
 ```javascript
 const systemPermisions = parsePermissions(permissions).$all;
@@ -261,8 +265,8 @@ Output:
 ##### `getAllPermissionsFor()`
 
 This function returns all the permissions for a given system entity. It expects two parameters; `systemPermissions`
-and `entity`. `systemPermissions` is the the list all system permissions. `entity` is very much self explanatory.
-Example:
+and `entity`. `systemPermissions` is the the list all system permissions - either the permissions map or a plain array
+of permission strings. `entity` is very much self explanatory. Example:
 
 ```javascript
 const systemPermisions = loadPermissions(`${__dirname}/permissions`).$all;
@@ -426,12 +430,18 @@ boolean values to avoid the ambiguity of relying on truthiness. Examples:
 
 ##### `Logical rules`
 
-Logical rules allow for combination of other rules using logical operators `AND` and `OR`. The library requires AND to
-be represented using `$and` and OR to be represented using `$or`. The value of any logical operator should be an
-`array`. At this point things get a little more complicated and I don't have many actual examples to demonstrate the
-use of logical rules. Because of that, I will use dummy entities and actions. Note that these logical rules are only
-available to ensure that even complex rules can be defined without breaking a sweat. `someCheck` defined below is a
-prerequisite callback for the examples to avoid repeating its definition over and over again.
+Logical rules allow for combination of other rules using logical operators. The library supports `$and`, `$or`, `$nor`
+(whose values are an `array` of rules) and `$not` (whose value is a single rule). `$not` negates a rule and `$nor`
+negates an `$or`. When an object rule has multiple keys they are implicitly AND-ed together. At this point things get a
+little more complicated and I don't have many actual examples to demonstrate the use of logical rules. Because of that,
+I will use dummy entities and actions. Note that these logical rules are only available to ensure that even complex
+rules can be defined without breaking a sweat. `someCheck` defined below is a prerequisite callback for the examples to
+avoid repeating its definition over and over again.
+
+> Logical rules are powered by [logical-compiler](https://github.com/mutaimwiti/logical-compiler). It evaluates the
+> boolean expression with proper short-circuiting (an `$and` stops at the first `false`, an `$or` at the first `true`),
+> supports both synchronous and promise-returning callbacks at **any** nesting depth, and treats the multiple keys of a
+> rule object as an implicit `AND`. This is what lets you compose `$and`, `$or`, `$not` and `$nor` freely.
 
 ```javascript
 const someCheck = () => {
@@ -590,13 +600,69 @@ This rule combines OR and AND rules.
 
   > Rules can be nested in any fashion to achieve the desired logical check.
 
+###### `NOT rule`
+
+This rule negates the result of the single rule provided to it.
+
+- Example
+
+  ```
+  {
+    foo: {
+      archive: { $not: { any: ['foo.x', 'foo.y'] } },
+    },
+  }
+  ```
+
+  > This rule means that `foo` can be archived only if the user has NEITHER `foo.x` NOR `foo.y` permission.
+
+###### `NOR rule`
+
+This rule performs a logical NOR on the provided rules - it is the negation of `$or`. It passes only when none of the
+provided rules pass.
+
+- Example
+
+  ```
+  {
+    foo: {
+      lock: { $nor: ['foo.x', someCheck] },
+    },
+  }
+  ```
+
+  > This rule means that `foo` can be locked only if the user does NOT have `foo.x` permission AND `someCheck` returns
+  > `false`.
+
+###### `Implicit AND`
+
+When a rule object has more than one key, the keys are implicitly AND-ed together. This holds at any nesting depth, so
+it is rarely needed at the top level but is handy for combining an operator with a permission rule without an extra
+wrapping `$and`.
+
+- Example
+
+  ```
+  {
+    foo: {
+      activate: {
+        $or: ['foo.x', 'foo.y'],
+        all: ['foo.m', 'foo.n'],
+      },
+    },
+  }
+  ```
+
+  > This rule means that for `foo` to be activated, the user must have either `foo.x` or `foo.y`, AND must have both
+  > `foo.m` and `foo.n`. It is equivalent to wrapping both keys in an `$and`.
+
 ##### IMPORTANT NOTES ON POLICY RULES
 
-1. An asynchronous call can be made inside a callback rule function. Currently, the library does not support promise
-   returning callbacks on nested rules. If one is found an exception is thrown. Promise returning callback rules are
-   only allowed ALONE. The clean workaround is to resolve values resulting from asynchronous calls before triggering
-   the authorization middleware. In the callback example above (`req callback`), that's exactly the case - the rule
-   expects the article in question to have been queried and resolved by a previous middleware.
+1. An asynchronous call can be made inside a callback rule function. Promise returning callbacks are supported at any
+   nesting depth, including inside `$and`, `$or`, `$not` and `$nor`. When any rule resolves asynchronously, `authorize()`
+   returns a promise, so be sure to `await` it (see the notes on authorization below). Resolving values from
+   asynchronous calls in a preceding middleware - as in the `req callback` example above - remains the cleanest pattern
+   and keeps the authorization check synchronous.
 
 2. Callback rules must explicitly return boolean values to avoid the ambiguity of relying on truthiness. Relying on
    truthiness would pose a serious security loophole. This is because the callback might accidentally resolve to true
@@ -612,6 +678,38 @@ This rule combines OR and AND rules.
    specified. This is because they're automatically checked. For example, if it is specified that a user requires
    `blog.delete` permission to delete a blog, the library will automatically determine that a user with `blog.*`
    permission can delete a blog.
+
+#### The `$grant` and `$deny` rules
+
+An entity policy may define two optional rules that are evaluated before the action policy:
+
+- `$grant` - if it passes, the action is authorized regardless of what the action policy says. This is the clean way
+  to grant a privileged user - for example an admin - access to every action on the entity without repeating the
+  check on each action.
+- `$deny` - if it passes, the action is denied regardless of `$grant` or the action policy. This is the clean way to
+  block a user - for example one who is suspended - from every action on the entity.
+
+`$deny` takes precedence over `$grant`, which takes precedence over the action policy. In other words authorization is
+`NOT $deny AND ($grant OR action)`. Each is an ordinary rule (a permission string, an `any`/`all` rule, a callback or
+a logical combination) and each is optional.
+
+```javascript
+{
+  article: {
+    // a user with full article access may perform any article action ...
+    $grant: 'article.*',
+    // ... unless they are suspended, in which case they may perform none
+    $deny: (req) => req.user.isSuspended,
+    create: 'article.create',
+    update: { $and: ['article.update', isOwner] },
+    remove: 'article.remove',
+  },
+}
+```
+
+> With the policy above, a suspended user is denied every action even if they hold `article.*`; a non-suspended
+> `article.*` holder may perform any action; everyone else is subject to the per-action policy. The action must still
+> be defined on the policy - these rules do not apply to actions the entity does not declare.
 
 ### Authorization
 
@@ -767,8 +865,8 @@ const can = (action, entity) => {
       // authorization was successful - invoke the next middleware
       return next();
     } catch (e) {
-      // three exceptions can be thrown by the authorize function:
-      // missing policy, missing policy action or unexpected nested promise callback
+      // exceptions thrown by the authorize function include: missing policy,
+      // missing policy action, or a callback resolving to a non-boolean value
       return res.status(500).json({
         message: 'Sorry :( Something bad happened.',
       });

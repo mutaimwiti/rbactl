@@ -1,4 +1,3 @@
-import expect from 'expect';
 import { getPermissionsMap } from '../../../src/permissions';
 import { systemPermissions } from '../../utils/permissions/helpers';
 

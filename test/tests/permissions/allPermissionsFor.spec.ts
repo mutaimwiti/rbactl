@@ -1,4 +1,3 @@
-import expect from 'expect';
 import { getAllPermissionsFor } from '../../../src/permissions';
 import { systemPermissions } from '../../utils/permissions/helpers';
 
@@ -21,6 +20,20 @@ describe('permissions.js', () => {
 
     it('should give an empty list when permission group does not exist', () => {
       expect(getAllPermissionsFor(systemPermissions.$all, 'job')).toEqual([]);
+    });
+
+    it('should accept a plain array of system permissions', () => {
+      const allPermissions = [
+        'article.list',
+        'article.create',
+        'item.list',
+        'item.create',
+      ];
+
+      expect(getAllPermissionsFor(allPermissions, 'article')).toEqual([
+        'article.list',
+        'article.create',
+      ]);
     });
   });
 });

@@ -1,7 +1,6 @@
 ## rbactl
 
-[![build](https://gitlab.com/mutaimwiti/rbactl/badges/master/build.svg)](https://gitlab.com/mutaimwiti/rbactl/pipelines)
-[![coverage](https://gitlab.com/mutaimwiti/rbactl/badges/master/coverage.svg)](https://gitlab.com/mutaimwiti/rbactl/commits/master)
+[![build](https://github.com/mutaimwiti/rbactl/actions/workflows/ci.yml/badge.svg)](https://github.com/mutaimwiti/rbactl/actions/workflows/ci.yml)
 [![version](https://img.shields.io/npm/v/rbactl.svg)](https://www.npmjs.com/package/rbactl)
 [![downloads](https://img.shields.io/npm/dm/rbactl.svg)](https://www.npmjs.com/package/rbactl)
 [![license](https://img.shields.io/npm/l/rbactl.svg)](https://www.npmjs.com/package/rbactl)
@@ -11,7 +10,7 @@ apps. The library embraces the unopinionated and minimalist approach of express 
 frameworks built on top of express. Your app decides how to store and retrieve roles (plus permissions) and the
 authentication logic. The library only comes in to simplify the process of building your authorization logic.
 
-> Repo : [GitLab](https://gitlab.com/mutaimwiti/rbactl) | [GitHub](https://github.com/mutaimwiti/rbactl)
+> Repo : [GitHub](https://github.com/mutaimwiti/rbactl) | [GitLab (mirror)](https://gitlab.com/mutaimwiti/rbactl)
 
 ### Installation
 
