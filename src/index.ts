@@ -7,3 +7,4 @@ export {
   validatePermissions,
   getAllPermissionsFor,
 } from './permissions';
+export * from './types';

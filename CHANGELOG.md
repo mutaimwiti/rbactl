@@ -31,9 +31,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `$deny` denies any action when it passes and takes precedence over both
   `$grant` and the per-action policy (e.g. suspended users). Authorization is
   `NOT $deny AND ($grant OR action)`.
+- Published, hand-maintenance-free TypeScript types covering the public API and
+  the policy DSL (`Rule`, `Policy`, `Policies`, `Permission`, `Permissions`,
+  `PermissionsMap`, `SystemPermissions`, `Callback`).
 
 ### Changed
 
+- The library is now written in TypeScript and built with `tsc`. The shipped
+  declaration (`lib/index.d.ts`) is generated from the source instead of being
+  hand-maintained, and Babel has been removed from the toolchain. The published
+  JavaScript and the package's runtime behavior are unchanged.
 - Policy rule evaluation is now delegated to the
   [`logical-compiler`](https://github.com/mutaimwiti/logical-compiler) library.
   Promise-returning callbacks are now supported at any nesting depth, including

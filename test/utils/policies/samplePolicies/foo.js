@@ -19,11 +19,11 @@ export default {
   pause: (req) => req.body.status === 0,
   rewind: () =>
     new Promise((resolve) => {
-      return resolve(true);
+      resolve(true);
     }),
   proceed: () =>
     new Promise((resolve) => {
-      return resolve(false);
+      resolve(false);
     }),
   // a non-boolean returning callback - not supported
   renew: () => 'some string',
