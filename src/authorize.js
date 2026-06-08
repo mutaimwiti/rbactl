@@ -47,9 +47,11 @@ const toExpression = (policy, userPermissions, req) => {
             value.map((sub) => toExpression(sub, userPermissions, req)),
           ];
         }
+
         if (key === '$not') {
           return [key, toExpression(value, userPermissions, req)];
         }
+
         // any / all (and any unrecognized key) are left for logical-compiler
         // to route to `fns` or to reject with a descriptive error.
         return [key, value];
@@ -126,22 +128,27 @@ export const authorize = (
       // defined. The compiler handles short-circuiting (so `$deny` is checked
       // first and can deny without evaluating the rest) and any async rules.
       let effectivePolicy = actionPolicy;
+
       if (policy.$grant !== undefined) {
         effectivePolicy = { $or: [policy.$grant, effectivePolicy] };
       }
+
       if (policy.$deny !== undefined) {
         effectivePolicy = { $and: [{ $not: policy.$deny }, effectivePolicy] };
       }
+
       return authorizeActionAgainstPolicy(
         userPermissions,
         effectivePolicy,
         req,
       );
     }
+
     throw createException(
       `The [${entity}] policy does not define action [${action}].`,
     );
   }
+
   throw createException(`The [${entity}] policy is not defined.`);
 };
 
