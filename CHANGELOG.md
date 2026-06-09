@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-06-09
+
+### Changed
+
+- Documentation cleanup: tidied prose and grammar across the README and
+  documentation, and rewrote the policy-rule examples around a realistic
+  `article` domain. No changes to the published code.
+- Modernized the MongoDB and PostgreSQL example apps to current dependency
+  majors (mongoose 8, sequelize 6 / pg 8, `@faker-js/faker`) and made their CI
+  jobs gating.
+
 ## [0.2.0] - 2026-06-09
 
 ### Added
@@ -68,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   policies, and an `authorize` middleware, with MongoDB and PostgreSQL example
   applications.
 
-[Unreleased]: https://github.com/mutaimwiti/rbactl/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/mutaimwiti/rbactl/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/mutaimwiti/rbactl/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mutaimwiti/rbactl/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mutaimwiti/rbactl/releases/tag/v0.1.0
