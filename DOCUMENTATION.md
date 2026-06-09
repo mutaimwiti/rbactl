@@ -77,7 +77,7 @@ The flow of requests on most applications where access is restricted based on us
 
 The stages we are most interested in are:
 
-1. `Authentication` - When request a request comes in we try to identify the user making it. This can be through means
+1. `Authentication` - When a request comes in we try to identify the user making it. This can be through means
    like token-based or session-based authentication. If the user cannot be authenticated, the request fails with a `401`
    error informing the user that they cannot be authenticated. If the user is successfully authenticated, the request
    proceeds to the next stage.
@@ -93,8 +93,8 @@ authorization has to be successful.
 ### Dealing with the problem
 
 1. `Authentication` - This is the stage where you identify the user that is making the request. The library expects you
-   to implement this based on whatever underlying persistence system you are using. This could be `MySQL`, `mongoDB`,
-   `postgres`, ... , the choice is yours :smiley_cat:. A common pattern is that after identifying the user, the user
+   to implement this based on whatever underlying persistence system you are using - `MySQL`, `MongoDB`, `PostgreSQL`,
+   or any other; the choice is yours. A common pattern is that after identifying the user, the user
    object is added to the express `req` object so that it is available to all the next handlers. An example with jwt
    auth:
 
@@ -109,7 +109,7 @@ authorization has to be successful.
 
 2. `Authorization` - At this stage we know the user that is making the request from the request object (`req.user`).
    All we need to do is determine whether they're allowed to perform the action that they're trying to perform. To
-   handle this, the library defines three concepts; `entities`, `permissions` and `policies`. This is where the story
+   handle this, the library defines three concepts: `entities`, `permissions` and `policies`. This is where the story
    of the library begins.
 
 ### Entities
@@ -120,7 +120,7 @@ and policies are defined based on the system entities.
 
 ### Permissions
 
-The definition of permissions is very much straight forward. Permissions are defined per entity, the key being the
+The definition of permissions is very straightforward. Permissions are defined per entity, the key being the
 action and the value being the description of the permission. The description is the kind of representation that the
 user (ideally the admin) will see on the UI. The most common use is when allocating roles or viewing the permissions
 of a role or a user.
@@ -153,13 +153,13 @@ const permissions = {
 
 ##### `loadPermissions()`
 
-This function loads permissions that are defined on separate files into one object. It expects one parameter;
+This function loads permissions that are defined on separate files into one object. It expects one parameter:
 `pathname` - path to the permissions. It returns an object with all entities and `$all` as the top level keys. The
 inner keys are the permissions prefixed with their respective entities and the values are the description of the
 permissions. `$all` is an object combining all the system permissions. Example:
 
 ```javascript
-const appPermisssions = loadPermissions(`${__dirname}/permissions`);
+const appPermissions = loadPermissions(`${__dirname}/permissions`);
 ```
 
 Sample output:
@@ -208,13 +208,13 @@ Sample output:
 
 ##### `parsePermissions()`
 
-This function parses permissions that are defined on a single object. It expects one parameter; `permissionsObj` which
+This function parses permissions that are defined on a single object. It expects one parameter: `permissionsObj` which
 is the single object defining all the permissions. It gives the same output as `loadPermissions()`.
 
 ##### `getPermissionsMap()`
 
 This function returns an object with the mapping of permissions with their descriptions `(permission : description)`.
-It expects two parameters; `systemPermissions` and `permissions`. `systemPermissions` is the the list all system
+It expects two parameters: `systemPermissions` and `permissions`. `systemPermissions` is the list of all system
 permissions. `permissions` is the list of permissions for which to get a permission-description mapping. Example:
 
 ```javascript
@@ -240,7 +240,7 @@ Sample output:
 
 This function checks a list of permissions against the system permissions. It returns an object with two values:
 `valid (boolean)` indicating whether the permissions are valid and `invalids (list)` with any invalid permissions
-found. It expects two parameters; `systemPermissions` and `permissions`. `systemPermissions` is the list all of system
+found. It expects two parameters: `systemPermissions` and `permissions`. `systemPermissions` is the list of all system
 permissions - either the permissions map (e.g. `parsePermissions(permissions).$all`) or a plain array of permission
 strings. `permissions` is the list of permissions to validate. Example:
 
@@ -264,8 +264,8 @@ Output:
 
 ##### `getAllPermissionsFor()`
 
-This function returns all the permissions for a given system entity. It expects two parameters; `systemPermissions`
-and `entity`. `systemPermissions` is the the list all system permissions - either the permissions map or a plain array
+This function returns all the permissions for a given system entity. It expects two parameters: `systemPermissions`
+and `entity`. `systemPermissions` is the list of all system permissions - either the permissions map or a plain array
 of permission strings. `entity` is very much self explanatory. Example:
 
 ```javascript
@@ -300,7 +300,7 @@ access is controlled.
 
 ##### `loadPolicies()`
 
-This function loads policies that are defined on separate files into one object. It expects one parameter; `pathname` -
+This function loads policies that are defined on separate files into one object. It expects one parameter: `pathname` -
 path to the policies. It returns an object with all entities as the top level keys. The inner keys are the actions
 and their values are the rules that define how access is controlled. Example:
 
@@ -403,15 +403,13 @@ boolean values to avoid the ambiguity of relying on truthiness. Examples:
 ```
 {
   article: {
-    view: () => {
-      // som code ...
-      return x === y;
-    }
+    create: () => submissionsOpen(),
   }
 }
 ```
 
-> This rule means that for a user to view articles `x` MUST be EQUAL to `y`. I could not think of a better example.
+> This rule means an article can only be created while the application is accepting submissions. A simple callback
+> decides based on application-level state rather than anything on the request.
 
 ###### `req callback`
 
@@ -432,11 +430,9 @@ boolean values to avoid the ambiguity of relying on truthiness. Examples:
 
 Logical rules allow for combination of other rules using logical operators. The library supports `$and`, `$or`, `$nor`
 (whose values are an `array` of rules) and `$not` (whose value is a single rule). `$not` negates a rule and `$nor`
-negates an `$or`. When an object rule has multiple keys they are implicitly AND-ed together. At this point things get a
-little more complicated and I don't have many actual examples to demonstrate the use of logical rules. Because of that,
-I will use dummy entities and actions. Note that these logical rules are only available to ensure that even complex
-rules can be defined without breaking a sweat. `someCheck` defined below is a prerequisite callback for the examples to
-avoid repeating its definition over and over again.
+negates an `$or`. When an object rule has multiple keys they are implicitly AND-ed together. The examples below build on
+the `article` entity. `isOwner`, defined below, is a reusable callback used throughout them; it grants access when the
+requesting user owns the article in question.
 
 > Logical rules are powered by [logical-compiler](https://github.com/mutaimwiti/logical-compiler). It evaluates the
 > boolean expression with proper short-circuiting (an `$and` stops at the first `false`, an `$or` at the first `true`),
@@ -444,217 +440,118 @@ avoid repeating its definition over and over again.
 > rule object as an implicit `AND`. This is what lets you compose `$and`, `$or`, `$not` and `$nor` freely.
 
 ```javascript
-const someCheck = () => {
-  return shouldBeAllowed();
+const isOwner = (req) => {
+  return req.user && req.user.id === req.context.article.ownerId;
 };
 ```
 
 ###### `OR rule`
 
-This rule performs a logical OR on the provided rules.
+This rule performs a logical OR on the provided rules - it passes if any of them passes.
 
 - Example 1
 
   ```
   {
-    foo: {
-      delete: { $or: [someCheck, 'foo.delete'] },
+    article: {
+      update: { $or: [isOwner, 'article.update'] },
     },
   }
   ```
 
-  > This rule means that for `foo` to be deleted, `someCheck` must return `true` or the user has `foo.delete`
-  > permission.
+  > An article can be updated by its owner, or by any user with the `article.update` permission.
 
 - Example 2
 
   ```
   {
-    foo: {
-      activate: {
-        $or: [{ any: ['foo.x', 'foo.y'] }, someCheck],
+    article: {
+      delete: {
+        $or: [{ any: ['article.delete', 'article.moderate'] }, isOwner],
       },
     },
   }
   ```
 
-  > This rule means that for `foo` to be activated, `someCheck` must return `true` or the user has either `foo.x`
-  > or `foo.y` permission.
-
-- Example 3
-
-  ```
-  {
-    foo: {
-      activate: {
-        $or: [{ any: ['foo.x', 'foo.y'] }, { $or: ['bar.m', 'bar.n'] }],
-      },
-    },
-  }
-  ```
-
-  > This rule shows that it is possible to have a nested `$or` rule.
+  > An article can be deleted by its owner, or by a user with either the `article.delete` or `article.moderate`
+  > permission.
 
 ###### `AND rule`
 
-This rule performs a logical AND on the provided rules.
+This rule performs a logical AND on the provided rules - it passes only if all of them pass.
 
 - Example 1
 
   ```
   {
-    foo: {
-      delete: { $and: [someCheck, 'foo.delete'] },
+    article: {
+      publish: { $and: [isOwner, 'article.publish'] },
     },
   }
   ```
 
-  > This rule means that for `foo` to be deleted, `someCheck` must return `true` and the user must have
-  > `foo.delete` permission.
+  > An article can be published only by its owner who also has the `article.publish` permission.
 
 - Example 2
 
   ```
   {
-    foo: {
-      activate: {
-        $and: [{ all: ['foo.x', 'foo.y'] }, someCheck],
+    article: {
+      unpublish: {
+        $and: [{ all: ['article.update', 'article.publish'] }, isOwner],
       },
     },
   }
   ```
 
-  > This rule means that for `foo` to be activated, `someCheck` must return `true` and the user must have both
-  > `foo.x` and `foo.y` permissions.
-
-- Example 3
-
-  ```
-  {
-    foo: {
-      activate: {
-        $and: [{ any: ['foo.x', 'foo.y'] }, { $and: ['bar.m', 'bar.n'] }],
-      },
-    },
-  }
-  ```
-
-  > This rule shows that it is possible to have a nested `$and` rule.
+  > An article can be unpublished only by its owner who also has both the `article.update` and `article.publish`
+  > permissions.
 
 ###### `Compound rule`
 
-This rule combines OR and AND rules.
+Operators nest freely, so they can be combined to express more involved checks.
 
-- Example 1
-
-  ```
-  {
-    foo: {
-      activate: {
-        $and: [{ $and: ['foo.x', 'foo.y'] }, { $or: ['bar.m', 'bar.n'] }],
-      },
-    },
-  }
-  ```
-
-  > When defining compound rules with permissions use of `any` and `all` is not necessary. You can use `$or` and `$and`
-  > in place of `any` and `all` respectively. It is a good idea to use any and all because it makes the rules easier
-  > to understand.
-
-- Example 2
+- Example
 
   ```
   {
-    foo: {
-      deactivate: {
+    article: {
+      publish: {
         $or: [
-          { all: ['foo.x', 'foo.y', 'foo.z'] },
-          {
-            $and: [{ any: ['foo.r', 'foo.s', 'foo.t'] }, someCheck],
-          },
+          { all: ['article.update', 'article.publish'] },
+          { $and: [isOwner, 'article.publish'] },
         ],
       },
     },
   }
   ```
 
-- Example 3
-
-  ```
-  {
-    foo: {
-      deactivate: {
-        $or: [
-          { all: ['foo.x', 'foo.y', 'foo.z'] },
-          {
-            $and: [
-              { any: ['foo.r', 'foo.s', 'foo.t'] },
-              { $or: [someCheck, 'foo.x'] },
-            ],
-          },
-        ],
-      },
-    },
-  }
-  ```
-
-  > Rules can be nested in any fashion to achieve the desired logical check.
-
-###### `NOT rule`
-
-This rule negates the result of the single rule provided to it.
-
-- Example
-
-  ```
-  {
-    foo: {
-      archive: { $not: { any: ['foo.x', 'foo.y'] } },
-    },
-  }
-  ```
-
-  > This rule means that `foo` can be archived only if the user has NEITHER `foo.x` NOR `foo.y` permission.
-
-###### `NOR rule`
-
-This rule performs a logical NOR on the provided rules - it is the negation of `$or`. It passes only when none of the
-provided rules pass.
-
-- Example
-
-  ```
-  {
-    foo: {
-      lock: { $nor: ['foo.x', someCheck] },
-    },
-  }
-  ```
-
-  > This rule means that `foo` can be locked only if the user does NOT have `foo.x` permission AND `someCheck` returns
-  > `false`.
+  > An article can be published either by a user who has both `article.update` and `article.publish`, or by its owner
+  > who has `article.publish`. Rules can be nested in any fashion to achieve the desired check.
+  >
+  > When combining permissions you can use `any`/`all` or the equivalent `$or`/`$and`; `any` and `all` usually read
+  > more clearly.
 
 ###### `Implicit AND`
 
-When a rule object has more than one key, the keys are implicitly AND-ed together. This holds at any nesting depth, so
-it is rarely needed at the top level but is handy for combining an operator with a permission rule without an extra
-wrapping `$and`.
+When a rule object has more than one key, the keys are implicitly AND-ed together. This is handy for combining an
+operator with another rule without an extra wrapping `$and`.
 
 - Example
 
   ```
   {
-    foo: {
-      activate: {
-        $or: ['foo.x', 'foo.y'],
-        all: ['foo.m', 'foo.n'],
+    article: {
+      update: {
+        $or: ['article.update', 'article.moderate'],
+        all: ['article.view'],
       },
     },
   }
   ```
 
-  > This rule means that for `foo` to be activated, the user must have either `foo.x` or `foo.y`, AND must have both
-  > `foo.m` and `foo.n`. It is equivalent to wrapping both keys in an `$and`.
+  > An article can be updated by a user who has either `article.update` or `article.moderate`, AND also has
+  > `article.view`. The two keys are implicitly AND-ed, equivalent to wrapping them in an `$and`.
 
 ##### IMPORTANT NOTES ON POLICY RULES
 
@@ -723,7 +620,7 @@ user **CAN** perform a specific action on a specific entity.
 ##### `authorize()`
 
 This function authorizes a user action on an entity based on their permissions and system policies. It can be used to
-define the `can()` function. It function accepts the following parameters:
+define the `can()` function. It accepts the following parameters:
 
 - `action` - the user action to check.
 - `entity` - the entity to check the action against.
@@ -748,9 +645,9 @@ all associated logic. This leaves very little room for errors and makes your aut
 The function expects the following parameters:
 
 - `policies` - the system policies definition.
-- `userPermissionsResolver` - an handler that is triggered to get user permissions.
-- `unauthorizedRequestHandler` - an handler that is triggered if the user is not authorized to make the request.
-- `authorizationExceptionHandler` - an handler that is triggered if an exception occurs when trying to get user
+- `userPermissionsResolver` - a handler that is triggered to get user permissions.
+- `unauthorizedRequestHandler` - a handler that is triggered if the user is not authorized to make the request.
+- `authorizationExceptionHandler` - a handler that is triggered if an exception occurs when trying to get user
   permissions, check authorization or when triggering unauthorizedRequestHandler.
 
 See how `authorize()` and `createCan()` can be used on the two examples;
@@ -760,7 +657,7 @@ See how `authorize()` and `createCan()` can be used on the two examples;
 
 This is an instance method, `can()`, defined on the user model that can be used to conveniently check whether a user can
 perform a given action on an entity. This can prove useful if you still need to perform an authorization check without
-necessarily doing it at the routing level. Internally, the method will make use of `authorize()`. The method accepts the 
+necessarily doing it at the routing level. Internally, the method will make use of `authorize()`. The method accepts the
 following parameters:
 
 - `action` - the action to check.
