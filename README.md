@@ -5,7 +5,7 @@
 [![downloads](https://img.shields.io/npm/dm/rbactl.svg)](https://www.npmjs.com/package/rbactl)
 [![license](https://img.shields.io/npm/l/rbactl.svg)](https://www.npmjs.com/package/rbactl)
 
-**rbactl** is an easy to use and intuitive role-based access control library for [Express](https://expressjs.com/)
+**rbactl** is an easy-to-use and intuitive role-based access control library for [Express](https://expressjs.com/)
 apps. The library embraces the unopinionated and minimalist approach of express and can also be used with other
 frameworks built on top of express. Your app decides how to store and retrieve roles (plus permissions) and the
 authentication logic. The library only comes in to simplify the process of building your authorization logic.
@@ -17,7 +17,7 @@ authentication logic. The library only comes in to simplify the process of build
 Use one of the two based on your project's dependency manager.
 
 ```bash
-$ npm install rbactl --save
+$ npm install rbactl
 
 $ yarn add rbactl
 ```
@@ -200,7 +200,7 @@ const User = {
 
 ##### Define authentication middleware
 
-This is a tiny snippet of the authorization middleware. It only shows the success case where the user object is added
+This is a tiny snippet of the authentication middleware. It only shows the success case where the user object is added
 to the `req` express object.
 
 ```javascript
@@ -279,7 +279,7 @@ To wrap your head around the entire process carefully go through one or both exa
 - [Mongo](examples/mongo)
 - [Postgres](examples/postgres)
 
-> These may still not make everything crystal clear. Go through the [documentation](DOCUMENTATION.md#documentation) to 
+> These may still not make everything crystal clear. Go through the [documentation](DOCUMENTATION.md#documentation) to
 > understand all key concepts.
 
 ### Licence

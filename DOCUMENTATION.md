@@ -77,7 +77,7 @@ The flow of requests on most applications where access is restricted based on us
 
 The stages we are most interested in are:
 
-1. `Authentication` - When request a request comes in we try to identify the user making it. This can be through means
+1. `Authentication` - When a request comes in we try to identify the user making it. This can be through means
    like token-based or session-based authentication. If the user cannot be authenticated, the request fails with a `401`
    error informing the user that they cannot be authenticated. If the user is successfully authenticated, the request
    proceeds to the next stage.
@@ -93,8 +93,8 @@ authorization has to be successful.
 ### Dealing with the problem
 
 1. `Authentication` - This is the stage where you identify the user that is making the request. The library expects you
-   to implement this based on whatever underlying persistence system you are using. This could be `MySQL`, `mongoDB`,
-   `postgres`, ... , the choice is yours :smiley_cat:. A common pattern is that after identifying the user, the user
+   to implement this based on whatever underlying persistence system you are using - `MySQL`, `MongoDB`, `PostgreSQL`,
+   or any other; the choice is yours. A common pattern is that after identifying the user, the user
    object is added to the express `req` object so that it is available to all the next handlers. An example with jwt
    auth:
 
@@ -109,7 +109,7 @@ authorization has to be successful.
 
 2. `Authorization` - At this stage we know the user that is making the request from the request object (`req.user`).
    All we need to do is determine whether they're allowed to perform the action that they're trying to perform. To
-   handle this, the library defines three concepts; `entities`, `permissions` and `policies`. This is where the story
+   handle this, the library defines three concepts: `entities`, `permissions` and `policies`. This is where the story
    of the library begins.
 
 ### Entities
@@ -120,7 +120,7 @@ and policies are defined based on the system entities.
 
 ### Permissions
 
-The definition of permissions is very much straight forward. Permissions are defined per entity, the key being the
+The definition of permissions is very straightforward. Permissions are defined per entity, the key being the
 action and the value being the description of the permission. The description is the kind of representation that the
 user (ideally the admin) will see on the UI. The most common use is when allocating roles or viewing the permissions
 of a role or a user.
@@ -153,13 +153,13 @@ const permissions = {
 
 ##### `loadPermissions()`
 
-This function loads permissions that are defined on separate files into one object. It expects one parameter;
+This function loads permissions that are defined on separate files into one object. It expects one parameter:
 `pathname` - path to the permissions. It returns an object with all entities and `$all` as the top level keys. The
 inner keys are the permissions prefixed with their respective entities and the values are the description of the
 permissions. `$all` is an object combining all the system permissions. Example:
 
 ```javascript
-const appPermisssions = loadPermissions(`${__dirname}/permissions`);
+const appPermissions = loadPermissions(`${__dirname}/permissions`);
 ```
 
 Sample output:
@@ -208,13 +208,13 @@ Sample output:
 
 ##### `parsePermissions()`
 
-This function parses permissions that are defined on a single object. It expects one parameter; `permissionsObj` which
+This function parses permissions that are defined on a single object. It expects one parameter: `permissionsObj` which
 is the single object defining all the permissions. It gives the same output as `loadPermissions()`.
 
 ##### `getPermissionsMap()`
 
 This function returns an object with the mapping of permissions with their descriptions `(permission : description)`.
-It expects two parameters; `systemPermissions` and `permissions`. `systemPermissions` is the the list all system
+It expects two parameters: `systemPermissions` and `permissions`. `systemPermissions` is the list of all system
 permissions. `permissions` is the list of permissions for which to get a permission-description mapping. Example:
 
 ```javascript
@@ -240,7 +240,7 @@ Sample output:
 
 This function checks a list of permissions against the system permissions. It returns an object with two values:
 `valid (boolean)` indicating whether the permissions are valid and `invalids (list)` with any invalid permissions
-found. It expects two parameters; `systemPermissions` and `permissions`. `systemPermissions` is the list all of system
+found. It expects two parameters: `systemPermissions` and `permissions`. `systemPermissions` is the list of all system
 permissions - either the permissions map (e.g. `parsePermissions(permissions).$all`) or a plain array of permission
 strings. `permissions` is the list of permissions to validate. Example:
 
@@ -264,8 +264,8 @@ Output:
 
 ##### `getAllPermissionsFor()`
 
-This function returns all the permissions for a given system entity. It expects two parameters; `systemPermissions`
-and `entity`. `systemPermissions` is the the list all system permissions - either the permissions map or a plain array
+This function returns all the permissions for a given system entity. It expects two parameters: `systemPermissions`
+and `entity`. `systemPermissions` is the list of all system permissions - either the permissions map or a plain array
 of permission strings. `entity` is very much self explanatory. Example:
 
 ```javascript
@@ -300,7 +300,7 @@ access is controlled.
 
 ##### `loadPolicies()`
 
-This function loads policies that are defined on separate files into one object. It expects one parameter; `pathname` -
+This function loads policies that are defined on separate files into one object. It expects one parameter: `pathname` -
 path to the policies. It returns an object with all entities as the top level keys. The inner keys are the actions
 and their values are the rules that define how access is controlled. Example:
 
@@ -411,7 +411,7 @@ boolean values to avoid the ambiguity of relying on truthiness. Examples:
 }
 ```
 
-> This rule means that for a user to view articles `x` MUST be EQUAL to `y`. I could not think of a better example.
+> This rule means that for a user to view articles `x` MUST be EQUAL to `y`.
 
 ###### `req callback`
 
@@ -432,11 +432,10 @@ boolean values to avoid the ambiguity of relying on truthiness. Examples:
 
 Logical rules allow for combination of other rules using logical operators. The library supports `$and`, `$or`, `$nor`
 (whose values are an `array` of rules) and `$not` (whose value is a single rule). `$not` negates a rule and `$nor`
-negates an `$or`. When an object rule has multiple keys they are implicitly AND-ed together. At this point things get a
-little more complicated and I don't have many actual examples to demonstrate the use of logical rules. Because of that,
-I will use dummy entities and actions. Note that these logical rules are only available to ensure that even complex
-rules can be defined without breaking a sweat. `someCheck` defined below is a prerequisite callback for the examples to
-avoid repeating its definition over and over again.
+negates an `$or`. When an object rule has multiple keys they are implicitly AND-ed together. The examples below use
+placeholder entities and actions to show how logical rules compose, so that even complex access checks can be expressed
+clearly. `someCheck`, defined below, is a prerequisite callback used throughout the examples to avoid repeating its
+definition.
 
 > Logical rules are powered by [logical-compiler](https://github.com/mutaimwiti/logical-compiler). It evaluates the
 > boolean expression with proper short-circuiting (an `$and` stops at the first `false`, an `$or` at the first `true`),
@@ -723,7 +722,7 @@ user **CAN** perform a specific action on a specific entity.
 ##### `authorize()`
 
 This function authorizes a user action on an entity based on their permissions and system policies. It can be used to
-define the `can()` function. It function accepts the following parameters:
+define the `can()` function. It accepts the following parameters:
 
 - `action` - the user action to check.
 - `entity` - the entity to check the action against.
@@ -748,9 +747,9 @@ all associated logic. This leaves very little room for errors and makes your aut
 The function expects the following parameters:
 
 - `policies` - the system policies definition.
-- `userPermissionsResolver` - an handler that is triggered to get user permissions.
-- `unauthorizedRequestHandler` - an handler that is triggered if the user is not authorized to make the request.
-- `authorizationExceptionHandler` - an handler that is triggered if an exception occurs when trying to get user
+- `userPermissionsResolver` - a handler that is triggered to get user permissions.
+- `unauthorizedRequestHandler` - a handler that is triggered if the user is not authorized to make the request.
+- `authorizationExceptionHandler` - a handler that is triggered if an exception occurs when trying to get user
   permissions, check authorization or when triggering unauthorizedRequestHandler.
 
 See how `authorize()` and `createCan()` can be used on the two examples;
@@ -760,7 +759,7 @@ See how `authorize()` and `createCan()` can be used on the two examples;
 
 This is an instance method, `can()`, defined on the user model that can be used to conveniently check whether a user can
 perform a given action on an entity. This can prove useful if you still need to perform an authorization check without
-necessarily doing it at the routing level. Internally, the method will make use of `authorize()`. The method accepts the 
+necessarily doing it at the routing level. Internally, the method will make use of `authorize()`. The method accepts the
 following parameters:
 
 - `action` - the action to check.
