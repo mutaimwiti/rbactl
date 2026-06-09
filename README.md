@@ -10,7 +10,7 @@ apps. The library embraces the unopinionated and minimalist approach of express 
 frameworks built on top of express. Your app decides how to store and retrieve roles (plus permissions) and the
 authentication logic. The library only comes in to simplify the process of building your authorization logic.
 
-> Repo : [GitHub](https://github.com/mutaimwiti/rbactl) | [GitLab (mirror)](https://gitlab.com/mutaimwiti/rbactl)
+> Repo : [GitHub](https://github.com/mutaimwiti/rbactl)
 
 ### Installation
 
@@ -285,8 +285,7 @@ To wrap your head around the entire process carefully go through one or both exa
 ### Licence
 
 [MIT](https://mit-license.org/) © Mutai Mwiti |
-[GitHub](https://github.com/mutaimwiti) |
-[GitLab](https://gitlab.com/mutaimwiti)
+[GitHub](https://github.com/mutaimwiti)
 
 _**DISCLAIMER:**_
 _All opinions expressed in this repository are mine and do not reflect any company or organisation I'm involved with._
