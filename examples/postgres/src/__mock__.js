@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const appendTimestamps = (data) => {
   return data.map((item) => ({

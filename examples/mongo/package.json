@@ -14,7 +14,7 @@
   "author": "Mutai Mwiti",
   "license": "MIT",
   "dependencies": {
-    "bcrypt": "^3.0.5",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^7.0.0",
