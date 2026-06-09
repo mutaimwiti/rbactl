@@ -403,15 +403,13 @@ boolean values to avoid the ambiguity of relying on truthiness. Examples:
 ```
 {
   article: {
-    view: () => {
-      // som code ...
-      return x === y;
-    }
+    create: () => submissionsOpen(),
   }
 }
 ```
 
-> This rule means that for a user to view articles `x` MUST be EQUAL to `y`.
+> This rule means an article can only be created while the application is accepting submissions. A simple callback
+> decides based on application-level state rather than anything on the request.
 
 ###### `req callback`
 
@@ -432,10 +430,9 @@ boolean values to avoid the ambiguity of relying on truthiness. Examples:
 
 Logical rules allow for combination of other rules using logical operators. The library supports `$and`, `$or`, `$nor`
 (whose values are an `array` of rules) and `$not` (whose value is a single rule). `$not` negates a rule and `$nor`
-negates an `$or`. When an object rule has multiple keys they are implicitly AND-ed together. The examples below use
-placeholder entities and actions to show how logical rules compose, so that even complex access checks can be expressed
-clearly. `someCheck`, defined below, is a prerequisite callback used throughout the examples to avoid repeating its
-definition.
+negates an `$or`. When an object rule has multiple keys they are implicitly AND-ed together. The examples below build on
+the `article` entity. `isOwner`, defined below, is a reusable callback used throughout them; it grants access when the
+requesting user owns the article in question.
 
 > Logical rules are powered by [logical-compiler](https://github.com/mutaimwiti/logical-compiler). It evaluates the
 > boolean expression with proper short-circuiting (an `$and` stops at the first `false`, an `$or` at the first `true`),
@@ -443,217 +440,118 @@ definition.
 > rule object as an implicit `AND`. This is what lets you compose `$and`, `$or`, `$not` and `$nor` freely.
 
 ```javascript
-const someCheck = () => {
-  return shouldBeAllowed();
+const isOwner = (req) => {
+  return req.user && req.user.id === req.context.article.ownerId;
 };
 ```
 
 ###### `OR rule`
 
-This rule performs a logical OR on the provided rules.
+This rule performs a logical OR on the provided rules - it passes if any of them passes.
 
 - Example 1
 
   ```
   {
-    foo: {
-      delete: { $or: [someCheck, 'foo.delete'] },
+    article: {
+      update: { $or: [isOwner, 'article.update'] },
     },
   }
   ```
 
-  > This rule means that for `foo` to be deleted, `someCheck` must return `true` or the user has `foo.delete`
-  > permission.
+  > An article can be updated by its owner, or by any user with the `article.update` permission.
 
 - Example 2
 
   ```
   {
-    foo: {
-      activate: {
-        $or: [{ any: ['foo.x', 'foo.y'] }, someCheck],
+    article: {
+      delete: {
+        $or: [{ any: ['article.delete', 'article.moderate'] }, isOwner],
       },
     },
   }
   ```
 
-  > This rule means that for `foo` to be activated, `someCheck` must return `true` or the user has either `foo.x`
-  > or `foo.y` permission.
-
-- Example 3
-
-  ```
-  {
-    foo: {
-      activate: {
-        $or: [{ any: ['foo.x', 'foo.y'] }, { $or: ['bar.m', 'bar.n'] }],
-      },
-    },
-  }
-  ```
-
-  > This rule shows that it is possible to have a nested `$or` rule.
+  > An article can be deleted by its owner, or by a user with either the `article.delete` or `article.moderate`
+  > permission.
 
 ###### `AND rule`
 
-This rule performs a logical AND on the provided rules.
+This rule performs a logical AND on the provided rules - it passes only if all of them pass.
 
 - Example 1
 
   ```
   {
-    foo: {
-      delete: { $and: [someCheck, 'foo.delete'] },
+    article: {
+      publish: { $and: [isOwner, 'article.publish'] },
     },
   }
   ```
 
-  > This rule means that for `foo` to be deleted, `someCheck` must return `true` and the user must have
-  > `foo.delete` permission.
+  > An article can be published only by its owner who also has the `article.publish` permission.
 
 - Example 2
 
   ```
   {
-    foo: {
-      activate: {
-        $and: [{ all: ['foo.x', 'foo.y'] }, someCheck],
+    article: {
+      unpublish: {
+        $and: [{ all: ['article.update', 'article.publish'] }, isOwner],
       },
     },
   }
   ```
 
-  > This rule means that for `foo` to be activated, `someCheck` must return `true` and the user must have both
-  > `foo.x` and `foo.y` permissions.
-
-- Example 3
-
-  ```
-  {
-    foo: {
-      activate: {
-        $and: [{ any: ['foo.x', 'foo.y'] }, { $and: ['bar.m', 'bar.n'] }],
-      },
-    },
-  }
-  ```
-
-  > This rule shows that it is possible to have a nested `$and` rule.
+  > An article can be unpublished only by its owner who also has both the `article.update` and `article.publish`
+  > permissions.
 
 ###### `Compound rule`
 
-This rule combines OR and AND rules.
+Operators nest freely, so they can be combined to express more involved checks.
 
-- Example 1
-
-  ```
-  {
-    foo: {
-      activate: {
-        $and: [{ $and: ['foo.x', 'foo.y'] }, { $or: ['bar.m', 'bar.n'] }],
-      },
-    },
-  }
-  ```
-
-  > When defining compound rules with permissions use of `any` and `all` is not necessary. You can use `$or` and `$and`
-  > in place of `any` and `all` respectively. It is a good idea to use any and all because it makes the rules easier
-  > to understand.
-
-- Example 2
+- Example
 
   ```
   {
-    foo: {
-      deactivate: {
+    article: {
+      publish: {
         $or: [
-          { all: ['foo.x', 'foo.y', 'foo.z'] },
-          {
-            $and: [{ any: ['foo.r', 'foo.s', 'foo.t'] }, someCheck],
-          },
+          { all: ['article.update', 'article.publish'] },
+          { $and: [isOwner, 'article.publish'] },
         ],
       },
     },
   }
   ```
 
-- Example 3
-
-  ```
-  {
-    foo: {
-      deactivate: {
-        $or: [
-          { all: ['foo.x', 'foo.y', 'foo.z'] },
-          {
-            $and: [
-              { any: ['foo.r', 'foo.s', 'foo.t'] },
-              { $or: [someCheck, 'foo.x'] },
-            ],
-          },
-        ],
-      },
-    },
-  }
-  ```
-
-  > Rules can be nested in any fashion to achieve the desired logical check.
-
-###### `NOT rule`
-
-This rule negates the result of the single rule provided to it.
-
-- Example
-
-  ```
-  {
-    foo: {
-      archive: { $not: { any: ['foo.x', 'foo.y'] } },
-    },
-  }
-  ```
-
-  > This rule means that `foo` can be archived only if the user has NEITHER `foo.x` NOR `foo.y` permission.
-
-###### `NOR rule`
-
-This rule performs a logical NOR on the provided rules - it is the negation of `$or`. It passes only when none of the
-provided rules pass.
-
-- Example
-
-  ```
-  {
-    foo: {
-      lock: { $nor: ['foo.x', someCheck] },
-    },
-  }
-  ```
-
-  > This rule means that `foo` can be locked only if the user does NOT have `foo.x` permission AND `someCheck` returns
-  > `false`.
+  > An article can be published either by a user who has both `article.update` and `article.publish`, or by its owner
+  > who has `article.publish`. Rules can be nested in any fashion to achieve the desired check.
+  >
+  > When combining permissions you can use `any`/`all` or the equivalent `$or`/`$and`; `any` and `all` usually read
+  > more clearly.
 
 ###### `Implicit AND`
 
-When a rule object has more than one key, the keys are implicitly AND-ed together. This holds at any nesting depth, so
-it is rarely needed at the top level but is handy for combining an operator with a permission rule without an extra
-wrapping `$and`.
+When a rule object has more than one key, the keys are implicitly AND-ed together. This is handy for combining an
+operator with another rule without an extra wrapping `$and`.
 
 - Example
 
   ```
   {
-    foo: {
-      activate: {
-        $or: ['foo.x', 'foo.y'],
-        all: ['foo.m', 'foo.n'],
+    article: {
+      update: {
+        $or: ['article.update', 'article.moderate'],
+        all: ['article.view'],
       },
     },
   }
   ```
 
-  > This rule means that for `foo` to be activated, the user must have either `foo.x` or `foo.y`, AND must have both
-  > `foo.m` and `foo.n`. It is equivalent to wrapping both keys in an `$and`.
+  > An article can be updated by a user who has either `article.update` or `article.moderate`, AND also has
+  > `article.view`. The two keys are implicitly AND-ed, equivalent to wrapping them in an `$and`.
 
 ##### IMPORTANT NOTES ON POLICY RULES
 
