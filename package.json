@@ -1,6 +1,6 @@
 {
   "name": "rbactl",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Easy and intuitive role-based access control library for Express apps.",
   "main": "index.js",
   "types": "lib/index.d.ts",
