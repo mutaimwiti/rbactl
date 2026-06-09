@@ -27,7 +27,13 @@ fs.readdirSync(__dirname)
     );
   })
   .forEach((file) => {
-    const model = sequelize.import(path.join(__dirname, file));
+    // sequelize.import was removed in Sequelize 6; require the model factory
+    // and call it with the sequelize instance and DataTypes.
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    const model = require(path.join(__dirname, file))(
+      sequelize,
+      Sequelize.DataTypes,
+    );
     db[model.name] = model;
   });
 

@@ -13,26 +13,26 @@
     "start": "cd src && yarn nodemon server.js",
     "setup": "cd src && NODE_ENV=test sequelize db:migrate",
     "teardown": "cd src && NODE_ENV=test sequelize db:migrate:undo:all",
-    "test": "NODE_ENV=test yarn teardown && yarn setup && jest --colors --detectOpenHandles"
+    "test": "NODE_ENV=test yarn teardown && yarn setup && jest --colors --runInBand --forceExit"
   },
   "author": "Mutai Mwiti",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^7.0.0",
-    "express": "^4.16.4",
-    "faker": "^4.1.0",
-    "jsonwebtoken": "^8.5.1",
-    "nodemon": "^1.18.10",
-    "pg": "^7.9.0",
-    "sequelize": "^5.21.2",
-    "sequelize-cli": "^5.4.0",
-    "supertest": "^4.0.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.7",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
+    "supertest": "^7.0.0"
   },
   "devDependencies": {
-    "jest": "^24.5.0"
+    "@faker-js/faker": "^9.3.0",
+    "jest": "^29.7.0"
   },
   "jest": {
     "verbose": true,
