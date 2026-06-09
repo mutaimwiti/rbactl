@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master]
   pull_request:
-    branches: [master, develop]
+    branches: [master]
 
 jobs:
   # Gating check: lint and test the published library across a Node matrix.
@@ -30,14 +30,10 @@ jobs:
       - run: yarn test
 
   # MongoDB example app integration tests against a mongo service container.
-  #
-  # Non-gating (continue-on-error) for now: the example apps pin 2019-era
-  # native dependencies (bcrypt@3 via node-pre-gyp) that do not build on
-  # current Node. Once the example dependencies are modernized, drop
-  # continue-on-error so these become gating checks again.
+  # Runs on Node 20 (the example apps' modern dependencies - mongoose 8 / bson -
+  # require Node >= 20.19).
   example-mongo:
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     services:
       mongo:
@@ -54,7 +50,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: yarn
 
       # The example consumes the built library (its pretest builds lib/).
@@ -63,10 +59,9 @@ jobs:
       - run: yarn --cwd examples/mongo test
 
   # PostgreSQL example app integration tests against a postgres service
-  # container. Non-gating for the same reason as example-mongo above.
+  # container. Runs on Node 20 to match example-mongo.
   example-postgres:
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     services:
       postgres:
@@ -95,7 +90,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
           cache: yarn
 
       - run: yarn install --frozen-lockfile

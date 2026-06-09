@@ -1,9 +1,9 @@
-const faker = require('faker');
+const { faker } = require('@faker-js/faker');
 const { Role, User, Article } = require('../../src/models');
 
 const createRole = async (permissions = []) => {
   return Role.create({
-    name: faker.name.jobTitle(),
+    name: faker.person.jobTitle(),
     permissions,
   });
 };
@@ -17,8 +17,8 @@ const createUser = async (overrides = {}, permissions = []) => {
   }
 
   return User.create({
-    name: faker.fake('{{name.firstName}} {{name.lastName}}'),
-    username: faker.internet.userName(),
+    name: faker.person.fullName(),
+    username: faker.internet.username(),
     email: faker.internet.email(),
     password: faker.internet.password(),
     roles,

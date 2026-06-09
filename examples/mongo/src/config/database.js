@@ -1,19 +1,18 @@
 const mongoose = require('mongoose');
 const { config } = require('./config');
 
-const options = {
-  promiseLibrary: global.Promise,
-  useNewUrlParser: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true,
-};
-
+// Mongoose 6+ no longer needs useNewUrlParser/useUnifiedTopology/useFindAndModify
+// and no longer accepts a callback - connect/disconnect return promises. The
+// optional callback is kept for the seeder/server scripts that pass one, by
+// running it once the promise resolves.
 const connect = (callback = null) => {
-  return mongoose.connect(config.mongoUrl, options, callback);
+  const promise = mongoose.connect(config.mongoUrl);
+  return callback ? promise.then(callback) : promise;
 };
 
 const disconnect = (callback = null) => {
-  return mongoose.disconnect(callback);
+  const promise = mongoose.disconnect();
+  return callback ? promise.then(callback) : promise;
 };
 
 module.exports = { connect, disconnect };

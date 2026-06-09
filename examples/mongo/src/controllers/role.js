@@ -57,7 +57,7 @@ module.exports = {
           'The role cannot be deleted because there are users that belong to it.',
       });
     }
-    await req.context.role.delete();
+    await req.context.role.deleteOne();
     return res.json({ message: 'Role deleted successfully.' });
   },
 };
